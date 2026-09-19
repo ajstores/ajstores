@@ -14,5 +14,13 @@
     "description": "Demo kids product",
     "image": "",
     "status": "ON"
+  },
+   {
+    "store": "AJ Kidz Zone",
+    "name": "DEMO Test Kids Product",
+    "price": 550,
+    "description": "Demo kids product",
+    "image": "",
+    "status": "ON"
   } 
 ]
