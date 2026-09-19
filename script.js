@@ -6,22 +6,37 @@ const store = location.pathname.toLowerCase().includes('kidz')
   ? 'AJ Kidz Zone'
   : 'AJ Trendy Hub';
 
+
+// ===============================
+// HTML ESCAPE
+// ===============================
+
 function escapeHtml(v) {
   return String(v ?? '').replace(/[&<>"']/g, c => ({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
   }[c]));
 }
 
+
+// ===============================
+// JAVASCRIPT ESCAPE
+// ===============================
+
 function jsEscape(v) {
   return String(v ?? '')
-    .replace(/\\/g,'\\\\')
-    .replace(/'/g,"\\'")
-    .replace(/\n/g,' ');
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, ' ');
 }
+
+
+// ===============================
+// LOAD PRODUCTS
+// ===============================
 
 async function loadProducts() {
 
@@ -31,26 +46,33 @@ async function loadProducts() {
 
   try {
 
-    // Root products.json location
-    const basePath = location.pathname.toLowerCase().includes('/trendy/') ||
-                     location.pathname.toLowerCase().includes('/kidz/')
-                     ? '../'
-                     : './';
+    // products.json location
+    const basePath =
+      location.pathname.toLowerCase().includes('/trendy/') ||
+      location.pathname.toLowerCase().includes('/kidz/')
+        ? '../'
+        : './';
+
 
     const response = await fetch(
       basePath + 'products.json?ts=' + Date.now()
     );
 
+
     if (!response.ok) {
       throw new Error('products.json not found');
     }
 
+
     const all = await response.json();
 
+
+    // Filter products according to store
     const products = all.filter(p =>
       String(p.store).toLowerCase() === store.toLowerCase() &&
       String(p.status).toUpperCase() === 'ON'
     );
+
 
     if (!products.length) {
 
@@ -60,84 +82,170 @@ async function loadProducts() {
       return;
     }
 
+
+    // ===============================
+    // CREATE PRODUCT CARDS
+    // ===============================
+
     grid.innerHTML = products.map(p => {
 
       const price = Number(p.price) || 0;
 
-      const img = p.image
-        ? `<img src="${escapeHtml(p.image)}"
-             alt="${escapeHtml(p.name)}"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+
+      // ===============================
+      // IMAGE FIX
+      // ===============================
+
+      let imageUrl = '';
+
+      if (p.image) {
+
+        try {
+
+          // Convert image path into correct absolute URL
+          imageUrl = new URL(
+            p.image,
+            response.url
+          ).href;
+
+        } catch (error) {
+
+          imageUrl = p.image;
+
+        }
+
+      }
+
+
+      const img = imageUrl
+        ? `
+          <img
+            src="${escapeHtml(imageUrl)}"
+            alt="${escapeHtml(p.name)}"
+            loading="lazy"
+            onerror="
+              this.style.display='none';
+              this.nextElementSibling.style.display='flex';
+            "
+          >
+        `
         : '';
 
+
       return `
+
         <article class="product">
 
           <div class="product-img">
 
             ${img}
 
-            <span class="placeholder"
-              ${p.image ? 'style="display:none"' : ''}>
+            <span
+              class="placeholder"
+              ${imageUrl ? 'style="display:none"' : ''}
+            >
               🛍️
             </span>
 
           </div>
 
-          <h3>${escapeHtml(p.name)}</h3>
 
-          <p>${escapeHtml(p.description || '')}</p>
+          <h3>
+            ${escapeHtml(p.name)}
+          </h3>
 
-          <strong>৳${price.toLocaleString('en-BD')}</strong>
 
-          <button onclick="openOrder('${jsEscape(p.name)}',${price})">
+          <p>
+            ${escapeHtml(p.description || '')}
+          </p>
+
+
+          <strong>
+            ৳${price.toLocaleString('en-BD')}
+          </strong>
+
+
+          <button
+            onclick="openOrder('${jsEscape(p.name)}', ${price})"
+          >
             অর্ডার করুন
           </button>
 
         </article>
+
       `;
 
     }).join('');
 
+
   } catch (err) {
 
-    console.error(err);
+    console.error('Product loading error:', err);
 
     grid.innerHTML =
       '<p class="loading">Product load হয়নি। একটু পরে আবার চেষ্টা করুন।</p>';
+
   }
+
 }
 
+
+// ===============================
+// OPEN ORDER MODAL
+// ===============================
 
 function openOrder(product, price) {
 
   modal.style.display = 'flex';
 
-  document.getElementById('product').value = product;
 
-  document.getElementById('price').value = price;
+  document.getElementById('product').value =
+    product;
 
-  const a = document.getElementById('orderProductName');
 
-  if (a) a.textContent = product;
+  document.getElementById('price').value =
+    price;
 
-  const b = document.getElementById('orderProductPrice');
+
+  const a =
+    document.getElementById('orderProductName');
+
+  if (a)
+    a.textContent = product;
+
+
+  const b =
+    document.getElementById('orderProductPrice');
 
   if (b)
-    b.textContent = Number(price).toLocaleString('en-BD');
+    b.textContent =
+      Number(price).toLocaleString('en-BD');
 
-  const c = document.getElementById('summaryPrice');
+
+  const c =
+    document.getElementById('summaryPrice');
 
   if (c)
-    c.textContent = Number(price).toLocaleString('en-BD');
+    c.textContent =
+      Number(price).toLocaleString('en-BD');
 
-  document.getElementById('deliveryArea').value = '';
+
+  document.getElementById('deliveryArea').value =
+    '';
+
 
   updateTotal();
 
-  document.getElementById('status').textContent = '';
+
+  document.getElementById('status').textContent =
+    '';
+
 }
 
+
+// ===============================
+// CLOSE ORDER MODAL
+// ===============================
 
 function closeOrder() {
 
@@ -146,133 +254,212 @@ function closeOrder() {
 }
 
 
+// ===============================
+// CLOSE MODAL BY CLICKING OUTSIDE
+// ===============================
+
 window.onclick = e => {
 
-  if (e.target === modal)
+  if (e.target === modal) {
+
     closeOrder();
+
+  }
 
 };
 
 
+// ===============================
+// UPDATE TOTAL PRICE
+// ===============================
+
 function updateTotal() {
 
   const price =
-    Number(document.getElementById('price').value) || 0;
+    Number(
+      document.getElementById('price').value
+    ) || 0;
+
 
   const area =
     document.getElementById('deliveryArea').value;
+
 
   const charge =
     area === 'ঢাকার ভিতরে'
       ? 60
       : area === 'ঢাকার বাইরে'
-      ? 120
-      : 0;
+        ? 120
+        : 0;
+
 
   document.getElementById('deliveryCharge').textContent =
     charge;
 
+
   document.getElementById('totalPrice').textContent =
     (price + charge).toLocaleString('en-BD');
+
 }
 
 
-document
-  .getElementById('deliveryArea')
-  .addEventListener('change', updateTotal);
+// ===============================
+// DELIVERY AREA CHANGE
+// ===============================
+
+const deliveryArea =
+  document.getElementById('deliveryArea');
+
+if (deliveryArea) {
+
+  deliveryArea.addEventListener(
+    'change',
+    updateTotal
+  );
+
+}
 
 
-document
-  .getElementById('orderForm')
-  .addEventListener('submit', async function(e) {
+// ===============================
+// ORDER FORM SUBMIT
+// ===============================
 
-    e.preventDefault();
+const orderForm =
+  document.getElementById('orderForm');
 
-    const status =
-      document.getElementById('status');
 
-    const price =
-      Number(document.getElementById('price').value) || 0;
+if (orderForm) {
 
-    const area =
-      document.getElementById('deliveryArea').value;
+  orderForm.addEventListener(
+    'submit',
+    async function(e) {
 
-    if (!area) {
+      e.preventDefault();
 
-      status.textContent =
-        'ডেলিভারি এলাকা নির্বাচন করুন।';
 
-      return;
-    }
+      const status =
+        document.getElementById('status');
 
-    const charge =
-      area === 'ঢাকার ভিতরে'
-        ? 60
-        : 120;
 
-    const total =
-      price + charge;
+      const price =
+        Number(
+          document.getElementById('price').value
+        ) || 0;
 
-    const data = new URLSearchParams({
 
-      store,
+      const area =
+        document.getElementById('deliveryArea').value;
 
-      product:
-        document.getElementById('product').value,
 
-      price:
-        String(price),
+      // Check delivery area
+      if (!area) {
 
-      deliveryArea:
-        area,
+        status.textContent =
+          'ডেলিভারি এলাকা নির্বাচন করুন।';
 
-      deliveryCharge:
-        String(charge),
+        return;
 
-      total:
-        String(total),
+      }
 
-      name:
-        document.getElementById('name').value,
 
-      phone:
-        document.getElementById('phone').value,
+      // Delivery charge
+      const charge =
+        area === 'ঢাকার ভিতরে'
+          ? 60
+          : 120;
 
-      address:
-        document.getElementById('address').value
 
-    });
+      // Total price
+      const total =
+        price + charge;
 
-    status.textContent =
-      'অর্ডার পাঠানো হচ্ছে...';
 
-    try {
+      // ===============================
+      // ORDER DATA
+      // ===============================
 
-      await fetch(APPS_SCRIPT_URL, {
+      const data = new URLSearchParams({
 
-        method: 'POST',
+        store: store,
 
-        mode: 'no-cors',
+        product:
+          document.getElementById('product').value,
 
-        body: data
+        price:
+          String(price),
+
+        deliveryArea:
+          area,
+
+        deliveryCharge:
+          String(charge),
+
+        total:
+          String(total),
+
+        name:
+          document.getElementById('name').value,
+
+        phone:
+          document.getElementById('phone').value,
+
+        address:
+          document.getElementById('address').value
 
       });
 
-      status.textContent =
-        'অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!';
-
-      this.reset();
-
-      updateTotal();
-
-    } catch(err) {
 
       status.textContent =
-        'অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।';
+        'অর্ডার পাঠানো হচ্ছে...';
+
+
+      try {
+
+        await fetch(
+          APPS_SCRIPT_URL,
+          {
+
+            method: 'POST',
+
+            mode: 'no-cors',
+
+            body: data
+
+          }
+        );
+
+
+        status.textContent =
+          'অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!';
+
+
+        this.reset();
+
+
+        updateTotal();
+
+
+      } catch (err) {
+
+        console.error(
+          'Order error:',
+          err
+        );
+
+
+        status.textContent =
+          'অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।';
+
+      }
 
     }
+  );
 
-  });
+}
 
+
+// ===============================
+// LOAD PRODUCTS ON PAGE LOAD
+// ===============================
 
 loadProducts();
