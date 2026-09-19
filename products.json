@@ -2,15 +2,7 @@
   {
     "store": "AJ Trendy Hub",
     "name": "Shalong Labtop Bag",
-    "price": 300,
-    "description": "Stylish Bag",
-    "ajstores/shalong.jpg": "",
-    "status": "ON"
-  },
-  {
-    "store": "AJ Trendy Hub",
-    "name": "Shalong Labtop Bag",
-    "price": 660,
+    "price": 650,
     "description": "Stylish Bag",
     "image": "/ajstores/shalong.jpg",
     "status": "ON"
@@ -20,7 +12,7 @@
     "name": "Kids Product",
     "price": 250,
     "description": "kids product",
-    "image": "shalong.jpg",
+    "image": "",
     "status": "ON"
   }
 ]
