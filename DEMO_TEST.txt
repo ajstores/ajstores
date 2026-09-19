@@ -1,0 +1,19 @@
+AJ STORES DEMO TEST
+
+এই version-এ product সরাসরি website-এর ভিতরে demo হিসেবে দেওয়া আছে।
+JSON বা Google Products sheet লাগবে না।
+
+Test:
+1. trendy.html open করো
+2. DEMO Test Bag দেখতে পাবে
+3. অর্ডার করুন চাপো
+4. নাম, ফোন, delivery area, address দাও
+5. Confirm order করো
+6. Google Sheet-এর Orders tab দেখো
+
+Delivery:
+Dhaka = 60
+Outside Dhaka = 120
+
+Note:
+এই demo-তে product শুধু order test করার জন্য embedded করা হয়েছে।
