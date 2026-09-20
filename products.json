@@ -24,12 +24,12 @@
         "image": "/ajstores/Kurumi.jpg"
       },
       {
-        "name": "Blue",
-        "image": ""
+        "name": "Sky Blue",
+        "image": "/ajstores/kurumisky.jpg"
       },
       {
-        "name": "Red",
-        "image": ""
+        "name": "Pink",
+        "image": "/ajstores/kurumipink.jpg"
       }
     ]
   },
