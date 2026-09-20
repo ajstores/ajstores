@@ -20,14 +20,14 @@ body {
 header {
   background: #111;
   color: white;
-  padding: 15px 20px;
+  padding: 14px 20px;
   text-align: center;
 }
 
 header .site-name {
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 9px;
 }
 
 header nav {
@@ -54,18 +54,18 @@ main {
   width: 100%;
   max-width: 1100px;
   margin: auto;
-  padding: 35px 20px;
+  padding: 32px 20px;
   text-align: center;
 }
 
 main h1 {
   font-size: 40px;
-  margin: 10px 0 20px;
+  margin: 10px 0 18px;
 }
 
 main h2 {
   font-size: 30px;
-  margin: 35px 0 25px;
+  margin: 32px 0 22px;
 }
 
 main > p {
@@ -76,13 +76,13 @@ main > p {
 
 .home-intro {
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 32px;
 }
 
 .home-intro p:first-child {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .home-intro h1 {
@@ -95,12 +95,12 @@ main > p {
   color: #555;
 }
 
-/* BRAND CARDS */
+/* ================= BRAND HOME ================= */
 
 .brand-grid {
   width: 100%;
   max-width: 850px;
-  margin: auto;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px;
@@ -109,7 +109,7 @@ main > p {
 .brand-card {
   background: white;
   border-radius: 15px;
-  padding: 12px;
+  padding: 15px;
   box-shadow: 0 3px 12px rgba(0,0,0,.10);
   text-decoration: none;
   color: #222;
@@ -117,14 +117,20 @@ main > p {
   text-align: center;
 }
 
+/*
+  IMPORTANT:
+  Logo আর square করা হবে না।
+  Original image ratio বজায় থাকবে।
+*/
+
 .brand-card img {
   display: block;
-  width: 75%;
-  max-width: 330px;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  margin: auto;
-  border-radius: 12px;
+  width: 70%;
+  max-width: 300px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 10px;
 }
 
 .brand-card h2 {
@@ -168,21 +174,36 @@ main > p {
   transform: scale(.96);
 }
 
+/*
+  Product card-এর image area
+*/
+
 .product-img {
   width: 100%;
   height: 150px;
-  background: #eee;
+  background: #f1f1f1;
   border-radius: 8px;
-  overflow: hidden;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  overflow: hidden;
 }
+
+/*
+  IMPORTANT:
+  cover বাদ দিয়ে contain করা হয়েছে।
+  তাই পুরো bag দেখা যাবে।
+*/
 
 .product-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  padding: 5px;
 }
 
 .placeholder {
@@ -208,28 +229,34 @@ main > p {
   margin: 4px 2px;
 }
 
-/* ================= LARGE PRODUCT ================= */
+/* ================= LARGE PRODUCT VIEW ================= */
 
 #productViewer {
   position: fixed;
   inset: 0;
   z-index: 9998;
   background: rgba(0,0,0,.70);
+
   display: none;
   align-items: center;
   justify-content: center;
+
   padding: 15px;
 }
 
 .large-product-box {
   position: relative;
   background: white;
+
   width: 100%;
   max-width: 450px;
+
   max-height: 92vh;
   overflow-y: auto;
+
   border-radius: 15px;
   padding: 15px;
+
   text-align: left;
 }
 
@@ -237,50 +264,83 @@ main > p {
   position: absolute;
   right: 10px;
   top: 10px;
+
   width: 36px;
   height: 36px;
+
   border: 0;
   border-radius: 50%;
+
   background: #111;
   color: white;
+
   font-size: 25px;
   z-index: 5;
 }
 
+/*
+  বড় ছবির area
+*/
+
 .product-slider {
   position: relative;
+
   width: 100%;
   height: 350px;
-  background: #eee;
+
+  background: #f1f1f1;
   border-radius: 12px;
+
   overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/*
+  বড় অবস্থাতেও পুরো bag দেখা যাবে
+*/
 
 .product-slider img {
   width: 100%;
   height: 100%;
+
   object-fit: contain;
+  object-position: center center;
+
+  display: block;
+  padding: 8px;
 }
 
 .big-placeholder {
   width: 100%;
   height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 80px;
 }
 
+/* ================= SLIDER ================= */
+
 .slider-arrow {
   position: absolute;
+
   top: 50%;
   transform: translateY(-50%);
+
   width: 38px;
   height: 38px;
+
   border: 0;
   border-radius: 50%;
+
   background: rgba(0,0,0,.6);
   color: white;
+
   font-size: 25px;
   z-index: 4;
 }
@@ -295,17 +355,21 @@ main > p {
 
 .slider-dots {
   position: absolute;
+
   bottom: 8px;
   left: 0;
   right: 0;
+
   display: flex;
   justify-content: center;
+
   gap: 5px;
 }
 
 .slider-dot {
   width: 8px;
   height: 8px;
+
   border-radius: 50%;
   background: #bbb;
 }
@@ -313,6 +377,8 @@ main > p {
 .slider-dot.active {
   background: #111;
 }
+
+/* ================= LARGE PRODUCT INFO ================= */
 
 .large-product-box h2 {
   font-size: 22px;
@@ -345,7 +411,9 @@ main > p {
 .color-btn {
   border: 1px solid #ccc;
   background: white;
+
   padding: 7px 13px;
+
   border-radius: 20px;
 }
 
@@ -358,34 +426,49 @@ main > p {
 
 .order-now-btn {
   width: 100%;
+
   border: 0;
   background: #111;
   color: white;
+
   padding: 12px;
+
   border-radius: 8px;
+
   margin-top: 15px;
+
   font-size: 16px;
 }
 
 #modal {
   position: fixed;
   inset: 0;
+
   z-index: 10000;
+
   background: rgba(0,0,0,.70);
+
   display: none;
+
   align-items: center;
   justify-content: center;
+
   padding: 15px;
 }
 
 #orderForm {
   width: 100%;
   max-width: 450px;
+
   max-height: 92vh;
   overflow-y: auto;
+
   background: white;
+
   border-radius: 15px;
+
   padding: 20px;
+
   text-align: left;
 }
 
@@ -401,8 +484,10 @@ main > p {
 
 #orderForm label {
   display: block;
+
   margin-top: 15px;
   margin-bottom: 6px;
+
   font-size: 16px;
 }
 
@@ -410,21 +495,32 @@ main > p {
 #orderForm textarea,
 #orderForm select {
   width: 100%;
+
   padding: 11px;
+
   border: 1px solid #ccc;
+
   border-radius: 8px;
+
   font-size: 16px;
+
   background: white;
 }
 
 #orderForm button[type="submit"] {
   width: 100%;
+
   border: 0;
+
   background: #111;
   color: white;
+
   padding: 12px;
+
   border-radius: 8px;
+
   font-size: 16px;
+
   margin-top: 10px;
 }
 
@@ -476,16 +572,27 @@ main > p {
     font-size: 17px;
   }
 
+  /* HOME LOGO */
+
   .brand-grid {
     grid-template-columns: 1fr;
     max-width: 500px;
     gap: 18px;
   }
 
-  .brand-card img {
-    width: 62%;
-    max-width: 270px;
+  .brand-card {
+    padding: 12px;
   }
+
+  .brand-card img {
+    width: 58%;
+    max-width: 250px;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+  }
+
+  /* PRODUCTS */
 
   #products {
     grid-template-columns: repeat(3, 1fr);
@@ -500,6 +607,11 @@ main > p {
     height: 105px;
   }
 
+  .product-img img {
+    padding: 4px;
+    object-fit: contain;
+  }
+
   .product h3 {
     font-size: 12px;
   }
@@ -512,10 +624,19 @@ main > p {
     font-size: 9px;
   }
 
+  /* BIG PRODUCT */
+
   .product-slider {
     height: 300px;
   }
+
+  .product-slider img {
+    padding: 8px;
+    object-fit: contain;
+  }
 }
+
+/* ================= SMALL PHONE ================= */
 
 @media (max-width: 420px) {
 
@@ -525,7 +646,11 @@ main > p {
   }
 
   .product-img {
-    height: 95px;
+    height: 100px;
+  }
+
+  .product-img img {
+    padding: 3px;
   }
 
   .product h3 {
@@ -536,12 +661,23 @@ main > p {
     font-size: 12px;
   }
 
+  /* HOME LOGO */
+
   .brand-card img {
-    width: 58%;
-    max-width: 240px;
+    width: 55%;
+    max-width: 230px;
+    height: auto;
+    aspect-ratio: auto;
   }
+
+  /* LARGE PRODUCT */
 
   .product-slider {
     height: 280px;
+  }
+
+  .product-slider img {
+    padding: 8px;
+    object-fit: contain;
   }
 }
