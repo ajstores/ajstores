@@ -1,41 +1,718 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZV3hrM0m0BhQR8c3Vdmk72ZEstvF-ASKdvV1fPgQ_gMRPOgX6NXmKAN_Hifnh78gK0A/exec";
+/* =====================================================
+   RESET
+===================================================== */
 
-const path = location.pathname.toLowerCase();
-
-let store = "AJ Trendy Hub";
-let productFile = "products.json";
-
-if (path.includes("/trendy/")) {
-  store = "AJ Trendy Hub";
-  productFile = "../products.json";
+* {
+  box-sizing: border-box;
 }
 
-if (path.includes("/kidz/")) {
-  store = "AJ Kidz Zone";
-  productFile = "../products.json";
+html {
+  scroll-behavior: smooth;
 }
 
-const modal = document.getElementById("modal");
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f7f7;
+  color: #222;
+}
 
-let currentProduct = null;
-let selectedColor = "";
-let currentSlide = 0;
+body.modal-open {
+  overflow: hidden;
+}
+
+img {
+  max-width: 100%;
+}
 
 
 /* =====================================================
-   ESCAPE HTML
+   HEADER
 ===================================================== */
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, function (c) {
-    return {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    }[c];
-  });
+header {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.site-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+
+nav a:hover {
+  background: #333;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+main {
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  padding: 30px 0 50px;
+}
+
+main > h1 {
+  margin-bottom: 8px;
+}
+
+main > p {
+  color: #666;
+}
+
+main > h2 {
+  margin-top: 30px;
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+.home-intro {
+  text-align: center;
+  padding: 45px 15px 30px;
+}
+
+.home-intro p:first-child {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.home-intro h1 {
+  margin: 10px 0;
+  font-size: clamp(30px, 6vw, 52px);
+}
+
+.home-intro p:last-child {
+  color: #666;
+}
+
+
+/* =====================================================
+   BRAND CARDS
+===================================================== */
+
+.brand-grid {
+  width: min(900px, 94%);
+  margin: 20px auto 50px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.brand-card {
+  display: block;
+  text-decoration: none;
+  color: #222;
+  background: #fff;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,.08);
+  transition: .25s ease;
+}
+
+.brand-card:hover {
+  transform: translateY(-5px);
+}
+
+.brand-card img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 18px;
+}
+
+.brand-card h2 {
+  margin: 8px 0;
+}
+
+.brand-card p {
+  color: #666;
+  line-height: 1.5;
+}
+
+.shop-link {
+  margin-top: 15px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   PRODUCTS GRID
+===================================================== */
+
+#products {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.product {
+  position: relative;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(0,0,0,.07);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.product:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+
+
+/* =====================================================
+   PRODUCT IMAGE
+===================================================== */
+
+.product-img {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.product-img > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.placeholder {
+  font-size: 50px;
+}
+
+
+/* =====================================================
+   PRODUCT BADGE
+===================================================== */
+
+.product-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  background: #111;
+  color: #fff;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   HEART
+===================================================== */
+
+.heart-btn {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.heart-btn.liked {
+  color: #e53935;
+}
+
+
+/* =====================================================
+   QUICK VIEW
+===================================================== */
+
+.quick-view {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: .2s;
+}
+
+.product:hover .quick-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* =====================================================
+   PRODUCT INFO
+===================================================== */
+
+.product-info {
+  padding: 13px;
+}
+
+.product-info h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.price {
+  font-size: 18px;
+}
+
+.color-count {
+  color: #777;
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading,
+.products-loading,
+.products-empty {
+  text-align: center;
+  padding: 35px 10px;
+  color: #666;
+}
+
+.products-empty {
+  grid-column: 1 / -1;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.loading-spinner {
+  width: 35px;
+  height: 35px;
+  border: 4px solid #ddd;
+  border-top-color: #111;
+  border-radius: 50%;
+  margin: auto;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.retry-btn {
+  border: 0;
+  background: #111;
+  color: #fff;
+  padding: 9px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   PRODUCT VIEWER
+===================================================== */
+
+#productViewer {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(0,0,0,.78);
+  overflow-y: auto;
+}
+
+.large-product-box {
+  position: relative;
+  width: min(500px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.close-viewer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 20;
+}
+
+
+/* =====================================================
+   SLIDER
+===================================================== */
+
+.product-slider {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #f5f5f5;
+  overflow: hidden;
+  border-radius: 18px 18px 0 0;
+}
+
+#sliderImageArea {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#sliderImageArea img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.big-placeholder {
+  font-size: 70px;
+}
+
+
+/* =====================================================
+   SLIDER ARROWS
+===================================================== */
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,.65);
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.slider-prev {
+  left: 10px;
+}
+
+.slider-next {
+  right: 10px;
+}
+
+
+/* =====================================================
+   DOTS
+===================================================== */
+
+.slider-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  background: #bbb;
+  border-radius: 50%;
+}
+
+.slider-dot.active {
+  background: #111;
+}
+
+
+/* =====================================================
+   VIEWER INFO
+===================================================== */
+
+.viewer-product-info {
+  padding: 18px;
+}
+
+.viewer-product-info h2 {
+  margin: 0 0 8px;
+  font-size: 23px;
+}
+
+.large-description {
+  color: #666;
+  line-height: 1.5;
+  margin: 5px 0 12px;
+}
+
+.large-price {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.color-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+
+/* =====================================================
+   COLOR BUTTONS
+===================================================== */
+
+.color-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stylish-color-btn,
+.order-color-choice {
+  position: relative;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px 9px 5px 5px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.stylish-color-btn img {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.stylish-color-btn b,
+.order-color-choice b {
+  display: none;
+}
+
+.stylish-color-btn.selected,
+.order-color-choice.selected {
+  border: 2px solid #111;
+}
+
+.stylish-color-btn.selected b,
+.order-color-choice.selected b {
+  display: inline;
+}
+
+
+/* =====================================================
+   ORDER BUTTON
+===================================================== */
+
+.order-now-btn {
+  width: 100%;
+  margin-top: 18px;
+  border: 0;
+  background: #111;
+  color: #fff;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   ORDER MODAL
+===================================================== */
+
+#modal {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(0,0,0,.75);
+  overflow-y: auto;
+}
+
+#orderForm {
+  width: min(430px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.3);
+}
+
+#orderForm h2 {
+  margin-top: 0;
+}
+
+#orderForm label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+#orderForm input,
+#orderForm textarea,
+#orderForm select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+#orderForm textarea {
+  resize: vertical;
+}
+
+#orderForm button[type="submit"] {
+  width: 100%;
+  border: 0;
+  background: #111;
+  color: #fff;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+
+/* =====================================================
+   ORDER COLORS
+===================================================== */
+
+#colorWrap {
+  margin-top: 10px;
+}
+
+.order-color-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.order-color-choice img {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.mini-color {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
+  border-radius: 6px;
+}
+
+#orderColor {
+  margin-top: 6px;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+#status {
+  text-align: center;
+  font-weight: 600;
+}
+
+#status.success {
+  color: #14833b;
+}
+
+#status.error {
+  color: #d32f2f;
 }
 
 
@@ -43,1889 +720,216 @@ function escapeHtml(value) {
    PAGE LOADER
 ===================================================== */
 
-function showPageLoader() {
-
-  if (document.getElementById("pageLoader")) return;
-
-  const loader = document.createElement("div");
-
-  loader.id = "pageLoader";
-
-  loader.innerHTML = `
-    <div class="loader-content">
-      <div class="loader-ring"></div>
-      <div class="loader-logo">AJ</div>
-      <p>Loading...</p>
-    </div>
-  `;
-
-  document.body.appendChild(loader);
+#pageLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .4s ease;
 }
 
-
-function hidePageLoader() {
-
-  const loader =
-    document.getElementById("pageLoader");
-
-  if (!loader) return;
-
-  loader.classList.add("hide");
-
-  setTimeout(function () {
-    loader.remove();
-  }, 500);
+#pageLoader.hide {
+  opacity: 0;
+  pointer-events: none;
 }
 
-
-/* =====================================================
-   PRODUCT LOADING
-===================================================== */
-
-async function loadProducts() {
-
-  const grid =
-    document.getElementById("products");
-
-  if (!grid) {
-    hidePageLoader();
-    return;
-  }
-
-  grid.innerHTML = `
-    <div class="products-loading">
-      <div class="loading-spinner"></div>
-      <p>Product load হচ্ছে...</p>
-    </div>
-  `;
-
-  try {
-
-    const response = await fetch(
-      productFile + "?v=" + Date.now(),
-      {
-        cache: "no-store"
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("products.json পাওয়া যায়নি");
-    }
-
-    const allProducts =
-      await response.json();
-
-    const products =
-      allProducts.filter(function (p) {
-
-        return (
-          String(p.store || "")
-            .trim()
-            .toLowerCase() ===
-          store.trim().toLowerCase()
-        ) &&
-        String(p.status || "")
-          .trim()
-          .toUpperCase() === "ON";
-
-      });
-
-
-    if (!products.length) {
-
-      grid.innerHTML = `
-        <div class="products-empty">
-          <div class="empty-icon">🛍️</div>
-          <p>এখনো কোনো product যোগ করা হয়নি।</p>
-        </div>
-      `;
-
-      hidePageLoader();
-      return;
-    }
-
-
-    window.loadedProducts = products;
-
-
-    grid.innerHTML =
-      products.map(function (p, index) {
-
-        const price =
-          Number(p.price) || 0;
-
-        const colors =
-          Array.isArray(p.colors)
-            ? p.colors
-            : [];
-
-        const firstColor =
-          colors.length
-            ? colors[0]
-            : null;
-
-        const firstImage =
-          firstColor &&
-          firstColor.image
-            ? firstColor.image
-            : "";
-
-
-        let imageHTML;
-
-
-        if (firstImage) {
-
-          imageHTML = `
-            <img
-              src="${escapeHtml(firstImage)}"
-              alt="${escapeHtml(p.name)}"
-              loading="lazy"
-            >
-          `;
-
-        } else {
-
-          imageHTML = `
-            <div class="placeholder">
-              🛍️
-            </div>
-          `;
-
-        }
-
-
-        /*
-          BADGE
-
-          products.json এ চাইলে:
-          "badge":"SALE"
-          অথবা
-          "badge":"NEW"
-
-          না থাকলে NEW দেখাবে
-        */
-
-        const badge =
-          String(p.badge || "NEW")
-            .trim()
-            .toUpperCase();
-
-
-        return `
-          <article
-            class="product product-card reveal"
-            data-index="${index}"
-            onclick="openProduct(${index})"
-          >
-
-            <div class="product-img">
-
-              <div class="product-badge">
-                ${escapeHtml(badge)}
-              </div>
-
-              <div class="heart-btn"
-                   onclick="toggleFavorite(event, ${index})">
-                <span>♡</span>
-              </div>
-
-              ${imageHTML}
-
-              <div class="quick-view">
-                View Product
-              </div>
-
-            </div>
-
-
-            <div class="product-info">
-
-              <h3>
-                ${escapeHtml(p.name)}
-              </h3>
-
-              <div class="product-bottom">
-
-                <strong class="price">
-                  ৳${price.toLocaleString("en-BD")}
-                </strong>
-
-                ${
-                  colors.length > 1
-                    ? `
-                      <small class="color-count">
-                        ${colors.length} colors
-                      </small>
-                    `
-                    : ""
-                }
-
-              </div>
-
-            </div>
-
-          </article>
-        `;
-
-      }).join("");
-
-
-    /*
-      STAGGER ANIMATION
-    */
-
-    requestAnimationFrame(function () {
-
-      const cards =
-        document.querySelectorAll(".product-card");
-
-      cards.forEach(function (card, index) {
-
-        card.style.setProperty(
-          "--delay",
-          `${index * 0.07}s`
-        );
-
-        setTimeout(function () {
-          card.classList.add("show");
-        }, index * 70);
-
-      });
-
-    });
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    grid.innerHTML = `
-      <div class="products-empty">
-        <div class="empty-icon">⚠️</div>
-        <p>Product load হয়নি।</p>
-        <button
-          class="retry-btn"
-          onclick="loadProducts()"
-        >
-          আবার চেষ্টা করুন
-        </button>
-      </div>
-    `;
-
-  }
-
-
-  hidePageLoader();
-
+.loader-content {
+  text-align: center;
+}
+
+.loader-ring {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #ddd;
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: auto;
+}
+
+.loader-logo {
+  margin-top: 12px;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.loader-content p {
+  color: #777;
 }
 
 
 /* =====================================================
-   OPEN PRODUCT
+   REVEAL ANIMATION
 ===================================================== */
 
-function openProduct(index) {
+.reveal {
+  opacity: 0;
+  transform: translateY(15px);
+  transition:
+    opacity .45s ease var(--delay, 0s),
+    transform .45s ease var(--delay, 0s);
+}
 
-  const products =
-    window.loadedProducts || [];
-
-  const product =
-    products[index];
-
-  if (!product) return;
-
-
-  currentProduct = product;
-  selectedColor = "";
-  currentSlide = 0;
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 
-  const colors =
-    Array.isArray(product.colors)
-      ? product.colors
-      : [];
+/* =====================================================
+   BUTTON ANIMATION
+===================================================== */
+
+.button-click {
+  transform: scale(.96) !important;
+}
+
+.image-click {
+  transform: scale(.98);
+}
 
 
-  if (colors.length === 1) {
-    selectedColor =
-      colors[0].name || "";
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 800px) {
+
+  header {
+    padding: 12px 14px;
+    flex-direction: column;
   }
 
-
-  const viewer =
-    document.getElementById("productViewer");
-
-  if (!viewer) return;
-
-
-  viewer.innerHTML = `
-
-    <div
-      class="large-product-box product-viewer-animation"
-      onclick="event.stopPropagation()"
-    >
-
-      <button
-        class="close-viewer"
-        onclick="closeProduct()"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-
-      <div
-        class="product-slider"
-        id="productSlider"
-      >
-
-        <div
-          id="sliderImageArea"
-          class="slider-image-transition"
-        ></div>
-
-
-        ${
-          colors.length > 1
-            ? `
-
-              <button
-                class="slider-arrow slider-prev"
-                onclick="previousSlide(event)"
-              >
-                ‹
-              </button>
-
-              <button
-                class="slider-arrow slider-next"
-                onclick="nextSlide(event)"
-              >
-                ›
-              </button>
-
-              <div
-                class="slider-dots"
-                id="sliderDots"
-              ></div>
-
-            `
-            : ""
-        }
-
-      </div>
-
-
-      <div class="viewer-product-info">
-
-        <h2>
-          ${escapeHtml(product.name)}
-        </h2>
-
-        <p class="large-description">
-          ${escapeHtml(product.description || "")}
-        </p>
-
-        <div class="large-price">
-          ৳${Number(product.price || 0)
-            .toLocaleString("en-BD")}
-        </div>
-
-
-        ${
-          colors.length > 1
-            ? `
-
-              <div class="color-title">
-                🎨 Color নির্বাচন করুন
-              </div>
-
-              <div
-                class="color-buttons stylish-colors"
-                id="viewerColors"
-              >
-
-                ${colors.map(function (color, i) {
-
-                  return `
-                    <button
-                      class="
-                        color-btn
-                        stylish-color-btn
-                        ${i === 0 ? "selected" : ""}
-                      "
-                      onclick="selectColor(${i}, event)"
-                    >
-
-                      ${
-                        color.image
-                          ? `
-                            <img
-                              src="${escapeHtml(color.image)}"
-                              alt=""
-                            >
-                          `
-                          : `
-                            <span class="color-circle">
-                              ${i + 1}
-                            </span>
-                          `
-                      }
-
-                      <span>
-                        ${escapeHtml(color.name)}
-                      </span>
-
-                      <b>✓</b>
-
-                    </button>
-                  `;
-
-                }).join("")}
-
-              </div>
-
-            `
-            : ""
-        }
-
-
-        <button
-          class="order-now-btn animated-order-btn"
-          onclick="orderCurrentProduct()"
-        >
-          <span>🛒</span>
-          অর্ডার করুন
-        </button>
-
-      </div>
-
-    </div>
-  `;
-
-
-  viewer.style.display = "flex";
-
-  document.body.classList.add("modal-open");
-
-
-  requestAnimationFrame(function () {
-    viewer.classList.add("viewer-show");
-  });
-
-
-  renderSlide();
-
-
-  /* =================================================
-     SWIPE
-  ================================================= */
-
-  const slider =
-    document.getElementById("productSlider");
-
-
-  if (slider && colors.length > 1) {
-
-    let startX = 0;
-    let startY = 0;
-
-
-    slider.addEventListener(
-      "touchstart",
-      function (e) {
-
-        startX =
-          e.touches[0].clientX;
-
-        startY =
-          e.touches[0].clientY;
-
-      },
-      { passive: true }
-    );
-
-
-    slider.addEventListener(
-      "touchend",
-      function (e) {
-
-        const endX =
-          e.changedTouches[0].clientX;
-
-        const endY =
-          e.changedTouches[0].clientY;
-
-
-        const differenceX =
-          startX - endX;
-
-        const differenceY =
-          startY - endY;
-
-
-        if (
-          Math.abs(differenceX) <
-          Math.abs(differenceY)
-        ) {
-          return;
-        }
-
-
-        if (
-          Math.abs(differenceX) < 40
-        ) {
-          return;
-        }
-
-
-        if (differenceX > 0) {
-          nextSlide();
-        } else {
-          previousSlide();
-        }
-
-      },
-      { passive: true }
-    );
-
+  nav {
+    justify-content: center;
+  }
+
+  #products {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .product-img {
+    height: 175px;
+  }
+
+  .product-info {
+    padding: 10px;
+  }
+
+  .product-info h3 {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 16px;
+  }
+
+  .brand-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  main {
+    width: 94%;
+    padding-top: 20px;
+  }
+
+  #products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .product-img {
+    height: 165px;
+  }
+
+  .product-badge {
+    top: 6px;
+    left: 6px;
+    font-size: 9px;
+    padding: 4px 7px;
+  }
+
+  .heart-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .quick-view {
+    display: none;
+  }
+
+  .large-product-box {
+    width: 96vw;
+    max-height: 94vh;
+    border-radius: 15px;
+  }
+
+  .product-slider {
+    height: 245px;
+  }
+
+  #sliderImageArea img {
+    max-height: 245px;
+  }
+
+  .viewer-product-info {
+    padding: 14px;
+  }
+
+  .viewer-product-info h2 {
+    font-size: 19px;
+  }
+
+  .large-price {
+    font-size: 21px;
+  }
+
+  #orderForm {
+    width: 96vw;
+    padding: 16px;
   }
 
 }
 
 
 /* =====================================================
-   RENDER SLIDE
+   SMALL PHONES
 ===================================================== */
 
-function renderSlide() {
+@media (max-width: 380px) {
 
-  if (!currentProduct) return;
-
-
-  const colors =
-    Array.isArray(currentProduct.colors)
-      ? currentProduct.colors
-      : [];
-
-
-  const imageArea =
-    document.getElementById(
-      "sliderImageArea"
-    );
-
-
-  if (!imageArea) return;
-
-
-  if (!colors.length) {
-
-    imageArea.innerHTML = `
-      <div class="big-placeholder">
-        🛍️
-      </div>
-    `;
-
-    return;
+  #products {
+    gap: 8px;
   }
 
-
-  const color =
-    colors[currentSlide];
-
-
-  /*
-    IMAGE TRANSITION
-  */
-
-  imageArea.classList.remove(
-    "color-changing"
-  );
-
-
-  void imageArea.offsetWidth;
-
-
-  imageArea.classList.add(
-    "color-changing"
-  );
-
-
-  if (color.image) {
-
-    imageArea.innerHTML = `
-      <img
-        src="${escapeHtml(color.image)}"
-        alt="${escapeHtml(color.name)}"
-      >
-    `;
-
-  } else {
-
-    imageArea.innerHTML = `
-      <div class="big-placeholder">
-        🛍️
-      </div>
-    `;
-
+  .product-img {
+    height: 145px;
   }
 
+  .product-info h3 {
+    font-size: 12px;
+  }
 
-  selectedColor =
-    color.name || "";
+  .price {
+    font-size: 15px;
+  }
 
+  .product-slider {
+    height: 220px;
+  }
 
-  /*
-    COLOR BUTTON ACTIVE
-  */
-
-  document
-    .querySelectorAll(".color-btn")
-    .forEach(function (btn, index) {
-
-      if (index === currentSlide) {
-        btn.classList.add("selected");
-      } else {
-        btn.classList.remove("selected");
-      }
-
-    });
-
-
-  /*
-    DOTS
-  */
-
-  const dots =
-    document.getElementById(
-      "sliderDots"
-    );
-
-
-  if (dots) {
-
-    dots.innerHTML =
-      colors.map(function (_, i) {
-
-        return `
-          <span
-            class="
-              slider-dot
-              ${i === currentSlide
-                ? "active"
-                : ""}
-            "
-          ></span>
-        `;
-
-      }).join("");
-
+  #sliderImageArea img {
+    max-height: 220px;
   }
 
 }
-
-
-/* =====================================================
-   NEXT SLIDE
-===================================================== */
-
-function nextSlide(event) {
-
-  if (event) {
-    event.stopPropagation();
-  }
-
-
-  if (!currentProduct) return;
-
-
-  const colors =
-    Array.isArray(currentProduct.colors)
-      ? currentProduct.colors
-      : [];
-
-
-  if (colors.length <= 1) return;
-
-
-  currentSlide++;
-
-
-  if (
-    currentSlide >=
-    colors.length
-  ) {
-    currentSlide = 0;
-  }
-
-
-  renderSlide();
-
-}
-
-
-/* =====================================================
-   PREVIOUS SLIDE
-===================================================== */
-
-function previousSlide(event) {
-
-  if (event) {
-    event.stopPropagation();
-  }
-
-
-  if (!currentProduct) return;
-
-
-  const colors =
-    Array.isArray(currentProduct.colors)
-      ? currentProduct.colors
-      : [];
-
-
-  if (colors.length <= 1) return;
-
-
-  currentSlide--;
-
-
-  if (currentSlide < 0) {
-    currentSlide =
-      colors.length - 1;
-  }
-
-
-  renderSlide();
-
-}
-
-
-/* =====================================================
-   SELECT COLOR
-===================================================== */
-
-function selectColor(index, event) {
-
-  if (event) {
-    event.stopPropagation();
-  }
-
-
-  currentSlide = index;
-
-  renderSlide();
-
-}
-
-
-/* =====================================================
-   CLOSE PRODUCT
-===================================================== */
-
-function closeProduct() {
-
-  const viewer =
-    document.getElementById(
-      "productViewer"
-    );
-
-
-  if (!viewer) return;
-
-
-  viewer.classList.remove(
-    "viewer-show"
-  );
-
-
-  setTimeout(function () {
-
-    viewer.style.display = "none";
-
-    viewer.innerHTML = "";
-
-    document.body.classList.remove(
-      "modal-open"
-    );
-
-  }, 250);
-
-}
-
-
-/* =====================================================
-   ORDER CURRENT PRODUCT
-===================================================== */
-
-function orderCurrentProduct() {
-
-  if (!currentProduct) return;
-
-
-  const colors =
-    Array.isArray(currentProduct.colors)
-      ? currentProduct.colors
-      : [];
-
-
-  if (colors.length === 1) {
-
-    selectedColor =
-      colors[0].name || "";
-
-  }
-
-
-  if (colors.length > 1) {
-
-    selectedColor =
-      colors[currentSlide].name || "";
-
-  }
-
-
-  openOrder(
-    currentProduct.name,
-    Number(currentProduct.price) || 0,
-    selectedColor
-  );
-
-}
-
-
-/* =====================================================
-   OPEN ORDER MODAL
-===================================================== */
-
-function openOrder(
-  product,
-  price,
-  color
-) {
-
-  if (!modal) return;
-
-
-  modal.style.display = "flex";
-
-
-  requestAnimationFrame(function () {
-    modal.classList.add("modal-show");
-  });
-
-
-  document.body.classList.add(
-    "modal-open"
-  );
-
-
-  document.getElementById(
-    "product"
-  ).value = product;
-
-
-  document.getElementById(
-    "price"
-  ).value = price;
-
-
-  const productName =
-    document.getElementById(
-      "orderProductName"
-    );
-
-
-  if (productName) {
-    productName.textContent =
-      product;
-  }
-
-
-  const productPrice =
-    document.getElementById(
-      "orderProductPrice"
-    );
-
-
-  if (productPrice) {
-
-    productPrice.textContent =
-      Number(price)
-        .toLocaleString("en-BD");
-
-  }
-
-
-  /*
-    COLOR
-  */
-
-  const colorWrap =
-    document.getElementById(
-      "colorWrap"
-    );
-
-
-  const colorBox =
-    document.getElementById(
-      "orderColor"
-    );
-
-
-  const colors =
-    currentProduct &&
-    Array.isArray(
-      currentProduct.colors
-    )
-      ? currentProduct.colors
-      : [];
-
-
-  if (colorWrap && colorBox) {
-
-    colorBox.innerHTML = "";
-
-
-    if (colors.length > 1) {
-
-      colorWrap.style.display =
-        "block";
-
-
-      colors.forEach(
-        function (c) {
-
-          const option =
-            document.createElement(
-              "option"
-            );
-
-
-          option.value =
-            c.name;
-
-
-          option.textContent =
-            c.name;
-
-
-          if (c.name === color) {
-            option.selected = true;
-          }
-
-
-          colorBox.appendChild(
-            option
-          );
-
-        }
-      );
-
-
-      /*
-        Stylish order color preview
-      */
-
-      createOrderColorButtons(
-        colors,
-        color
-      );
-
-
-    } else {
-
-      colorWrap.style.display =
-        "none";
-
-    }
-
-  }
-
-
-  document.getElementById(
-    "deliveryArea"
-  ).value = "";
-
-
-  updateTotal();
-
-
-  document.getElementById(
-    "status"
-  ).textContent = "";
-
-}
-
-
-/* =====================================================
-   STYLISH ORDER COLORS
-===================================================== */
-
-function createOrderColorButtons(
-  colors,
-  selected
-) {
-
-  const colorWrap =
-    document.getElementById(
-      "colorWrap"
-    );
-
-
-  if (!colorWrap) return;
-
-
-  let old =
-    document.getElementById(
-      "orderColorStyle"
-    );
-
-
-  if (old) {
-    old.remove();
-  }
-
-
-  const box =
-    document.createElement(
-      "div"
-    );
-
-
-  box.id =
-    "orderColorStyle";
-
-
-  box.className =
-    "order-color-buttons";
-
-
-  colors.forEach(function (
-    color,
-    index
-  ) {
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.type =
-      "button";
-
-
-    button.className =
-      "order-color-choice";
-
-
-    if (
-      color.name === selected
-    ) {
-      button.classList.add(
-        "selected"
-      );
-    }
-
-
-    button.innerHTML = `
-
-      ${
-        color.image
-          ? `
-            <img
-              src="${escapeHtml(color.image)}"
-              alt=""
-            >
-          `
-          : `
-            <span class="mini-color">
-              ${index + 1}
-            </span>
-          `
-      }
-
-      <span>
-        ${escapeHtml(color.name)}
-      </span>
-
-      <b>✓</b>
-
-    `;
-
-
-    button.onclick =
-      function () {
-
-        document
-          .querySelectorAll(
-            ".order-color-choice"
-          )
-          .forEach(function (btn) {
-            btn.classList.remove(
-              "selected"
-            );
-          });
-
-
-        button.classList.add(
-          "selected"
-        );
-
-
-        const colorBox =
-          document.getElementById(
-            "orderColor"
-          );
-
-
-        if (colorBox) {
-          colorBox.value =
-            color.name;
-        }
-
-
-        selectedColor =
-          color.name;
-
-      };
-
-
-    box.appendChild(
-      button
-    );
-
-  });
-
-
-  colorWrap.appendChild(
-    box
-  );
-
-}
-
-
-/* =====================================================
-   CLOSE ORDER
-===================================================== */
-
-function closeOrder() {
-
-  if (!modal) return;
-
-
-  modal.classList.remove(
-    "modal-show"
-  );
-
-
-  setTimeout(function () {
-
-    modal.style.display =
-      "none";
-
-    document.body.classList.remove(
-      "modal-open"
-    );
-
-  }, 250);
-
-}
-
-
-/* =====================================================
-   CLOSE MODALS WITH CLICK
-===================================================== */
-
-window.addEventListener(
-  "click",
-  function (e) {
-
-    if (e.target === modal) {
-      closeOrder();
-    }
-
-  }
-);
-
-
-/* =====================================================
-   ESC KEY
-===================================================== */
-
-document.addEventListener(
-  "keydown",
-  function (e) {
-
-    if (e.key !== "Escape") {
-      return;
-    }
-
-
-    const viewer =
-      document.getElementById(
-        "productViewer"
-      );
-
-
-    if (
-      viewer &&
-      viewer.style.display === "flex"
-    ) {
-
-      closeProduct();
-
-    } else if (
-      modal &&
-      modal.style.display === "flex"
-    ) {
-
-      closeOrder();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   DELIVERY
-===================================================== */
-
-function updateTotal() {
-
-  const price =
-    Number(
-      document.getElementById(
-        "price"
-      ).value
-    ) || 0;
-
-
-  const area =
-    document.getElementById(
-      "deliveryArea"
-    ).value;
-
-
-  let charge = 0;
-
-
-  if (
-    area === "ঢাকার ভিতরে"
-  ) {
-    charge = 60;
-  }
-
-
-  if (
-    area === "ঢাকার বাইরে"
-  ) {
-    charge = 120;
-  }
-
-
-  const deliveryCharge =
-    document.getElementById(
-      "deliveryCharge"
-    );
-
-
-  const totalPrice =
-    document.getElementById(
-      "totalPrice"
-    );
-
-
-  if (deliveryCharge) {
-    deliveryCharge.textContent =
-      charge;
-  }
-
-
-  if (totalPrice) {
-
-    totalPrice.textContent =
-      (price + charge)
-        .toLocaleString("en-BD");
-
-  }
-
-}
-
-
-const deliveryArea =
-  document.getElementById(
-    "deliveryArea"
-  );
-
-
-if (deliveryArea) {
-
-  deliveryArea.addEventListener(
-    "change",
-    updateTotal
-  );
-
-}
-
-
-/* =====================================================
-   FAVORITE / HEART
-===================================================== */
-
-function toggleFavorite(
-  event,
-  index
-) {
-
-  if (event) {
-    event.stopPropagation();
-  }
-
-
-  const card =
-    document.querySelector(
-      `.product-card[data-index="${index}"]`
-    );
-
-
-  if (!card) return;
-
-
-  const heart =
-    card.querySelector(
-      ".heart-btn"
-    );
-
-
-  if (!heart) return;
-
-
-  const isActive =
-    heart.classList.toggle(
-      "liked"
-    );
-
-
-  const span =
-    heart.querySelector(
-      "span"
-    );
-
-
-  if (span) {
-
-    span.textContent =
-      isActive
-        ? "♥"
-        : "♡";
-
-  }
-
-}
-
-
-/* =====================================================
-   ORDER SUBMIT
-===================================================== */
-
-const orderForm =
-  document.getElementById(
-    "orderForm"
-  );
-
-
-if (orderForm) {
-
-  orderForm.addEventListener(
-    "submit",
-    async function (e) {
-
-      e.preventDefault();
-
-
-      const status =
-        document.getElementById(
-          "status"
-        );
-
-
-      const submitButton =
-        orderForm.querySelector(
-          'button[type="submit"]'
-        );
-
-
-      const price =
-        Number(
-          document.getElementById(
-            "price"
-          ).value
-        ) || 0;
-
-
-      const area =
-        document.getElementById(
-          "deliveryArea"
-        ).value;
-
-
-      const colorBox =
-        document.getElementById(
-          "orderColor"
-        );
-
-
-      let color =
-        selectedColor || "";
-
-
-      const colorWrap =
-        document.getElementById(
-          "colorWrap"
-        );
-
-
-      if (
-        colorBox &&
-        colorWrap &&
-        colorWrap.style.display !==
-          "none"
-      ) {
-
-        color =
-          colorBox.value;
-
-      }
-
-
-      if (!area) {
-
-        status.textContent =
-          "ডেলিভারি এলাকা নির্বাচন করুন।";
-
-        status.classList.add(
-          "error"
-        );
-
-        return;
-
-      }
-
-
-      const name =
-        document.getElementById(
-          "name"
-        ).value.trim();
-
-
-      const phone =
-        document.getElementById(
-          "phone"
-        ).value.trim();
-
-
-      const address =
-        document.getElementById(
-          "address"
-        ).value.trim();
-
-
-      if (!name || !phone || !address) {
-
-        status.textContent =
-          "সব তথ্য পূরণ করুন।";
-
-        status.classList.add(
-          "error"
-        );
-
-        return;
-
-      }
-
-
-      const charge =
-        area === "ঢাকার ভিতরে"
-          ? 60
-          : 120;
-
-
-      const total =
-        price + charge;
-
-
-      const data =
-        new URLSearchParams({
-
-          store: store,
-
-          product:
-            document.getElementById(
-              "product"
-            ).value,
-
-          price:
-            String(price),
-
-          color:
-            color,
-
-          deliveryArea:
-            area,
-
-          deliveryCharge:
-            String(charge),
-
-          total:
-            String(total),
-
-          name:
-            name,
-
-          phone:
-            phone,
-
-          address:
-            address
-
-        });
-
-
-      status.classList.remove(
-        "error"
-      );
-
-
-      status.textContent =
-        "অর্ডার পাঠানো হচ্ছে...";
-
-
-      if (submitButton) {
-
-        submitButton.disabled =
-          true;
-
-        submitButton.classList.add(
-          "sending"
-        );
-
-      }
-
-
-      try {
-
-        await fetch(
-          APPS_SCRIPT_URL,
-          {
-            method: "POST",
-            mode: "no-cors",
-            body: data
-          }
-        );
-
-
-        status.textContent =
-          "✓ অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
-
-
-        status.classList.add(
-          "success"
-        );
-
-
-        orderForm.reset();
-
-
-        selectedColor = "";
-
-
-        updateTotal();
-
-
-        /*
-          কিছুক্ষণ পরে modal close
-        */
-
-        setTimeout(
-          function () {
-            closeOrder();
-          },
-          1800
-        );
-
-
-      } catch (error) {
-
-        console.error(error);
-
-
-        status.textContent =
-          "অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।";
-
-
-        status.classList.add(
-          "error"
-        );
-
-      }
-
-
-      if (submitButton) {
-
-        submitButton.disabled =
-          false;
-
-        submitButton.classList.remove(
-          "sending"
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   SCROLL REVEAL
-===================================================== */
-
-function setupScrollAnimation() {
-
-  const items =
-    document.querySelectorAll(
-      ".reveal"
-    );
-
-
-  if (!items.length) return;
-
-
-  if (
-    !("IntersectionObserver" in window)
-  ) {
-
-    items.forEach(function (item) {
-      item.classList.add("show");
-    });
-
-    return;
-
-  }
-
-
-  const observer =
-    new IntersectionObserver(
-      function (entries) {
-
-        entries.forEach(
-          function (entry) {
-
-            if (
-              entry.isIntersecting
-            ) {
-
-              entry.target.classList.add(
-                "show"
-              );
-
-              observer.unobserve(
-                entry.target
-              );
-
-            }
-
-          }
-        );
-
-      },
-      {
-        threshold: 0.08
-      }
-    );
-
-
-  items.forEach(function (item) {
-    observer.observe(item);
-  });
-
-}
-
-
-/* =====================================================
-   BUTTON CLICK ANIMATION
-===================================================== */
-
-document.addEventListener(
-  "click",
-  function (e) {
-
-    const button =
-      e.target.closest(
-        "button"
-      );
-
-
-    if (!button) return;
-
-
-    button.classList.add(
-      "button-click"
-    );
-
-
-    setTimeout(
-      function () {
-
-        button.classList.remove(
-          "button-click"
-        );
-
-      },
-      180
-    );
-
-  }
-);
-
-
-/* =====================================================
-   IMAGE CLICK EFFECT
-===================================================== */
-
-document.addEventListener(
-  "click",
-  function (e) {
-
-    const img =
-      e.target.closest(
-        ".product-card img"
-      );
-
-
-    if (!img) return;
-
-
-    img.classList.add(
-      "image-click"
-    );
-
-
-    setTimeout(
-      function () {
-
-        img.classList.remove(
-          "image-click"
-        );
-
-      },
-      220
-    );
-
-  }
-);
-
-
-/* =====================================================
-   HOME BRAND CARD ANIMATION
-===================================================== */
-
-function setupBrandAnimation() {
-
-  const brands =
-    document.querySelectorAll(
-      ".brand-card"
-    );
-
-
-  brands.forEach(
-    function (brand, index) {
-
-      brand.classList.add(
-        "reveal"
-      );
-
-
-      brand.style.setProperty(
-        "--delay",
-        `${index * 0.15}s`
-      );
-
-    }
-  );
-
-
-  setupScrollAnimation();
-
-}
-
-
-/* =====================================================
-   SMOOTH ANCHOR SCROLL
-===================================================== */
-
-document.addEventListener(
-  "click",
-  function (e) {
-
-    const link =
-      e.target.closest(
-        'a[href^="#"]'
-      );
-
-
-    if (!link) return;
-
-
-    const id =
-      link.getAttribute(
-        "href"
-      );
-
-
-    if (!id || id === "#") {
-      return;
-    }
-
-
-    const target =
-      document.querySelector(
-        id
-      );
-
-
-    if (!target) return;
-
-
-    e.preventDefault();
-
-
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-  }
-);
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  function () {
-
-    showPageLoader();
-
-    setupBrandAnimation();
-
-    loadProducts();
-
-  }
-);
