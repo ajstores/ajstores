@@ -17,9 +17,117 @@
     href="../style.css"
   >
 
+  <style>
+
+    /* =========================
+       ORDER MODAL HIDDEN
+    ========================= */
+
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.72);
+      padding: 15px;
+      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal form {
+      width: min(430px, 94vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: auto;
+      box-sizing: border-box;
+    }
+
+
+    /* =========================
+       PRODUCT VIEWER
+    ========================= */
+
+    #productViewer {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.78);
+      overflow-y: auto;
+    }
+
+    #productViewer .large-product-box {
+      width: min(480px, 94vw);
+      max-width: 480px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+      margin: auto;
+    }
+
+    #productViewer .product-slider {
+      width: 100%;
+      max-height: 350px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #productViewer .product-slider img {
+      width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+      display: block;
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      #productViewer {
+        padding: 8px;
+      }
+
+      #productViewer .large-product-box {
+        width: 96vw;
+        max-width: 96vw;
+        max-height: 94vh;
+        border-radius: 16px;
+      }
+
+      #productViewer .product-slider {
+        max-height: 260px;
+      }
+
+      #productViewer .product-slider img {
+        max-height: 250px;
+      }
+
+      #modal {
+        padding: 10px;
+      }
+
+      #modal form {
+        width: 96vw;
+        max-height: 92vh;
+      }
+
+    }
+
+  </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -56,9 +164,11 @@
     ব্যাগ, ওয়ালেট ও দৈনন্দিন ফ্যাশন পণ্য।
   </p>
 
+
   <h2>
     Products
   </h2>
+
 
   <section id="products">
 
@@ -71,14 +181,23 @@
 </main>
 
 
-<!-- LARGE PRODUCT -->
+
+<!-- =========================
+     PRODUCT VIEWER
+========================= -->
 
 <div id="productViewer"></div>
 
 
-<!-- ORDER -->
 
-<div id="modal">
+<!-- =========================
+     ORDER MODAL
+========================= -->
+
+<div
+  id="modal"
+  style="display:none;"
+>
 
   <form id="orderForm">
 
@@ -86,10 +205,12 @@
       অর্ডার করুন
     </h2>
 
+
     <p>
       Product:
       <strong id="orderProductName"></strong>
     </p>
+
 
     <p>
       Price:
@@ -102,13 +223,15 @@
       id="product"
     >
 
+
     <input
       type="hidden"
       id="price"
     >
 
 
-    <!-- COLOR ONLY WHEN NEEDED -->
+
+    <!-- COLOR -->
 
     <div id="colorWrap">
 
@@ -121,6 +244,9 @@
     </div>
 
 
+
+    <!-- NAME -->
+
     <label>
       আপনার নাম
     </label>
@@ -131,6 +257,9 @@
       required
     >
 
+
+
+    <!-- PHONE -->
 
     <label>
       মোবাইল নম্বর
@@ -143,6 +272,9 @@
     >
 
 
+
+    <!-- ADDRESS -->
+
     <label>
       ঠিকানা
     </label>
@@ -153,6 +285,9 @@
       required
     ></textarea>
 
+
+
+    <!-- DELIVERY AREA -->
 
     <label>
       ডেলিভারি এলাকা
@@ -178,10 +313,17 @@
     </select>
 
 
+
+    <!-- DELIVERY CHARGE -->
+
     <p>
       Delivery Charge:
       ৳<span id="deliveryCharge">0</span>
     </p>
+
+
+
+    <!-- TOTAL -->
 
     <p>
       Total:
@@ -189,10 +331,16 @@
     </p>
 
 
+
+    <!-- SUBMIT -->
+
     <button type="submit">
       অর্ডার কনফার্ম করুন
     </button>
 
+
+
+    <!-- STATUS -->
 
     <p id="status"></p>
 
@@ -201,7 +349,9 @@
 </div>
 
 
+
 <script src="../script.js"></script>
+
 
 </body>
 
