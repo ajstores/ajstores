@@ -19,9 +19,17 @@ const modal = document.getElementById("modal");
 
 let currentProduct = null;
 let selectedColor = "";
+let currentSlide = 0;
+
+
+// =========================
+// ESCAPE
+// =========================
 
 function escapeHtml(value) {
+
   return String(value ?? "").replace(/[&<>"']/g, function(c) {
+
     return {
       "&": "&amp;",
       "<": "&lt;",
@@ -29,17 +37,20 @@ function escapeHtml(value) {
       '"': "&quot;",
       "'": "&#39;"
     }[c];
+
   });
+
 }
 
 
-// =============================
+// =========================
 // LOAD PRODUCTS
-// =============================
+// =========================
 
 async function loadProducts() {
 
-  const grid = document.getElementById("products");
+  const grid =
+    document.getElementById("products");
 
   if (!grid) return;
 
@@ -59,19 +70,23 @@ async function loadProducts() {
       throw new Error("products.json পাওয়া যায়নি");
     }
 
-    const allProducts = await response.json();
+    const allProducts =
+      await response.json();
 
-    const products = allProducts.filter(function(p) {
 
-      return String(p.store || "")
-        .trim()
-        .toLowerCase() === store.trim().toLowerCase()
-        &&
-        String(p.status || "")
-        .trim()
-        .toUpperCase() === "ON";
+    const products =
+      allProducts.filter(function(p) {
 
-    });
+        return String(p.store || "")
+          .trim()
+          .toLowerCase() ===
+          store.trim().toLowerCase()
+          &&
+          String(p.status || "")
+          .trim()
+          .toUpperCase() === "ON";
+
+      });
 
 
     if (!products.length) {
@@ -86,71 +101,85 @@ async function loadProducts() {
     window.loadedProducts = products;
 
 
-    grid.innerHTML = products.map(function(p, index) {
+    grid.innerHTML =
+      products.map(function(p, index) {
 
-      const price = Number(p.price) || 0;
-
-      const colors =
-        Array.isArray(p.colors) ? p.colors : [];
-
-      const firstColor =
-        colors.length ? colors[0] : null;
-
-      const firstImage =
-        firstColor && firstColor.image
-          ? firstColor.image
-          : "";
+        const price =
+          Number(p.price) || 0;
 
 
-      let imageHTML = "";
-
-      if (firstImage) {
-
-        imageHTML =
-          `<img
-            src="${escapeHtml(firstImage)}"
-            alt="${escapeHtml(p.name)}"
-            class="card-main-image"
-          >`;
-
-      } else {
-
-        imageHTML =
-          `<div class="placeholder">🛍️</div>`;
-
-      }
+        const colors =
+          Array.isArray(p.colors)
+            ? p.colors
+            : [];
 
 
-      return `
+        const firstColor =
+          colors.length
+            ? colors[0]
+            : null;
 
-        <article
-          class="product"
-          onclick="openProduct(${index})"
-        >
 
-          <div class="product-img">
-            ${imageHTML}
-          </div>
+        const firstImage =
+          firstColor &&
+          firstColor.image
+            ? firstColor.image
+            : "";
 
-          <h3>
-            ${escapeHtml(p.name)}
-          </h3>
 
-          <strong>
-            ৳${price.toLocaleString("en-BD")}
-          </strong>
+        let imageHTML;
 
-          ${
-            colors.length > 1
-              ? `<small>${colors.length} colors</small>`
-              : ""
-          }
 
-        </article>
+        if (firstImage) {
 
-      `;
+          imageHTML = `
+            <img
+              src="${escapeHtml(firstImage)}"
+              alt="${escapeHtml(p.name)}"
+            >
+          `;
 
-    }).join("");
+        } else {
+
+          imageHTML = `
+            <div class="placeholder">
+              🛍️
+            </div>
+          `;
+
+        }
+
+
+        return `
+
+          <article
+            class="product"
+            onclick="openProduct(${index})"
+          >
+
+            <div class="product-img">
+              ${imageHTML}
+            </div>
+
+            <h3>
+              ${escapeHtml(p.name)}
+            </h3>
+
+            <strong>
+              ৳${price.toLocaleString("en-BD")}
+            </strong>
+
+            ${
+              colors.length > 1
+                ? `<small>${colors.length} colors</small>`
+                : ""
+            }
+
+          </article>
+
+        `;
+
+      }).join("");
 
 
   } catch (error) {
@@ -161,12 +190,13 @@ async function loadProducts() {
       '<p class="loading">Product load হয়নি।</p>';
 
   }
+
 }
 
 
-// =============================
-// LARGE PRODUCT
-// =============================
+// =========================
+// OPEN PRODUCT
+// =========================
 
 function openProduct(index) {
 
@@ -178,9 +208,13 @@ function openProduct(index) {
 
   if (!product) return;
 
+
   currentProduct = product;
 
   selectedColor = "";
+
+  currentSlide = 0;
+
 
   const colors =
     Array.isArray(product.colors)
@@ -188,10 +222,12 @@ function openProduct(index) {
       : [];
 
 
-  const firstColor =
-    colors.length
-      ? colors[0]
-      : { name: "", image: "" };
+  if (colors.length === 1) {
+
+    selectedColor =
+      colors[0].name || "";
+
+  }
 
 
   const viewer =
@@ -215,21 +251,39 @@ function openProduct(index) {
       </button>
 
 
-      <div class="large-product-image">
+      <div
+        class="product-slider"
+        id="productSlider"
+      >
+
+        <div id="sliderImageArea">
+        </div>
+
 
         ${
-          firstColor.image
-            ? `<img
-                id="largeProductImage"
-                src="${escapeHtml(firstColor.image)}"
-                alt="${escapeHtml(product.name)}"
-              >`
-            : `<div
-                id="bigPlaceholder"
-                class="big-placeholder"
+          colors.length > 1
+            ? `
+              <button
+                class="slider-arrow slider-prev"
+                onclick="previousSlide(event)"
               >
-                🛍️
-              </div>`
+                ‹
+              </button>
+
+              <button
+                class="slider-arrow slider-next"
+                onclick="nextSlide(event)"
+              >
+                ›
+              </button>
+
+              <div
+                class="slider-dots"
+                id="sliderDots"
+              >
+              </div>
+            `
+            : ""
         }
 
       </div>
@@ -254,26 +308,35 @@ function openProduct(index) {
         colors.length > 1
           ? `
 
-          <div class="color-title">
-            Color নির্বাচন করুন:
-          </div>
+            <div class="color-title">
+              Color নির্বাচন করুন:
+            </div>
 
-          <div class="color-buttons">
+            <div class="color-buttons">
 
-            ${colors.map(function(color, i) {
+              ${colors.map(function(color, i) {
 
-              return `
-                <button
-                  class="color-btn ${i === 0 ? "selected" : ""}"
-                  onclick="selectColor(${i}, event)"
-                >
-                  ${escapeHtml(color.name)}
-                </button>
-              `;
+                return `
 
-            }).join("")}
+                  <button
+                    class="color-btn ${
+                      i === 0
+                        ? "selected"
+                        : ""
+                    }"
+                    onclick="selectColor(
+                      ${i},
+                      event
+                    )"
+                  >
+                    ${escapeHtml(color.name)}
+                  </button>
 
-          </div>
+                `;
+
+              }).join("")}
+
+            </div>
 
           `
           : ""
@@ -294,109 +357,284 @@ function openProduct(index) {
 
   viewer.style.display = "flex";
 
-}
+
+  renderSlide();
 
 
-function closeProduct() {
+  // SWIPE
 
-  const viewer =
-    document.getElementById("productViewer");
+  const slider =
+    document.getElementById("productSlider");
 
-  if (viewer) {
-    viewer.style.display = "none";
+  if (slider && colors.length > 1) {
+
+    let startX = 0;
+
+    slider.addEventListener(
+      "touchstart",
+      function(e) {
+
+        startX =
+          e.touches[0].clientX;
+
+      }
+    );
+
+
+    slider.addEventListener(
+      "touchend",
+      function(e) {
+
+        const endX =
+          e.changedTouches[0].clientX;
+
+        const difference =
+          startX - endX;
+
+
+        if (Math.abs(difference) < 40) {
+          return;
+        }
+
+
+        if (difference > 0) {
+          nextSlide();
+        } else {
+          previousSlide();
+        }
+
+      }
+    );
+
   }
 
 }
 
 
-// =============================
-// COLOR SELECT
-// =============================
+// =========================
+// RENDER SLIDE
+// =========================
 
-function selectColor(index, event) {
-
-  event.stopPropagation();
+function renderSlide() {
 
   if (!currentProduct) return;
+
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
+
+  if (!colors.length) {
+
+    document.getElementById(
+      "sliderImageArea"
+    ).innerHTML =
+      '<div class="big-placeholder">🛍️</div>';
+
+    return;
+  }
+
+
   const color =
-    colors[index];
-
-  if (!color) return;
+    colors[currentSlide];
 
 
-  selectedColor =
-    color.name;
+  const imageArea =
+    document.getElementById(
+      "sliderImageArea"
+    );
 
 
-  document.querySelectorAll(".color-btn")
-    .forEach(function(btn) {
-      btn.classList.remove("selected");
-    });
-
-
-  event.target.classList.add("selected");
-
-
-  const image =
-    document.getElementById("largeProductImage");
-
-  const placeholder =
-    document.getElementById("bigPlaceholder");
+  if (!imageArea) return;
 
 
   if (color.image) {
 
-    if (image) {
+    imageArea.innerHTML = `
 
-      image.src = color.image;
-      image.style.display = "block";
+      <img
+        src="${escapeHtml(color.image)}"
+        alt="${escapeHtml(color.name)}"
+      >
 
-    } else {
-
-      const box =
-        document.querySelector(".large-product-image");
-
-      if (box) {
-
-        box.innerHTML =
-          `<img
-            id="largeProductImage"
-            src="${escapeHtml(color.image)}"
-          >`;
-
-      }
-
-    }
-
-
-    if (placeholder) {
-      placeholder.style.display = "none";
-    }
+    `;
 
   } else {
 
-    if (image) {
-      image.style.display = "none";
-    }
+    imageArea.innerHTML = `
 
-    if (placeholder) {
-      placeholder.style.display = "flex";
-    }
+      <div class="big-placeholder">
+        🛍️
+      </div>
+
+    `;
+
+  }
+
+
+  selectedColor =
+    color.name || "";
+
+
+  // COLOR BUTTON
+
+  document.querySelectorAll(".color-btn")
+    .forEach(function(btn, index) {
+
+      if (index === currentSlide) {
+        btn.classList.add("selected");
+      } else {
+        btn.classList.remove("selected");
+      }
+
+    });
+
+
+  // DOTS
+
+  const dots =
+    document.getElementById("sliderDots");
+
+
+  if (dots) {
+
+    dots.innerHTML =
+      colors.map(function(_, i) {
+
+        return `
+          <span
+            class="slider-dot ${
+              i === currentSlide
+                ? "active"
+                : ""
+            }"
+          ></span>
+        `;
+
+      }).join("");
 
   }
 
 }
 
 
-// =============================
-// ORDER
-// =============================
+// =========================
+// NEXT SLIDE
+// =========================
+
+function nextSlide(event) {
+
+  if (event) {
+    event.stopPropagation();
+  }
+
+
+  if (!currentProduct) return;
+
+
+  const colors =
+    Array.isArray(currentProduct.colors)
+      ? currentProduct.colors
+      : [];
+
+
+  if (colors.length <= 1) return;
+
+
+  currentSlide++;
+
+
+  if (currentSlide >= colors.length) {
+    currentSlide = 0;
+  }
+
+
+  renderSlide();
+
+}
+
+
+// =========================
+// PREVIOUS SLIDE
+// =========================
+
+function previousSlide(event) {
+
+  if (event) {
+    event.stopPropagation();
+  }
+
+
+  if (!currentProduct) return;
+
+
+  const colors =
+    Array.isArray(currentProduct.colors)
+      ? currentProduct.colors
+      : [];
+
+
+  if (colors.length <= 1) return;
+
+
+  currentSlide--;
+
+
+  if (currentSlide < 0) {
+    currentSlide = colors.length - 1;
+  }
+
+
+  renderSlide();
+
+}
+
+
+// =========================
+// COLOR BUTTON
+// =========================
+
+function selectColor(index, event) {
+
+  if (event) {
+    event.stopPropagation();
+  }
+
+
+  currentSlide = index;
+
+  renderSlide();
+
+}
+
+
+// =========================
+// CLOSE PRODUCT
+// =========================
+
+function closeProduct() {
+
+  const viewer =
+    document.getElementById(
+      "productViewer"
+    );
+
+
+  if (viewer) {
+
+    viewer.style.display =
+      "none";
+
+  }
+
+}
+
+
+// =========================
+// ORDER CURRENT PRODUCT
+// =========================
 
 function orderCurrentProduct() {
 
@@ -409,7 +647,6 @@ function orderCurrentProduct() {
       : [];
 
 
-  // ONE COLOR
   if (colors.length === 1) {
 
     selectedColor =
@@ -418,11 +655,10 @@ function orderCurrentProduct() {
   }
 
 
-  // MULTIPLE COLOR
-  if (colors.length > 1 && !selectedColor) {
+  if (colors.length > 1) {
 
     selectedColor =
-      colors[0].name || "";
+      colors[currentSlide].name || "";
 
   }
 
@@ -436,65 +672,90 @@ function orderCurrentProduct() {
 }
 
 
-// =============================
+// =========================
 // ORDER MODAL
-// =============================
+// =========================
 
-function openOrder(product, price, color) {
+function openOrder(
+  product,
+  price,
+  color
+) {
 
   if (!modal) return;
 
-  modal.style.display = "flex";
+
+  modal.style.display =
+    "flex";
 
 
-  document.getElementById("product").value =
-    product;
+  document.getElementById(
+    "product"
+  ).value = product;
 
 
-  document.getElementById("price").value =
-    price;
+  document.getElementById(
+    "price"
+  ).value = price;
 
 
   const productName =
-    document.getElementById("orderProductName");
+    document.getElementById(
+      "orderProductName"
+    );
+
 
   if (productName) {
-    productName.textContent = product;
+
+    productName.textContent =
+      product;
+
   }
 
 
   const productPrice =
-    document.getElementById("orderProductPrice");
+    document.getElementById(
+      "orderProductPrice"
+    );
+
 
   if (productPrice) {
 
     productPrice.textContent =
-      Number(price).toLocaleString("en-BD");
+      Number(price)
+        .toLocaleString("en-BD");
 
   }
 
 
   const summaryPrice =
-    document.getElementById("summaryPrice");
+    document.getElementById(
+      "summaryPrice"
+    );
+
 
   if (summaryPrice) {
 
     summaryPrice.textContent =
-      Number(price).toLocaleString("en-BD");
+      Number(price)
+        .toLocaleString("en-BD");
 
   }
 
 
-  // COLOR BOX
   const colorBox =
-    document.getElementById("orderColor");
+    document.getElementById(
+      "orderColor"
+    );
 
 
   if (colorBox) {
 
     const colors =
       currentProduct &&
-      Array.isArray(currentProduct.colors)
+      Array.isArray(
+        currentProduct.colors
+      )
         ? currentProduct.colors
         : [];
 
@@ -502,89 +763,113 @@ function openOrder(product, price, color) {
     colorBox.innerHTML = "";
 
 
-    // ONE COLOR
-    if (colors.length === 1) {
+    if (colors.length > 1) {
 
-      colorBox.style.display = "none";
-
-    }
-
-
-    // MULTIPLE COLOR
-    else if (colors.length > 1) {
-
-      colorBox.style.display = "block";
+      colorBox.style.display =
+        "block";
 
 
       colors.forEach(function(c) {
 
         const option =
-          document.createElement("option");
+          document.createElement(
+            "option"
+          );
 
-        option.value = c.name;
 
-        option.textContent = c.name;
+        option.value =
+          c.name;
+
+
+        option.textContent =
+          c.name;
 
 
         if (c.name === color) {
-          option.selected = true;
+
+          option.selected =
+            true;
+
         }
 
 
-        colorBox.appendChild(option);
+        colorBox.appendChild(
+          option
+        );
 
       });
 
-    }
+    } else {
 
-
-    else {
-
-      colorBox.style.display = "none";
+      colorBox.style.display =
+        "none";
 
     }
 
   }
 
 
-  document.getElementById("deliveryArea").value = "";
+  document.getElementById(
+    "deliveryArea"
+  ).value = "";
+
 
   updateTotal();
 
-  document.getElementById("status").textContent = "";
+
+  document.getElementById(
+    "status"
+  ).textContent = "";
 
 }
 
+
+// =========================
+// CLOSE ORDER
+// =========================
 
 function closeOrder() {
 
   if (modal) {
-    modal.style.display = "none";
+
+    modal.style.display =
+      "none";
+
   }
 
 }
 
 
-window.onclick = function(e) {
+window.onclick =
+  function(e) {
 
-  if (e.target === modal) {
-    closeOrder();
-  }
+    if (e.target === modal) {
 
-};
+      closeOrder();
+
+    }
+
+  };
 
 
-// =============================
+// =========================
 // DELIVERY
-// =============================
+// =========================
 
 function updateTotal() {
 
   const price =
-    Number(document.getElementById("price").value) || 0;
+    Number(
+      document.getElementById(
+        "price"
+      ).value
+    ) || 0;
+
 
   const area =
-    document.getElementById("deliveryArea").value;
+    document.getElementById(
+      "deliveryArea"
+    ).value;
 
 
   let charge = 0;
@@ -600,18 +885,25 @@ function updateTotal() {
   }
 
 
-  document.getElementById("deliveryCharge").textContent =
+  document.getElementById(
+    "deliveryCharge"
+  ).textContent =
     charge;
 
 
-  document.getElementById("totalPrice").textContent =
-    (price + charge).toLocaleString("en-BD");
+  document.getElementById(
+    "totalPrice"
+  ).textContent =
+    (price + charge)
+      .toLocaleString("en-BD");
 
 }
 
 
 const deliveryArea =
-  document.getElementById("deliveryArea");
+  document.getElementById(
+    "deliveryArea"
+  );
 
 
 if (deliveryArea) {
@@ -624,12 +916,14 @@ if (deliveryArea) {
 }
 
 
-// =============================
+// =========================
 // SUBMIT ORDER
-// =============================
+// =========================
 
 const orderForm =
-  document.getElementById("orderForm");
+  document.getElementById(
+    "orderForm"
+  );
 
 
 if (orderForm) {
@@ -642,22 +936,33 @@ if (orderForm) {
 
 
       const status =
-        document.getElementById("status");
+        document.getElementById(
+          "status"
+        );
 
 
       const price =
-        Number(document.getElementById("price").value) || 0;
+        Number(
+          document.getElementById(
+            "price"
+          ).value
+        ) || 0;
 
 
       const area =
-        document.getElementById("deliveryArea").value;
+        document.getElementById(
+          "deliveryArea"
+        ).value;
 
 
       const colorBox =
-        document.getElementById("orderColor");
+        document.getElementById(
+          "orderColor"
+        );
 
 
-      let color = "";
+      let color =
+        selectedColor || "";
 
 
       if (
@@ -665,21 +970,8 @@ if (orderForm) {
         colorBox.style.display !== "none"
       ) {
 
-        color = colorBox.value;
-
-      }
-
-
-      // ONE COLOR PRODUCT
-      if (
-        !color &&
-        currentProduct &&
-        Array.isArray(currentProduct.colors) &&
-        currentProduct.colors.length === 1
-      ) {
-
         color =
-          currentProduct.colors[0].name || "";
+          colorBox.value;
 
       }
 
@@ -710,7 +1002,9 @@ if (orderForm) {
           store: store,
 
           product:
-            document.getElementById("product").value,
+            document.getElementById(
+              "product"
+            ).value,
 
           price:
             String(price),
@@ -728,13 +1022,19 @@ if (orderForm) {
             String(total),
 
           name:
-            document.getElementById("name").value,
+            document.getElementById(
+              "name"
+            ).value,
 
           phone:
-            document.getElementById("phone").value,
+            document.getElementById(
+              "phone"
+            ).value,
 
           address:
-            document.getElementById("address").value
+            document.getElementById(
+              "address"
+            ).value
 
         });
 
@@ -779,8 +1079,8 @@ if (orderForm) {
 }
 
 
-// =============================
+// =========================
 // START
-// =============================
+// =========================
 
 loadProducts();
