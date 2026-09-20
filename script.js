@@ -1,416 +1,746 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZV3hrM0m0BhQR8c3Vdmk72ZEstvF-ASKdvV1fPgQ_gMRPOgX6NXmKAN_Hifnh78gK0A/exec";
 
-const modal = document.getElementById('modal');
+const path = location.pathname.toLowerCase();
 
-const store = location.pathname.toLowerCase().includes('kidz')
-  ? 'AJ Kidz Zone'
-  : 'AJ Trendy Hub';
+let store = "AJ Trendy Hub";
+let productFile = "products.json";
 
+if (path.includes("/trendy/")) {
+  store = "AJ Trendy Hub";
+  productFile = "../products.json";
+}
 
-// ===============================
-// HTML ESCAPE
-// ===============================
+if (path.includes("/kidz/")) {
+  store = "AJ Kidz Zone";
+  productFile = "../products.json";
+}
 
-function escapeHtml(v) {
-  return String(v ?? '').replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[c]));
+const modal = document.getElementById("modal");
+
+let currentProduct = null;
+let selectedColor = "";
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, function(c) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[c];
+  });
 }
 
 
-// ===============================
-// JAVASCRIPT ESCAPE
-// ===============================
-
-function jsEscape(v) {
-  return String(v ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/'/g, "\\'")
-    .replace(/\n/g, ' ');
-}
-
-
-// ===============================
+// =============================
 // LOAD PRODUCTS
-// ===============================
+// =============================
 
 async function loadProducts() {
 
-  const grid = document.getElementById('products');
+  const grid = document.getElementById("products");
 
   if (!grid) return;
 
+  grid.innerHTML =
+    '<p class="loading">Product load হচ্ছে...</p>';
+
   try {
 
-    // products.json location
-    const basePath =
-      location.pathname.toLowerCase().includes('/trendy/') ||
-      location.pathname.toLowerCase().includes('/kidz/')
-        ? '../'
-        : './';
-
-
     const response = await fetch(
-      basePath + 'products.json?ts=' + Date.now()
+      productFile + "?v=" + Date.now(),
+      {
+        cache: "no-store"
+      }
     );
-
 
     if (!response.ok) {
-      throw new Error('products.json not found');
+      throw new Error("products.json পাওয়া যায়নি");
     }
 
+    const allProducts = await response.json();
 
-    const all = await response.json();
+    const products = allProducts.filter(function(p) {
 
+      return String(p.store || "")
+        .trim()
+        .toLowerCase() === store.trim().toLowerCase()
+        &&
+        String(p.status || "")
+        .trim()
+        .toUpperCase() === "ON";
 
-    // Filter products according to store
-    const products = all.filter(p =>
-      String(p.store).toLowerCase() === store.toLowerCase() &&
-      String(p.status).toUpperCase() === 'ON'
-    );
+    });
 
 
     if (!products.length) {
 
       grid.innerHTML =
-        '<p class="loading">এখনো কোনো product যোগ করা হয়নি।</p>';
+        '<p class="loading">এখনো কোনো product যোগ করা হয়নি।';
 
       return;
     }
 
 
-    // ===============================
-    // CREATE PRODUCT CARDS
-    // ===============================
+    window.loadedProducts = products;
 
-    grid.innerHTML = products.map(p => {
+
+    grid.innerHTML = products.map(function(p, index) {
 
       const price = Number(p.price) || 0;
 
+      const colors =
+        Array.isArray(p.colors) ? p.colors : [];
 
-      // ===============================
-      // IMAGE FIX
-      // ===============================
+      const firstColor =
+        colors.length ? colors[0] : null;
 
-      let imageUrl = '';
+      const firstImage =
+        firstColor && firstColor.image
+          ? firstColor.image
+          : "";
 
-      if (p.image) {
 
-        try {
+      let imageHTML = "";
 
-          // Convert image path into correct absolute URL
-          imageUrl = new URL(
-            p.image,
-            response.url
-          ).href;
+      if (firstImage) {
 
-        } catch (error) {
+        imageHTML =
+          `<img
+            src="${escapeHtml(firstImage)}"
+            alt="${escapeHtml(p.name)}"
+            class="card-main-image"
+          >`;
 
-          imageUrl = p.image;
+      } else {
 
-        }
+        imageHTML =
+          `<div class="placeholder">🛍️</div>`;
 
       }
 
 
-      const img = imageUrl
-        ? `
-          <img
-            src="${escapeHtml(imageUrl)}"
-            alt="${escapeHtml(p.name)}"
-            loading="lazy"
-            onerror="
-              this.style.display='none';
-              this.nextElementSibling.style.display='flex';
-            "
-          >
-        `
-        : '';
-
-
       return `
 
-        <article class="product">
+        <article
+          class="product"
+          onclick="openProduct(${index})"
+        >
 
           <div class="product-img">
-
-            ${img}
-
-            <span
-              class="placeholder"
-              ${imageUrl ? 'style="display:none"' : ''}
-            >
-              🛍️
-            </span>
-
+            ${imageHTML}
           </div>
-
 
           <h3>
             ${escapeHtml(p.name)}
           </h3>
 
-
-          <p>
-            ${escapeHtml(p.description || '')}
-          </p>
-
-
           <strong>
-            ৳${price.toLocaleString('en-BD')}
+            ৳${price.toLocaleString("en-BD")}
           </strong>
 
-
-          <button
-            onclick="openOrder('${jsEscape(p.name)}', ${price})"
-          >
-            অর্ডার করুন
-          </button>
+          ${
+            colors.length > 1
+              ? `<small>${colors.length} colors</small>`
+              : ""
+          }
 
         </article>
 
       `;
 
-    }).join('');
+    }).join("");
 
 
-  } catch (err) {
+  } catch (error) {
 
-    console.error('Product loading error:', err);
+    console.error(error);
 
     grid.innerHTML =
-      '<p class="loading">Product load হয়নি। একটু পরে আবার চেষ্টা করুন।</p>';
+      '<p class="loading">Product load হয়নি।</p>';
+
+  }
+}
+
+
+// =============================
+// LARGE PRODUCT
+// =============================
+
+function openProduct(index) {
+
+  const products =
+    window.loadedProducts || [];
+
+  const product =
+    products[index];
+
+  if (!product) return;
+
+  currentProduct = product;
+
+  selectedColor = "";
+
+  const colors =
+    Array.isArray(product.colors)
+      ? product.colors
+      : [];
+
+
+  const firstColor =
+    colors.length
+      ? colors[0]
+      : { name: "", image: "" };
+
+
+  const viewer =
+    document.getElementById("productViewer");
+
+  if (!viewer) return;
+
+
+  viewer.innerHTML = `
+
+    <div
+      class="large-product-box"
+      onclick="event.stopPropagation()"
+    >
+
+      <button
+        class="close-viewer"
+        onclick="closeProduct()"
+      >
+        ×
+      </button>
+
+
+      <div class="large-product-image">
+
+        ${
+          firstColor.image
+            ? `<img
+                id="largeProductImage"
+                src="${escapeHtml(firstColor.image)}"
+                alt="${escapeHtml(product.name)}"
+              >`
+            : `<div
+                id="bigPlaceholder"
+                class="big-placeholder"
+              >
+                🛍️
+              </div>`
+        }
+
+      </div>
+
+
+      <h2>
+        ${escapeHtml(product.name)}
+      </h2>
+
+
+      <p class="large-description">
+        ${escapeHtml(product.description || "")}
+      </p>
+
+
+      <div class="large-price">
+        ৳${Number(product.price || 0).toLocaleString("en-BD")}
+      </div>
+
+
+      ${
+        colors.length > 1
+          ? `
+
+          <div class="color-title">
+            Color নির্বাচন করুন:
+          </div>
+
+          <div class="color-buttons">
+
+            ${colors.map(function(color, i) {
+
+              return `
+                <button
+                  class="color-btn ${i === 0 ? "selected" : ""}"
+                  onclick="selectColor(${i}, event)"
+                >
+                  ${escapeHtml(color.name)}
+                </button>
+              `;
+
+            }).join("")}
+
+          </div>
+
+          `
+          : ""
+      }
+
+
+      <button
+        class="order-now-btn"
+        onclick="orderCurrentProduct()"
+      >
+        অর্ডার করুন
+      </button>
+
+    </div>
+
+  `;
+
+
+  viewer.style.display = "flex";
+
+}
+
+
+function closeProduct() {
+
+  const viewer =
+    document.getElementById("productViewer");
+
+  if (viewer) {
+    viewer.style.display = "none";
+  }
+
+}
+
+
+// =============================
+// COLOR SELECT
+// =============================
+
+function selectColor(index, event) {
+
+  event.stopPropagation();
+
+  if (!currentProduct) return;
+
+  const colors =
+    Array.isArray(currentProduct.colors)
+      ? currentProduct.colors
+      : [];
+
+  const color =
+    colors[index];
+
+  if (!color) return;
+
+
+  selectedColor =
+    color.name;
+
+
+  document.querySelectorAll(".color-btn")
+    .forEach(function(btn) {
+      btn.classList.remove("selected");
+    });
+
+
+  event.target.classList.add("selected");
+
+
+  const image =
+    document.getElementById("largeProductImage");
+
+  const placeholder =
+    document.getElementById("bigPlaceholder");
+
+
+  if (color.image) {
+
+    if (image) {
+
+      image.src = color.image;
+      image.style.display = "block";
+
+    } else {
+
+      const box =
+        document.querySelector(".large-product-image");
+
+      if (box) {
+
+        box.innerHTML =
+          `<img
+            id="largeProductImage"
+            src="${escapeHtml(color.image)}"
+          >`;
+
+      }
+
+    }
+
+
+    if (placeholder) {
+      placeholder.style.display = "none";
+    }
+
+  } else {
+
+    if (image) {
+      image.style.display = "none";
+    }
+
+    if (placeholder) {
+      placeholder.style.display = "flex";
+    }
 
   }
 
 }
 
 
-// ===============================
-// OPEN ORDER MODAL
-// ===============================
+// =============================
+// ORDER
+// =============================
 
-function openOrder(product, price) {
+function orderCurrentProduct() {
 
-  modal.style.display = 'flex';
+  if (!currentProduct) return;
 
 
-  document.getElementById('product').value =
+  const colors =
+    Array.isArray(currentProduct.colors)
+      ? currentProduct.colors
+      : [];
+
+
+  // ONE COLOR
+  if (colors.length === 1) {
+
+    selectedColor =
+      colors[0].name || "";
+
+  }
+
+
+  // MULTIPLE COLOR
+  if (colors.length > 1 && !selectedColor) {
+
+    selectedColor =
+      colors[0].name || "";
+
+  }
+
+
+  openOrder(
+    currentProduct.name,
+    Number(currentProduct.price) || 0,
+    selectedColor
+  );
+
+}
+
+
+// =============================
+// ORDER MODAL
+// =============================
+
+function openOrder(product, price, color) {
+
+  if (!modal) return;
+
+  modal.style.display = "flex";
+
+
+  document.getElementById("product").value =
     product;
 
 
-  document.getElementById('price').value =
+  document.getElementById("price").value =
     price;
 
 
-  const a =
-    document.getElementById('orderProductName');
+  const productName =
+    document.getElementById("orderProductName");
 
-  if (a)
-    a.textContent = product;
-
-
-  const b =
-    document.getElementById('orderProductPrice');
-
-  if (b)
-    b.textContent =
-      Number(price).toLocaleString('en-BD');
+  if (productName) {
+    productName.textContent = product;
+  }
 
 
-  const c =
-    document.getElementById('summaryPrice');
+  const productPrice =
+    document.getElementById("orderProductPrice");
 
-  if (c)
-    c.textContent =
-      Number(price).toLocaleString('en-BD');
+  if (productPrice) {
+
+    productPrice.textContent =
+      Number(price).toLocaleString("en-BD");
+
+  }
 
 
-  document.getElementById('deliveryArea').value =
-    '';
+  const summaryPrice =
+    document.getElementById("summaryPrice");
 
+  if (summaryPrice) {
+
+    summaryPrice.textContent =
+      Number(price).toLocaleString("en-BD");
+
+  }
+
+
+  // COLOR BOX
+  const colorBox =
+    document.getElementById("orderColor");
+
+
+  if (colorBox) {
+
+    const colors =
+      currentProduct &&
+      Array.isArray(currentProduct.colors)
+        ? currentProduct.colors
+        : [];
+
+
+    colorBox.innerHTML = "";
+
+
+    // ONE COLOR
+    if (colors.length === 1) {
+
+      colorBox.style.display = "none";
+
+    }
+
+
+    // MULTIPLE COLOR
+    else if (colors.length > 1) {
+
+      colorBox.style.display = "block";
+
+
+      colors.forEach(function(c) {
+
+        const option =
+          document.createElement("option");
+
+        option.value = c.name;
+
+        option.textContent = c.name;
+
+
+        if (c.name === color) {
+          option.selected = true;
+        }
+
+
+        colorBox.appendChild(option);
+
+      });
+
+    }
+
+
+    else {
+
+      colorBox.style.display = "none";
+
+    }
+
+  }
+
+
+  document.getElementById("deliveryArea").value = "";
 
   updateTotal();
 
-
-  document.getElementById('status').textContent =
-    '';
+  document.getElementById("status").textContent = "";
 
 }
 
-
-// ===============================
-// CLOSE ORDER MODAL
-// ===============================
 
 function closeOrder() {
 
-  modal.style.display = 'none';
+  if (modal) {
+    modal.style.display = "none";
+  }
 
 }
 
 
-// ===============================
-// CLOSE MODAL BY CLICKING OUTSIDE
-// ===============================
-
-window.onclick = e => {
+window.onclick = function(e) {
 
   if (e.target === modal) {
-
     closeOrder();
-
   }
 
 };
 
 
-// ===============================
-// UPDATE TOTAL PRICE
-// ===============================
+// =============================
+// DELIVERY
+// =============================
 
 function updateTotal() {
 
   const price =
-    Number(
-      document.getElementById('price').value
-    ) || 0;
-
+    Number(document.getElementById("price").value) || 0;
 
   const area =
-    document.getElementById('deliveryArea').value;
+    document.getElementById("deliveryArea").value;
 
 
-  const charge =
-    area === 'ঢাকার ভিতরে'
-      ? 60
-      : area === 'ঢাকার বাইরে'
-        ? 120
-        : 0;
+  let charge = 0;
 
 
-  document.getElementById('deliveryCharge').textContent =
+  if (area === "ঢাকার ভিতরে") {
+    charge = 60;
+  }
+
+
+  if (area === "ঢাকার বাইরে") {
+    charge = 120;
+  }
+
+
+  document.getElementById("deliveryCharge").textContent =
     charge;
 
 
-  document.getElementById('totalPrice').textContent =
-    (price + charge).toLocaleString('en-BD');
+  document.getElementById("totalPrice").textContent =
+    (price + charge).toLocaleString("en-BD");
 
 }
 
 
-// ===============================
-// DELIVERY AREA CHANGE
-// ===============================
-
 const deliveryArea =
-  document.getElementById('deliveryArea');
+  document.getElementById("deliveryArea");
+
 
 if (deliveryArea) {
 
   deliveryArea.addEventListener(
-    'change',
+    "change",
     updateTotal
   );
 
 }
 
 
-// ===============================
-// ORDER FORM SUBMIT
-// ===============================
+// =============================
+// SUBMIT ORDER
+// =============================
 
 const orderForm =
-  document.getElementById('orderForm');
+  document.getElementById("orderForm");
 
 
 if (orderForm) {
 
   orderForm.addEventListener(
-    'submit',
+    "submit",
     async function(e) {
 
       e.preventDefault();
 
 
       const status =
-        document.getElementById('status');
+        document.getElementById("status");
 
 
       const price =
-        Number(
-          document.getElementById('price').value
-        ) || 0;
+        Number(document.getElementById("price").value) || 0;
 
 
       const area =
-        document.getElementById('deliveryArea').value;
+        document.getElementById("deliveryArea").value;
 
 
-      // Check delivery area
+      const colorBox =
+        document.getElementById("orderColor");
+
+
+      let color = "";
+
+
+      if (
+        colorBox &&
+        colorBox.style.display !== "none"
+      ) {
+
+        color = colorBox.value;
+
+      }
+
+
+      // ONE COLOR PRODUCT
+      if (
+        !color &&
+        currentProduct &&
+        Array.isArray(currentProduct.colors) &&
+        currentProduct.colors.length === 1
+      ) {
+
+        color =
+          currentProduct.colors[0].name || "";
+
+      }
+
+
       if (!area) {
 
         status.textContent =
-          'ডেলিভারি এলাকা নির্বাচন করুন।';
+          "ডেলিভারি এলাকা নির্বাচন করুন।";
 
         return;
 
       }
 
 
-      // Delivery charge
       const charge =
-        area === 'ঢাকার ভিতরে'
+        area === "ঢাকার ভিতরে"
           ? 60
           : 120;
 
 
-      // Total price
       const total =
         price + charge;
 
 
-      // ===============================
-      // ORDER DATA
-      // ===============================
+      const data =
+        new URLSearchParams({
 
-      const data = new URLSearchParams({
+          store: store,
 
-        store: store,
+          product:
+            document.getElementById("product").value,
 
-        product:
-          document.getElementById('product').value,
+          price:
+            String(price),
 
-        price:
-          String(price),
+          color:
+            color,
 
-        deliveryArea:
-          area,
+          deliveryArea:
+            area,
 
-        deliveryCharge:
-          String(charge),
+          deliveryCharge:
+            String(charge),
 
-        total:
-          String(total),
+          total:
+            String(total),
 
-        name:
-          document.getElementById('name').value,
+          name:
+            document.getElementById("name").value,
 
-        phone:
-          document.getElementById('phone').value,
+          phone:
+            document.getElementById("phone").value,
 
-        address:
-          document.getElementById('address').value
+          address:
+            document.getElementById("address").value
 
-      });
+        });
 
 
       status.textContent =
-        'অর্ডার পাঠানো হচ্ছে...';
+        "অর্ডার পাঠানো হচ্ছে...";
 
 
       try {
@@ -418,37 +748,28 @@ if (orderForm) {
         await fetch(
           APPS_SCRIPT_URL,
           {
-
-            method: 'POST',
-
-            mode: 'no-cors',
-
+            method: "POST",
+            mode: "no-cors",
             body: data
-
           }
         );
 
 
         status.textContent =
-          'অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!';
+          "অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
 
 
         this.reset();
 
-
         updateTotal();
 
 
-      } catch (err) {
+      } catch (error) {
 
-        console.error(
-          'Order error:',
-          err
-        );
-
+        console.error(error);
 
         status.textContent =
-          'অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।';
+          "অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।";
 
       }
 
@@ -458,8 +779,8 @@ if (orderForm) {
 }
 
 
-// ===============================
-// LOAD PRODUCTS ON PAGE LOAD
-// ===============================
+// =============================
+// START
+// =============================
 
 loadProducts();
