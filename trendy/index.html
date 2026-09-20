@@ -19,15 +19,13 @@
 
 </head>
 
-
 <body>
-
 
 <header>
 
-  <a href="../">
+  <div class="site-name">
     AJ STORES
-  </a>
+  </div>
 
   <nav>
 
@@ -35,13 +33,9 @@
       Home
     </a>
 
-    &nbsp;
-
-    <a href="./">
+    <a href="../trendy/">
       AJ Trendy Hub
     </a>
-
-    &nbsp;
 
     <a href="../kidz/">
       AJ Kidz Zone
@@ -62,11 +56,9 @@
     ব্যাগ, ওয়ালেট ও দৈনন্দিন ফ্যাশন পণ্য।
   </p>
 
-
   <h2>
     Products
   </h2>
-
 
   <section id="products">
 
@@ -79,12 +71,12 @@
 </main>
 
 
-<!-- PRODUCT LARGE VIEW -->
+<!-- LARGE PRODUCT -->
 
 <div id="productViewer"></div>
 
 
-<!-- ORDER MODAL -->
+<!-- ORDER -->
 
 <div id="modal">
 
@@ -94,12 +86,10 @@
       অর্ডার করুন
     </h2>
 
-
     <p>
       Product:
       <strong id="orderProductName"></strong>
     </p>
-
 
     <p>
       Price:
@@ -112,19 +102,23 @@
       id="product"
     >
 
-
     <input
       type="hidden"
       id="price"
     >
 
 
-    <label>
-      Color
-    </label>
+    <!-- COLOR ONLY WHEN NEEDED -->
 
-    <select id="orderColor">
-    </select>
+    <div id="colorWrap">
+
+      <label>
+        Color
+      </label>
+
+      <select id="orderColor"></select>
+
+    </div>
 
 
     <label>
@@ -189,7 +183,6 @@
       ৳<span id="deliveryCharge">0</span>
     </p>
 
-
     <p>
       Total:
       ৳<strong id="totalPrice">0</strong>
@@ -208,10 +201,7 @@
 </div>
 
 
-<script
-  src="../script.js"
-></script>
-
+<script src="../script.js"></script>
 
 </body>
 
