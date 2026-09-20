@@ -20,16 +20,20 @@ body {
 header {
   background: #111;
   color: white;
-  padding: 14px 20px;
+  padding: 15px 20px;
+  text-align: center;
 }
 
 header .site-name {
-  font-size: 18px;
-  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 header nav {
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 18px;
 }
@@ -40,18 +44,23 @@ header a {
   font-size: 16px;
 }
 
+header a:hover {
+  text-decoration: underline;
+}
+
 /* ================= MAIN ================= */
 
 main {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: auto;
-  padding: 30px 20px;
+  padding: 35px 20px;
+  text-align: center;
 }
 
 main h1 {
-  font-size: 42px;
-  margin: 15px 0 35px;
+  font-size: 40px;
+  margin: 10px 0 20px;
 }
 
 main h2 {
@@ -59,23 +68,39 @@ main h2 {
   margin: 35px 0 25px;
 }
 
-/* ================= HOME PAGE ================= */
+main > p {
+  font-size: 18px;
+}
+
+/* ================= HOME ================= */
 
 .home-intro {
-  margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.home-intro p:first-child {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
 }
 
 .home-intro h1 {
   font-size: 40px;
-  margin: 10px 0 20px;
+  margin: 10px 0 15px;
 }
 
-.home-intro p {
-  font-size: 20px;
+.home-intro p:last-child {
+  font-size: 19px;
+  color: #555;
 }
+
+/* BRAND CARDS */
 
 .brand-grid {
   width: 100%;
+  max-width: 850px;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px;
@@ -84,27 +109,27 @@ main h2 {
 .brand-card {
   background: white;
   border-radius: 15px;
-  padding: 15px;
+  padding: 12px;
   box-shadow: 0 3px 12px rgba(0,0,0,.10);
   text-decoration: none;
   color: #222;
   overflow: hidden;
+  text-align: center;
 }
 
 .brand-card img {
   display: block;
-  width: 100%;
-  max-width: 500px;
-  height: auto;
+  width: 75%;
+  max-width: 330px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   margin: auto;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .brand-card h2 {
   font-size: 22px;
-  margin: 15px 0 8px;
+  margin: 14px 0 7px;
 }
 
 .brand-card p {
@@ -122,9 +147,11 @@ main h2 {
 /* ================= PRODUCTS ================= */
 
 #products {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+  text-align: left;
 }
 
 .product {
@@ -175,11 +202,13 @@ main h2 {
 }
 
 .product small {
+  display: block;
   color: #777;
   font-size: 11px;
+  margin: 4px 2px;
 }
 
-/* ================= LARGE PRODUCT VIEW ================= */
+/* ================= LARGE PRODUCT ================= */
 
 #productViewer {
   position: fixed;
@@ -201,6 +230,7 @@ main h2 {
   overflow-y: auto;
   border-radius: 15px;
   padding: 15px;
+  text-align: left;
 }
 
 .close-viewer {
@@ -324,7 +354,7 @@ main h2 {
   color: white;
 }
 
-/* ================= ORDER BUTTON ================= */
+/* ================= ORDER ================= */
 
 .order-now-btn {
   width: 100%;
@@ -336,8 +366,6 @@ main h2 {
   margin-top: 15px;
   font-size: 16px;
 }
-
-/* ================= ORDER MODAL ================= */
 
 #modal {
   position: fixed;
@@ -358,6 +386,7 @@ main h2 {
   background: white;
   border-radius: 15px;
   padding: 20px;
+  text-align: left;
 }
 
 #orderForm h2 {
@@ -365,10 +394,15 @@ main h2 {
   font-size: 28px;
 }
 
+#orderForm p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
 #orderForm label {
   display: block;
-  margin-top: 12px;
-  margin-bottom: 5px;
+  margin-top: 15px;
+  margin-bottom: 6px;
   font-size: 16px;
 }
 
@@ -407,7 +441,11 @@ main h2 {
 @media (max-width: 700px) {
 
   header {
-    padding: 12px 20px;
+    padding: 13px 15px;
+  }
+
+  header .site-name {
+    font-size: 18px;
   }
 
   header nav {
@@ -419,28 +457,34 @@ main h2 {
   }
 
   main {
-    padding: 25px 20px;
+    padding: 25px 15px;
   }
 
   main h1 {
-    font-size: 34px;
+    font-size: 32px;
   }
 
   main h2 {
-    font-size: 27px;
+    font-size: 26px;
   }
 
   .home-intro h1 {
-    font-size: 34px;
+    font-size: 32px;
   }
 
-  .home-intro p {
-    font-size: 18px;
+  .home-intro p:last-child {
+    font-size: 17px;
   }
 
   .brand-grid {
     grid-template-columns: 1fr;
+    max-width: 500px;
     gap: 18px;
+  }
+
+  .brand-card img {
+    width: 62%;
+    max-width: 270px;
   }
 
   #products {
@@ -490,6 +534,11 @@ main h2 {
 
   .product strong {
     font-size: 12px;
+  }
+
+  .brand-card img {
+    width: 58%;
+    max-width: 240px;
   }
 
   .product-slider {
