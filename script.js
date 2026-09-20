@@ -22,14 +22,12 @@ let selectedColor = "";
 let currentSlide = 0;
 
 
-/* =========================
-   ESCAPE
-========================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(value) {
-
-  return String(value ?? "").replace(/[&<>"']/g, function(c) {
-
+  return String(value ?? "").replace(/[&<>"']/g, function (c) {
     return {
       "&": "&amp;",
       "<": "&lt;",
@@ -37,24 +35,69 @@ function escapeHtml(value) {
       '"': "&quot;",
       "'": "&#39;"
     }[c];
-
   });
-
 }
 
 
-/* =========================
-   LOAD PRODUCTS
-========================= */
+/* =====================================================
+   PAGE LOADER
+===================================================== */
+
+function showPageLoader() {
+
+  if (document.getElementById("pageLoader")) return;
+
+  const loader = document.createElement("div");
+
+  loader.id = "pageLoader";
+
+  loader.innerHTML = `
+    <div class="loader-content">
+      <div class="loader-ring"></div>
+      <div class="loader-logo">AJ</div>
+      <p>Loading...</p>
+    </div>
+  `;
+
+  document.body.appendChild(loader);
+}
+
+
+function hidePageLoader() {
+
+  const loader =
+    document.getElementById("pageLoader");
+
+  if (!loader) return;
+
+  loader.classList.add("hide");
+
+  setTimeout(function () {
+    loader.remove();
+  }, 500);
+}
+
+
+/* =====================================================
+   PRODUCT LOADING
+===================================================== */
 
 async function loadProducts() {
 
-  const grid = document.getElementById("products");
+  const grid =
+    document.getElementById("products");
 
-  if (!grid) return;
+  if (!grid) {
+    hidePageLoader();
+    return;
+  }
 
-  grid.innerHTML =
-    '<p class="loading">Product load হচ্ছে...</p>';
+  grid.innerHTML = `
+    <div class="products-loading">
+      <div class="loading-spinner"></div>
+      <p>Product load হচ্ছে...</p>
+    </div>
+  `;
 
   try {
 
@@ -69,159 +112,284 @@ async function loadProducts() {
       throw new Error("products.json পাওয়া যায়নি");
     }
 
-    const allProducts = await response.json();
+    const allProducts =
+      await response.json();
 
-    const products = allProducts.filter(function(p) {
+    const products =
+      allProducts.filter(function (p) {
 
-      return String(p.store || "")
-        .trim()
-        .toLowerCase() === store.trim().toLowerCase()
-        &&
+        return (
+          String(p.store || "")
+            .trim()
+            .toLowerCase() ===
+          store.trim().toLowerCase()
+        ) &&
         String(p.status || "")
-        .trim()
-        .toUpperCase() === "ON";
+          .trim()
+          .toUpperCase() === "ON";
 
-    });
+      });
+
 
     if (!products.length) {
 
-      grid.innerHTML =
-        '<p class="loading">এখনো কোনো product যোগ করা হয়নি।';
+      grid.innerHTML = `
+        <div class="products-empty">
+          <div class="empty-icon">🛍️</div>
+          <p>এখনো কোনো product যোগ করা হয়নি।</p>
+        </div>
+      `;
 
+      hidePageLoader();
       return;
     }
 
+
     window.loadedProducts = products;
 
-    grid.innerHTML = products.map(function(p, index) {
 
-      const price = Number(p.price) || 0;
+    grid.innerHTML =
+      products.map(function (p, index) {
 
-      const colors =
-        Array.isArray(p.colors) ? p.colors : [];
+        const price =
+          Number(p.price) || 0;
 
-      const firstColor =
-        colors.length ? colors[0] : null;
+        const colors =
+          Array.isArray(p.colors)
+            ? p.colors
+            : [];
 
-      const firstImage =
-        firstColor && firstColor.image
-          ? firstColor.image
-          : "";
+        const firstColor =
+          colors.length
+            ? colors[0]
+            : null;
 
-      let imageHTML;
+        const firstImage =
+          firstColor &&
+          firstColor.image
+            ? firstColor.image
+            : "";
 
-      if (firstImage) {
 
-        imageHTML = `
-          <img
-            src="${escapeHtml(firstImage)}"
-            alt="${escapeHtml(p.name)}"
+        let imageHTML;
+
+
+        if (firstImage) {
+
+          imageHTML = `
+            <img
+              src="${escapeHtml(firstImage)}"
+              alt="${escapeHtml(p.name)}"
+              loading="lazy"
+            >
+          `;
+
+        } else {
+
+          imageHTML = `
+            <div class="placeholder">
+              🛍️
+            </div>
+          `;
+
+        }
+
+
+        /*
+          BADGE
+
+          products.json এ চাইলে:
+          "badge":"SALE"
+          অথবা
+          "badge":"NEW"
+
+          না থাকলে NEW দেখাবে
+        */
+
+        const badge =
+          String(p.badge || "NEW")
+            .trim()
+            .toUpperCase();
+
+
+        return `
+          <article
+            class="product product-card reveal"
+            data-index="${index}"
+            onclick="openProduct(${index})"
           >
+
+            <div class="product-img">
+
+              <div class="product-badge">
+                ${escapeHtml(badge)}
+              </div>
+
+              <div class="heart-btn"
+                   onclick="toggleFavorite(event, ${index})">
+                <span>♡</span>
+              </div>
+
+              ${imageHTML}
+
+              <div class="quick-view">
+                View Product
+              </div>
+
+            </div>
+
+
+            <div class="product-info">
+
+              <h3>
+                ${escapeHtml(p.name)}
+              </h3>
+
+              <div class="product-bottom">
+
+                <strong class="price">
+                  ৳${price.toLocaleString("en-BD")}
+                </strong>
+
+                ${
+                  colors.length > 1
+                    ? `
+                      <small class="color-count">
+                        ${colors.length} colors
+                      </small>
+                    `
+                    : ""
+                }
+
+              </div>
+
+            </div>
+
+          </article>
         `;
 
-      } else {
+      }).join("");
 
-        imageHTML = `
-          <div class="placeholder">🛍️</div>
-        `;
 
-      }
+    /*
+      STAGGER ANIMATION
+    */
 
-      return `
-        <article
-          class="product"
-          onclick="openProduct(${index})"
-        >
+    requestAnimationFrame(function () {
 
-          <div class="product-img">
-            ${imageHTML}
-          </div>
+      const cards =
+        document.querySelectorAll(".product-card");
 
-          <h3>
-            ${escapeHtml(p.name)}
-          </h3>
+      cards.forEach(function (card, index) {
 
-          <strong>
-            ৳${price.toLocaleString("en-BD")}
-          </strong>
+        card.style.setProperty(
+          "--delay",
+          `${index * 0.07}s`
+        );
 
-          ${
-            colors.length > 1
-              ? `<small>${colors.length} colors</small>`
-              : ""
-          }
+        setTimeout(function () {
+          card.classList.add("show");
+        }, index * 70);
 
-        </article>
-      `;
+      });
 
-    }).join("");
+    });
+
 
   } catch (error) {
 
     console.error(error);
 
-    grid.innerHTML =
-      '<p class="loading">Product load হয়নি।</p>';
+    grid.innerHTML = `
+      <div class="products-empty">
+        <div class="empty-icon">⚠️</div>
+        <p>Product load হয়নি।</p>
+        <button
+          class="retry-btn"
+          onclick="loadProducts()"
+        >
+          আবার চেষ্টা করুন
+        </button>
+      </div>
+    `;
 
   }
+
+
+  hidePageLoader();
 
 }
 
 
-/* =========================
+/* =====================================================
    OPEN PRODUCT
-========================= */
+===================================================== */
 
 function openProduct(index) {
 
-  const products = window.loadedProducts || [];
+  const products =
+    window.loadedProducts || [];
 
-  const product = products[index];
+  const product =
+    products[index];
 
   if (!product) return;
+
 
   currentProduct = product;
   selectedColor = "";
   currentSlide = 0;
+
 
   const colors =
     Array.isArray(product.colors)
       ? product.colors
       : [];
 
+
   if (colors.length === 1) {
-    selectedColor = colors[0].name || "";
+    selectedColor =
+      colors[0].name || "";
   }
+
 
   const viewer =
     document.getElementById("productViewer");
 
   if (!viewer) return;
 
+
   viewer.innerHTML = `
 
     <div
-      class="large-product-box"
+      class="large-product-box product-viewer-animation"
       onclick="event.stopPropagation()"
     >
 
       <button
         class="close-viewer"
         onclick="closeProduct()"
+        aria-label="Close"
       >
         ×
       </button>
+
 
       <div
         class="product-slider"
         id="productSlider"
       >
 
-        <div id="sliderImageArea"></div>
+        <div
+          id="sliderImageArea"
+          class="slider-image-transition"
+        ></div>
+
 
         ${
           colors.length > 1
             ? `
+
               <button
                 class="slider-arrow slider-prev"
                 onclick="previousSlide(event)"
@@ -240,104 +408,185 @@ function openProduct(index) {
                 class="slider-dots"
                 id="sliderDots"
               ></div>
+
             `
             : ""
         }
 
       </div>
 
-      <h2>
-        ${escapeHtml(product.name)}
-      </h2>
 
-      <p class="large-description">
-        ${escapeHtml(product.description || "")}
-      </p>
+      <div class="viewer-product-info">
 
-      <div class="large-price">
-        ৳${Number(product.price || 0).toLocaleString("en-BD")}
+        <h2>
+          ${escapeHtml(product.name)}
+        </h2>
+
+        <p class="large-description">
+          ${escapeHtml(product.description || "")}
+        </p>
+
+        <div class="large-price">
+          ৳${Number(product.price || 0)
+            .toLocaleString("en-BD")}
+        </div>
+
+
+        ${
+          colors.length > 1
+            ? `
+
+              <div class="color-title">
+                🎨 Color নির্বাচন করুন
+              </div>
+
+              <div
+                class="color-buttons stylish-colors"
+                id="viewerColors"
+              >
+
+                ${colors.map(function (color, i) {
+
+                  return `
+                    <button
+                      class="
+                        color-btn
+                        stylish-color-btn
+                        ${i === 0 ? "selected" : ""}
+                      "
+                      onclick="selectColor(${i}, event)"
+                    >
+
+                      ${
+                        color.image
+                          ? `
+                            <img
+                              src="${escapeHtml(color.image)}"
+                              alt=""
+                            >
+                          `
+                          : `
+                            <span class="color-circle">
+                              ${i + 1}
+                            </span>
+                          `
+                      }
+
+                      <span>
+                        ${escapeHtml(color.name)}
+                      </span>
+
+                      <b>✓</b>
+
+                    </button>
+                  `;
+
+                }).join("")}
+
+              </div>
+
+            `
+            : ""
+        }
+
+
+        <button
+          class="order-now-btn animated-order-btn"
+          onclick="orderCurrentProduct()"
+        >
+          <span>🛒</span>
+          অর্ডার করুন
+        </button>
+
       </div>
-
-      ${
-        colors.length > 1
-          ? `
-            <div class="color-title">
-              Color নির্বাচন করুন:
-            </div>
-
-            <div class="color-buttons">
-
-              ${colors.map(function(color, i) {
-
-                return `
-                  <button
-                    class="color-btn ${
-                      i === 0 ? "selected" : ""
-                    }"
-                    onclick="selectColor(${i}, event)"
-                  >
-                    ${escapeHtml(color.name)}
-                  </button>
-                `;
-
-              }).join("")}
-
-            </div>
-          `
-          : ""
-      }
-
-      <button
-        class="order-now-btn"
-        onclick="orderCurrentProduct()"
-      >
-        অর্ডার করুন
-      </button>
 
     </div>
   `;
 
+
   viewer.style.display = "flex";
+
+  document.body.classList.add("modal-open");
+
+
+  requestAnimationFrame(function () {
+    viewer.classList.add("viewer-show");
+  });
+
 
   renderSlide();
 
-  /* SWIPE */
+
+  /* =================================================
+     SWIPE
+  ================================================= */
 
   const slider =
     document.getElementById("productSlider");
 
+
   if (slider && colors.length > 1) {
 
     let startX = 0;
+    let startY = 0;
+
 
     slider.addEventListener(
       "touchstart",
-      function(e) {
-        startX = e.touches[0].clientX;
-      }
+      function (e) {
+
+        startX =
+          e.touches[0].clientX;
+
+        startY =
+          e.touches[0].clientY;
+
+      },
+      { passive: true }
     );
+
 
     slider.addEventListener(
       "touchend",
-      function(e) {
+      function (e) {
 
         const endX =
           e.changedTouches[0].clientX;
 
-        const difference =
+        const endY =
+          e.changedTouches[0].clientY;
+
+
+        const differenceX =
           startX - endX;
 
-        if (Math.abs(difference) < 40) {
+        const differenceY =
+          startY - endY;
+
+
+        if (
+          Math.abs(differenceX) <
+          Math.abs(differenceY)
+        ) {
           return;
         }
 
-        if (difference > 0) {
+
+        if (
+          Math.abs(differenceX) < 40
+        ) {
+          return;
+        }
+
+
+        if (differenceX > 0) {
           nextSlide();
         } else {
           previousSlide();
         }
 
-      }
+      },
+      { passive: true }
     );
 
   }
@@ -345,33 +594,62 @@ function openProduct(index) {
 }
 
 
-/* =========================
+/* =====================================================
    RENDER SLIDE
-========================= */
+===================================================== */
 
 function renderSlide() {
 
   if (!currentProduct) return;
+
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
+
   const imageArea =
-    document.getElementById("sliderImageArea");
+    document.getElementById(
+      "sliderImageArea"
+    );
+
 
   if (!imageArea) return;
 
+
   if (!colors.length) {
 
-    imageArea.innerHTML =
-      '<div class="big-placeholder">🛍️</div>';
+    imageArea.innerHTML = `
+      <div class="big-placeholder">
+        🛍️
+      </div>
+    `;
 
     return;
   }
 
-  const color = colors[currentSlide];
+
+  const color =
+    colors[currentSlide];
+
+
+  /*
+    IMAGE TRANSITION
+  */
+
+  imageArea.classList.remove(
+    "color-changing"
+  );
+
+
+  void imageArea.offsetWidth;
+
+
+  imageArea.classList.add(
+    "color-changing"
+  );
+
 
   if (color.image) {
 
@@ -392,10 +670,18 @@ function renderSlide() {
 
   }
 
-  selectedColor = color.name || "";
 
-  document.querySelectorAll(".color-btn")
-    .forEach(function(btn, index) {
+  selectedColor =
+    color.name || "";
+
+
+  /*
+    COLOR BUTTON ACTIVE
+  */
+
+  document
+    .querySelectorAll(".color-btn")
+    .forEach(function (btn, index) {
 
       if (index === currentSlide) {
         btn.classList.add("selected");
@@ -405,19 +691,30 @@ function renderSlide() {
 
     });
 
+
+  /*
+    DOTS
+  */
+
   const dots =
-    document.getElementById("sliderDots");
+    document.getElementById(
+      "sliderDots"
+    );
+
 
   if (dots) {
 
     dots.innerHTML =
-      colors.map(function(_, i) {
+      colors.map(function (_, i) {
 
         return `
           <span
-            class="slider-dot ${
-              i === currentSlide ? "active" : ""
-            }"
+            class="
+              slider-dot
+              ${i === currentSlide
+                ? "active"
+                : ""}
+            "
           ></span>
         `;
 
@@ -428,65 +725,92 @@ function renderSlide() {
 }
 
 
-/* =========================
-   NEXT / PREVIOUS
-========================= */
+/* =====================================================
+   NEXT SLIDE
+===================================================== */
 
 function nextSlide(event) {
 
-  if (event) event.stopPropagation();
+  if (event) {
+    event.stopPropagation();
+  }
+
 
   if (!currentProduct) return;
+
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
+
   if (colors.length <= 1) return;
+
 
   currentSlide++;
 
-  if (currentSlide >= colors.length) {
+
+  if (
+    currentSlide >=
+    colors.length
+  ) {
     currentSlide = 0;
   }
+
 
   renderSlide();
 
 }
 
 
+/* =====================================================
+   PREVIOUS SLIDE
+===================================================== */
+
 function previousSlide(event) {
 
-  if (event) event.stopPropagation();
+  if (event) {
+    event.stopPropagation();
+  }
+
 
   if (!currentProduct) return;
+
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
+
   if (colors.length <= 1) return;
+
 
   currentSlide--;
 
+
   if (currentSlide < 0) {
-    currentSlide = colors.length - 1;
+    currentSlide =
+      colors.length - 1;
   }
+
 
   renderSlide();
 
 }
 
 
-/* =========================
+/* =====================================================
    SELECT COLOR
-========================= */
+===================================================== */
 
 function selectColor(index, event) {
 
-  if (event) event.stopPropagation();
+  if (event) {
+    event.stopPropagation();
+  }
+
 
   currentSlide = index;
 
@@ -495,34 +819,55 @@ function selectColor(index, event) {
 }
 
 
-/* =========================
+/* =====================================================
    CLOSE PRODUCT
-========================= */
+===================================================== */
 
 function closeProduct() {
 
   const viewer =
-    document.getElementById("productViewer");
+    document.getElementById(
+      "productViewer"
+    );
 
-  if (viewer) {
+
+  if (!viewer) return;
+
+
+  viewer.classList.remove(
+    "viewer-show"
+  );
+
+
+  setTimeout(function () {
+
     viewer.style.display = "none";
-  }
+
+    viewer.innerHTML = "";
+
+    document.body.classList.remove(
+      "modal-open"
+    );
+
+  }, 250);
 
 }
 
 
-/* =========================
-   ORDER PRODUCT
-========================= */
+/* =====================================================
+   ORDER CURRENT PRODUCT
+===================================================== */
 
 function orderCurrentProduct() {
 
   if (!currentProduct) return;
 
+
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
+
 
   if (colors.length === 1) {
 
@@ -531,12 +876,14 @@ function orderCurrentProduct() {
 
   }
 
+
   if (colors.length > 1) {
 
     selectedColor =
       colors[currentSlide].name || "";
 
   }
+
 
   openOrder(
     currentProduct.name,
@@ -547,153 +894,472 @@ function orderCurrentProduct() {
 }
 
 
-/* =========================
-   OPEN ORDER
-========================= */
+/* =====================================================
+   OPEN ORDER MODAL
+===================================================== */
 
-function openOrder(product, price, color) {
+function openOrder(
+  product,
+  price,
+  color
+) {
 
   if (!modal) return;
 
+
   modal.style.display = "flex";
 
-  document.getElementById("product").value = product;
 
-  document.getElementById("price").value = price;
+  requestAnimationFrame(function () {
+    modal.classList.add("modal-show");
+  });
+
+
+  document.body.classList.add(
+    "modal-open"
+  );
+
+
+  document.getElementById(
+    "product"
+  ).value = product;
+
+
+  document.getElementById(
+    "price"
+  ).value = price;
+
 
   const productName =
-    document.getElementById("orderProductName");
+    document.getElementById(
+      "orderProductName"
+    );
+
 
   if (productName) {
-    productName.textContent = product;
+    productName.textContent =
+      product;
   }
+
 
   const productPrice =
-    document.getElementById("orderProductPrice");
+    document.getElementById(
+      "orderProductPrice"
+    );
+
 
   if (productPrice) {
+
     productPrice.textContent =
-      Number(price).toLocaleString("en-BD");
+      Number(price)
+        .toLocaleString("en-BD");
+
   }
 
+
   /*
-    COLOR OPTION
-    Multiple color হলে দেখাবে
-    Single color হলে লুকাবে
+    COLOR
   */
 
   const colorWrap =
-    document.getElementById("colorWrap");
+    document.getElementById(
+      "colorWrap"
+    );
+
 
   const colorBox =
-    document.getElementById("orderColor");
+    document.getElementById(
+      "orderColor"
+    );
+
 
   const colors =
     currentProduct &&
-    Array.isArray(currentProduct.colors)
+    Array.isArray(
+      currentProduct.colors
+    )
       ? currentProduct.colors
       : [];
+
 
   if (colorWrap && colorBox) {
 
     colorBox.innerHTML = "";
 
+
     if (colors.length > 1) {
 
-      colorWrap.style.display = "block";
+      colorWrap.style.display =
+        "block";
 
-      colors.forEach(function(c) {
 
-        const option =
-          document.createElement("option");
+      colors.forEach(
+        function (c) {
 
-        option.value = c.name;
-        option.textContent = c.name;
+          const option =
+            document.createElement(
+              "option"
+            );
 
-        if (c.name === color) {
-          option.selected = true;
+
+          option.value =
+            c.name;
+
+
+          option.textContent =
+            c.name;
+
+
+          if (c.name === color) {
+            option.selected = true;
+          }
+
+
+          colorBox.appendChild(
+            option
+          );
+
         }
+      );
 
-        colorBox.appendChild(option);
 
-      });
+      /*
+        Stylish order color preview
+      */
+
+      createOrderColorButtons(
+        colors,
+        color
+      );
+
 
     } else {
 
-      colorWrap.style.display = "none";
+      colorWrap.style.display =
+        "none";
 
     }
 
   }
 
-  document.getElementById("deliveryArea").value = "";
+
+  document.getElementById(
+    "deliveryArea"
+  ).value = "";
+
 
   updateTotal();
 
-  document.getElementById("status").textContent = "";
+
+  document.getElementById(
+    "status"
+  ).textContent = "";
 
 }
 
 
-/* =========================
+/* =====================================================
+   STYLISH ORDER COLORS
+===================================================== */
+
+function createOrderColorButtons(
+  colors,
+  selected
+) {
+
+  const colorWrap =
+    document.getElementById(
+      "colorWrap"
+    );
+
+
+  if (!colorWrap) return;
+
+
+  let old =
+    document.getElementById(
+      "orderColorStyle"
+    );
+
+
+  if (old) {
+    old.remove();
+  }
+
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+
+  box.id =
+    "orderColorStyle";
+
+
+  box.className =
+    "order-color-buttons";
+
+
+  colors.forEach(function (
+    color,
+    index
+  ) {
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.className =
+      "order-color-choice";
+
+
+    if (
+      color.name === selected
+    ) {
+      button.classList.add(
+        "selected"
+      );
+    }
+
+
+    button.innerHTML = `
+
+      ${
+        color.image
+          ? `
+            <img
+              src="${escapeHtml(color.image)}"
+              alt=""
+            >
+          `
+          : `
+            <span class="mini-color">
+              ${index + 1}
+            </span>
+          `
+      }
+
+      <span>
+        ${escapeHtml(color.name)}
+      </span>
+
+      <b>✓</b>
+
+    `;
+
+
+    button.onclick =
+      function () {
+
+        document
+          .querySelectorAll(
+            ".order-color-choice"
+          )
+          .forEach(function (btn) {
+            btn.classList.remove(
+              "selected"
+            );
+          });
+
+
+        button.classList.add(
+          "selected"
+        );
+
+
+        const colorBox =
+          document.getElementById(
+            "orderColor"
+          );
+
+
+        if (colorBox) {
+          colorBox.value =
+            color.name;
+        }
+
+
+        selectedColor =
+          color.name;
+
+      };
+
+
+    box.appendChild(
+      button
+    );
+
+  });
+
+
+  colorWrap.appendChild(
+    box
+  );
+
+}
+
+
+/* =====================================================
    CLOSE ORDER
-========================= */
+===================================================== */
 
 function closeOrder() {
 
-  if (modal) {
-    modal.style.display = "none";
-  }
+  if (!modal) return;
+
+
+  modal.classList.remove(
+    "modal-show"
+  );
+
+
+  setTimeout(function () {
+
+    modal.style.display =
+      "none";
+
+    document.body.classList.remove(
+      "modal-open"
+    );
+
+  }, 250);
 
 }
 
-window.onclick = function(e) {
 
-  if (e.target === modal) {
-    closeOrder();
+/* =====================================================
+   CLOSE MODALS WITH CLICK
+===================================================== */
+
+window.addEventListener(
+  "click",
+  function (e) {
+
+    if (e.target === modal) {
+      closeOrder();
+    }
+
   }
+);
 
-};
+
+/* =====================================================
+   ESC KEY
+===================================================== */
+
+document.addEventListener(
+  "keydown",
+  function (e) {
+
+    if (e.key !== "Escape") {
+      return;
+    }
 
 
-/* =========================
+    const viewer =
+      document.getElementById(
+        "productViewer"
+      );
+
+
+    if (
+      viewer &&
+      viewer.style.display === "flex"
+    ) {
+
+      closeProduct();
+
+    } else if (
+      modal &&
+      modal.style.display === "flex"
+    ) {
+
+      closeOrder();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
    DELIVERY
-========================= */
+===================================================== */
 
 function updateTotal() {
 
   const price =
     Number(
-      document.getElementById("price").value
+      document.getElementById(
+        "price"
+      ).value
     ) || 0;
 
+
   const area =
-    document.getElementById("deliveryArea").value;
+    document.getElementById(
+      "deliveryArea"
+    ).value;
+
 
   let charge = 0;
 
-  if (area === "ঢাকার ভিতরে") {
+
+  if (
+    area === "ঢাকার ভিতরে"
+  ) {
     charge = 60;
   }
 
-  if (area === "ঢাকার বাইরে") {
+
+  if (
+    area === "ঢাকার বাইরে"
+  ) {
     charge = 120;
   }
 
-  document.getElementById(
-    "deliveryCharge"
-  ).textContent = charge;
 
-  document.getElementById(
-    "totalPrice"
-  ).textContent =
-    (price + charge).toLocaleString("en-BD");
+  const deliveryCharge =
+    document.getElementById(
+      "deliveryCharge"
+    );
+
+
+  const totalPrice =
+    document.getElementById(
+      "totalPrice"
+    );
+
+
+  if (deliveryCharge) {
+    deliveryCharge.textContent =
+      charge;
+  }
+
+
+  if (totalPrice) {
+
+    totalPrice.textContent =
+      (price + charge)
+        .toLocaleString("en-BD");
+
+  }
 
 }
 
 
 const deliveryArea =
-  document.getElementById("deliveryArea");
+  document.getElementById(
+    "deliveryArea"
+  );
+
 
 if (deliveryArea) {
 
@@ -705,73 +1371,191 @@ if (deliveryArea) {
 }
 
 
-/* =========================
-   SUBMIT ORDER
-========================= */
+/* =====================================================
+   FAVORITE / HEART
+===================================================== */
+
+function toggleFavorite(
+  event,
+  index
+) {
+
+  if (event) {
+    event.stopPropagation();
+  }
+
+
+  const card =
+    document.querySelector(
+      `.product-card[data-index="${index}"]`
+    );
+
+
+  if (!card) return;
+
+
+  const heart =
+    card.querySelector(
+      ".heart-btn"
+    );
+
+
+  if (!heart) return;
+
+
+  const isActive =
+    heart.classList.toggle(
+      "liked"
+    );
+
+
+  const span =
+    heart.querySelector(
+      "span"
+    );
+
+
+  if (span) {
+
+    span.textContent =
+      isActive
+        ? "♥"
+        : "♡";
+
+  }
+
+}
+
+
+/* =====================================================
+   ORDER SUBMIT
+===================================================== */
 
 const orderForm =
-  document.getElementById("orderForm");
+  document.getElementById(
+    "orderForm"
+  );
+
 
 if (orderForm) {
 
   orderForm.addEventListener(
     "submit",
-    async function(e) {
+    async function (e) {
 
       e.preventDefault();
 
+
       const status =
-        document.getElementById("status");
+        document.getElementById(
+          "status"
+        );
+
+
+      const submitButton =
+        orderForm.querySelector(
+          'button[type="submit"]'
+        );
+
 
       const price =
         Number(
-          document.getElementById("price").value
+          document.getElementById(
+            "price"
+          ).value
         ) || 0;
 
+
       const area =
-        document.getElementById("deliveryArea").value;
+        document.getElementById(
+          "deliveryArea"
+        ).value;
+
 
       const colorBox =
-        document.getElementById("orderColor");
+        document.getElementById(
+          "orderColor"
+        );
+
 
       let color =
         selectedColor || "";
 
-      /*
-        Multiple color হলে
-        customer যে color select করেছে
-        সেটা নেওয়া হবে
-      */
 
       const colorWrap =
-        document.getElementById("colorWrap");
+        document.getElementById(
+          "colorWrap"
+        );
+
 
       if (
         colorBox &&
         colorWrap &&
-        colorWrap.style.display !== "none"
+        colorWrap.style.display !==
+          "none"
       ) {
 
-        color = colorBox.value;
+        color =
+          colorBox.value;
 
       }
+
 
       if (!area) {
 
         status.textContent =
           "ডেলিভারি এলাকা নির্বাচন করুন।";
 
+        status.classList.add(
+          "error"
+        );
+
         return;
 
       }
+
+
+      const name =
+        document.getElementById(
+          "name"
+        ).value.trim();
+
+
+      const phone =
+        document.getElementById(
+          "phone"
+        ).value.trim();
+
+
+      const address =
+        document.getElementById(
+          "address"
+        ).value.trim();
+
+
+      if (!name || !phone || !address) {
+
+        status.textContent =
+          "সব তথ্য পূরণ করুন।";
+
+        status.classList.add(
+          "error"
+        );
+
+        return;
+
+      }
+
 
       const charge =
         area === "ঢাকার ভিতরে"
           ? 60
           : 120;
 
+
       const total =
         price + charge;
+
 
       const data =
         new URLSearchParams({
@@ -779,7 +1563,9 @@ if (orderForm) {
           store: store,
 
           product:
-            document.getElementById("product").value,
+            document.getElementById(
+              "product"
+            ).value,
 
           price:
             String(price),
@@ -797,18 +1583,37 @@ if (orderForm) {
             String(total),
 
           name:
-            document.getElementById("name").value,
+            name,
 
           phone:
-            document.getElementById("phone").value,
+            phone,
 
           address:
-            document.getElementById("address").value
+            address
 
         });
 
+
+      status.classList.remove(
+        "error"
+      );
+
+
       status.textContent =
         "অর্ডার পাঠানো হচ্ছে...";
+
+
+      if (submitButton) {
+
+        submitButton.disabled =
+          true;
+
+        submitButton.classList.add(
+          "sending"
+        );
+
+      }
+
 
       try {
 
@@ -821,19 +1626,61 @@ if (orderForm) {
           }
         );
 
-        status.textContent =
-          "অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
 
-        this.reset();
+        status.textContent =
+          "✓ অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
+
+
+        status.classList.add(
+          "success"
+        );
+
+
+        orderForm.reset();
+
+
+        selectedColor = "";
+
 
         updateTotal();
+
+
+        /*
+          কিছুক্ষণ পরে modal close
+        */
+
+        setTimeout(
+          function () {
+            closeOrder();
+          },
+          1800
+        );
+
 
       } catch (error) {
 
         console.error(error);
 
+
         status.textContent =
           "অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।";
+
+
+        status.classList.add(
+          "error"
+        );
+
+      }
+
+
+      if (submitButton) {
+
+        submitButton.disabled =
+          false;
+
+        submitButton.classList.remove(
+          "sending"
+        );
 
       }
 
@@ -843,91 +1690,242 @@ if (orderForm) {
 }
 
 
-/* =========================
-   START
-========================= */
+/* =====================================================
+   SCROLL REVEAL
+===================================================== */
 
-loadProducts();
-// =====================================
-// PREMIUM SCROLL ANIMATION
-// =====================================
+function setupScrollAnimation() {
 
-document.addEventListener("DOMContentLoaded", function () {
-
-  const observer = new IntersectionObserver(
-    function (entries) {
-
-      entries.forEach(function (entry) {
-
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          observer.unobserve(entry.target);
-        }
-
-      });
-
-    },
-    {
-      threshold: 0.12
-    }
-  );
-
-
-  function addScrollAnimation() {
-
-    const items = document.querySelectorAll(
-      ".product-card, .brand-card"
+  const items =
+    document.querySelectorAll(
+      ".reveal"
     );
 
+
+  if (!items.length) return;
+
+
+  if (
+    !("IntersectionObserver" in window)
+  ) {
+
     items.forEach(function (item) {
-
-      item.classList.add("reveal");
-
-      observer.observe(item);
-
+      item.classList.add("show");
     });
+
+    return;
 
   }
 
 
-  setTimeout(addScrollAnimation, 500);
+  const observer =
+    new IntersectionObserver(
+      function (entries) {
 
-});
+        entries.forEach(
+          function (entry) {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              entry.target.classList.add(
+                "show"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          }
+        );
+
+      },
+      {
+        threshold: 0.08
+      }
+    );
 
 
-// =====================================
-// SMOOTH PRODUCT IMAGE EFFECT
-// =====================================
+  items.forEach(function (item) {
+    observer.observe(item);
+  });
 
-document.addEventListener("click", function (e) {
-
-  const img = e.target.closest(".product-card img");
-
-  if (!img) return;
-
-  img.style.transform = "scale(0.95)";
-
-  setTimeout(function () {
-    img.style.transform = "";
-  }, 180);
-
-});
+}
 
 
-// =====================================
-// BUTTON CLICK ANIMATION
-// =====================================
+/* =====================================================
+   BUTTON CLICK ANIMATION
+===================================================== */
 
-document.addEventListener("click", function (e) {
+document.addEventListener(
+  "click",
+  function (e) {
 
-  const button = e.target.closest("button");
+    const button =
+      e.target.closest(
+        "button"
+      );
 
-  if (!button) return;
 
-  button.classList.add("button-click");
+    if (!button) return;
 
-  setTimeout(function () {
-    button.classList.remove("button-click");
-  }, 180);
 
-});
+    button.classList.add(
+      "button-click"
+    );
+
+
+    setTimeout(
+      function () {
+
+        button.classList.remove(
+          "button-click"
+        );
+
+      },
+      180
+    );
+
+  }
+);
+
+
+/* =====================================================
+   IMAGE CLICK EFFECT
+===================================================== */
+
+document.addEventListener(
+  "click",
+  function (e) {
+
+    const img =
+      e.target.closest(
+        ".product-card img"
+      );
+
+
+    if (!img) return;
+
+
+    img.classList.add(
+      "image-click"
+    );
+
+
+    setTimeout(
+      function () {
+
+        img.classList.remove(
+          "image-click"
+        );
+
+      },
+      220
+    );
+
+  }
+);
+
+
+/* =====================================================
+   HOME BRAND CARD ANIMATION
+===================================================== */
+
+function setupBrandAnimation() {
+
+  const brands =
+    document.querySelectorAll(
+      ".brand-card"
+    );
+
+
+  brands.forEach(
+    function (brand, index) {
+
+      brand.classList.add(
+        "reveal"
+      );
+
+
+      brand.style.setProperty(
+        "--delay",
+        `${index * 0.15}s`
+      );
+
+    }
+  );
+
+
+  setupScrollAnimation();
+
+}
+
+
+/* =====================================================
+   SMOOTH ANCHOR SCROLL
+===================================================== */
+
+document.addEventListener(
+  "click",
+  function (e) {
+
+    const link =
+      e.target.closest(
+        'a[href^="#"]'
+      );
+
+
+    if (!link) return;
+
+
+    const id =
+      link.getAttribute(
+        "href"
+      );
+
+
+    if (!id || id === "#") {
+      return;
+    }
+
+
+    const target =
+      document.querySelector(
+        id
+      );
+
+
+    if (!target) return;
+
+
+    e.preventDefault();
+
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  }
+);
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
+
+    showPageLoader();
+
+    setupBrandAnimation();
+
+    loadProducts();
+
+  }
+);
