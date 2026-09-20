@@ -2,11 +2,7 @@
   box-sizing: border-box;
 }
 
-html {
-  margin: 0;
-  padding: 0;
-}
-
+html,
 body {
   margin: 0;
   padding: 0;
@@ -15,50 +11,121 @@ body {
   color: #222;
 }
 
+body {
+  overflow-x: hidden;
+}
 
-/* =========================
-   HEADER
-========================= */
+/* ================= HEADER ================= */
 
 header {
   background: #111;
   color: white;
-  padding: 14px 12px;
+  padding: 14px 20px;
+}
+
+header .site-name {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
 }
 
 header a {
   color: white;
   text-decoration: none;
+  font-size: 16px;
 }
 
-
-/* =========================
-   MAIN
-========================= */
+/* ================= MAIN ================= */
 
 main {
   width: 100%;
   max-width: 1200px;
   margin: auto;
-  padding: 15px 10px;
+  padding: 30px 20px;
 }
 
+main h1 {
+  font-size: 42px;
+  margin: 15px 0 35px;
+}
 
-/* =========================
-   PRODUCT GRID
-========================= */
+main h2 {
+  font-size: 30px;
+  margin: 35px 0 25px;
+}
 
-#products {
+/* ================= HOME PAGE ================= */
+
+.home-intro {
+  margin-bottom: 30px;
+}
+
+.home-intro h1 {
+  font-size: 40px;
+  margin: 10px 0 20px;
+}
+
+.home-intro p {
+  font-size: 20px;
+}
+
+.brand-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
 }
 
+.brand-card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.10);
+  text-decoration: none;
+  color: #222;
+  overflow: hidden;
+}
 
-/* =========================
-   PRODUCT CARD
-========================= */
+.brand-card img {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  margin: auto;
+  border-radius: 10px;
+}
+
+.brand-card h2 {
+  font-size: 22px;
+  margin: 15px 0 8px;
+}
+
+.brand-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.brand-card .shop-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #111;
+  font-weight: bold;
+}
+
+/* ================= PRODUCTS ================= */
+
+#products {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
 
 .product {
   background: white;
@@ -74,13 +141,10 @@ main {
   transform: scale(.96);
 }
 
-
-/* PRODUCT IMAGE */
-
 .product-img {
   width: 100%;
-  height: 145px;
-  background: #eeeeee;
+  height: 150px;
+  background: #eee;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -95,21 +159,13 @@ main {
 }
 
 .placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 42px;
+  font-size: 45px;
 }
-
-
-/* PRODUCT TEXT */
 
 .product h3 {
   font-size: 14px;
-  margin: 7px 2px 3px;
   line-height: 1.2;
+  margin: 8px 2px 4px;
 }
 
 .product strong {
@@ -119,41 +175,33 @@ main {
 }
 
 .product small {
-  display: block;
   color: #777;
-  font-size: 10px;
-  margin: 3px 2px;
+  font-size: 11px;
 }
 
-
-/* =========================
-   LARGE PRODUCT VIEW
-========================= */
+/* ================= LARGE PRODUCT VIEW ================= */
 
 #productViewer {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.7);
   z-index: 9998;
+  background: rgba(0,0,0,.70);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 15px;
 }
 
 .large-product-box {
+  position: relative;
   background: white;
   width: 100%;
   max-width: 450px;
-  max-height: 94vh;
+  max-height: 92vh;
   overflow-y: auto;
   border-radius: 15px;
   padding: 15px;
-  position: relative;
 }
-
-
-/* CLOSE BUTTON */
 
 .close-viewer {
   position: absolute;
@@ -166,23 +214,16 @@ main {
   background: #111;
   color: white;
   font-size: 25px;
-  line-height: 30px;
-  z-index: 10;
+  z-index: 5;
 }
-
-
-/* =========================
-   PRODUCT SLIDER
-========================= */
 
 .product-slider {
   position: relative;
   width: 100%;
   height: 350px;
-  background: #f1f1f1;
+  background: #eee;
   border-radius: 12px;
   overflow: hidden;
-  touch-action: pan-y;
 }
 
 .product-slider img {
@@ -200,21 +241,18 @@ main {
   font-size: 80px;
 }
 
-
-/* SLIDER ARROWS */
-
 .slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 35px;
-  height: 35px;
+  width: 38px;
+  height: 38px;
   border: 0;
   border-radius: 50%;
-  background: rgba(0,0,0,.55);
+  background: rgba(0,0,0,.6);
   color: white;
-  font-size: 22px;
-  z-index: 5;
+  font-size: 25px;
+  z-index: 4;
 }
 
 .slider-prev {
@@ -224,9 +262,6 @@ main {
 .slider-next {
   right: 8px;
 }
-
-
-/* DOTS */
 
 .slider-dots {
   position: absolute;
@@ -249,19 +284,13 @@ main {
   background: #111;
 }
 
-
-/* =========================
-   LARGE PRODUCT INFO
-========================= */
-
 .large-product-box h2 {
-  font-size: 21px;
-  margin: 14px 0 5px;
+  font-size: 22px;
+  margin: 15px 0 5px;
 }
 
 .large-description {
   color: #666;
-  font-size: 14px;
 }
 
 .large-price {
@@ -270,10 +299,7 @@ main {
   margin: 10px 0;
 }
 
-
-/* =========================
-   COLOR
-========================= */
+/* ================= COLOR ================= */
 
 .color-title {
   font-weight: bold;
@@ -291,19 +317,14 @@ main {
   background: white;
   padding: 7px 13px;
   border-radius: 20px;
-  cursor: pointer;
 }
 
 .color-btn.selected {
   background: #111;
   color: white;
-  border-color: #111;
 }
 
-
-/* =========================
-   ORDER BUTTON
-========================= */
+/* ================= ORDER BUTTON ================= */
 
 .order-now-btn {
   width: 100%;
@@ -316,78 +337,119 @@ main {
   font-size: 16px;
 }
 
-
-/* =========================
-   LOADING
-========================= */
-
-.loading {
-  text-align: center;
-  padding: 30px;
-  color: #666;
-}
-
-
-/* =========================
-   ORDER MODAL
-========================= */
+/* ================= ORDER MODAL ================= */
 
 #modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.65);
   z-index: 10000;
+  background: rgba(0,0,0,.70);
   display: none;
   align-items: center;
   justify-content: center;
   padding: 15px;
 }
 
-#modal form {
-  background: white;
+#orderForm {
   width: 100%;
-  max-width: 420px;
-  max-height: 90vh;
+  max-width: 450px;
+  max-height: 92vh;
   overflow-y: auto;
-  padding: 18px;
-  border-radius: 12px;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
 }
 
-#modal input,
-#modal textarea,
-#modal select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0 10px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
+#orderForm h2 {
+  margin: 0 0 20px;
+  font-size: 28px;
 }
 
-#modal button[type="submit"] {
+#orderForm label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+#orderForm input,
+#orderForm textarea,
+#orderForm select {
   width: 100%;
   padding: 11px;
-  background: #111;
-  color: white;
-  border: 0;
-  border-radius: 7px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
 }
 
+#orderForm button[type="submit"] {
+  width: 100%;
+  border: 0;
+  background: #111;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-top: 10px;
+}
 
-/* =========================
-   MOBILE
-========================= */
+#colorWrap {
+  display: none;
+}
+
+#status {
+  text-align: center;
+}
+
+/* ================= MOBILE ================= */
 
 @media (max-width: 700px) {
+
+  header {
+    padding: 12px 20px;
+  }
+
+  header nav {
+    gap: 12px;
+  }
+
+  header a {
+    font-size: 15px;
+  }
+
+  main {
+    padding: 25px 20px;
+  }
+
+  main h1 {
+    font-size: 34px;
+  }
+
+  main h2 {
+    font-size: 27px;
+  }
+
+  .home-intro h1 {
+    font-size: 34px;
+  }
+
+  .home-intro p {
+    font-size: 18px;
+  }
+
+  .brand-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
 
   #products {
     grid-template-columns: repeat(3, 1fr);
     gap: 7px;
-    padding: 5px;
   }
 
   .product {
     padding: 5px;
-    border-radius: 8px;
   }
 
   .product-img {
@@ -411,17 +473,11 @@ main {
   }
 }
 
-
-/* =========================
-   SMALL PHONE
-========================= */
-
 @media (max-width: 420px) {
 
   #products {
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
-    padding: 5px;
   }
 
   .product-img {
