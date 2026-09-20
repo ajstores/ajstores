@@ -1,6 +1,4 @@
-body {
-  background: red !important;
-}
+
 
 /* =====================================================
    GLOBAL
@@ -1309,4 +1307,24 @@ select:focus {
     height: 195px !important;
     max-height: 195px !important;
   }
+}
+/* FIX: Product card image should not zoom on touch */
+.product-card .product-img {
+  overflow: hidden;
+}
+
+.product-card .product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Keep large image only inside product viewer */
+#productViewer .slider-image-transition img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none;
 }
