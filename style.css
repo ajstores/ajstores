@@ -2,805 +2,564 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  color: #222;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
+  color: #222;
   overflow-x: hidden;
 }
 
-/* ================= HEADER ================= */
+/* =========================
+   HEADER
+========================= */
 
 header {
-  background: #111;
-  color: white;
-  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 16px 20px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.08);
+  animation: headerDown 0.7s ease;
 }
 
-header .site-name {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 9px;
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
-header nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 18px;
+header p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 14px;
 }
 
-header a {
-  color: white;
+/* =========================
+   NAVIGATION
+========================= */
+
+nav {
+  margin-top: 12px;
+}
+
+nav a {
+  display: inline-block;
+  margin: 4px 6px;
+  padding: 8px 16px;
+  color: #222;
   text-decoration: none;
-  font-size: 16px;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: 0.3s ease;
 }
 
-header a:hover {
-  text-decoration: underline;
+nav a:hover {
+  background: #222;
+  color: white;
+  transform: translateY(-2px);
 }
 
-/* ================= MAIN ================= */
-
-main {
-  width: 100%;
-  max-width: 1100px;
-  margin: auto;
-  padding: 32px 20px;
-  text-align: center;
-}
-
-main h1 {
-  font-size: 40px;
-  margin: 10px 0 18px;
-}
-
-main h2 {
-  font-size: 30px;
-  margin: 32px 0 22px;
-}
-
-main > p {
-  font-size: 18px;
-}
-
-/* ================= HOME ================= */
+/* =========================
+   HOME PAGE
+========================= */
 
 .home-intro {
   text-align: center;
-  margin-bottom: 32px;
+  padding: 45px 20px 25px;
+  animation: fadeUp 0.9s ease;
 }
 
-.home-intro p:first-child {
-  font-size: 18px;
-  font-weight: bold;
+.home-intro h2 {
+  font-size: 32px;
   margin-bottom: 10px;
 }
 
-.home-intro h1 {
-  font-size: 40px;
-  margin: 10px 0 15px;
+.home-intro p {
+  color: #666;
 }
 
-.home-intro p:last-child {
-  font-size: 19px;
-  color: #555;
-}
-
-/* ================= BRAND LOGOS ================= */
+/* =========================
+   BRAND CARDS
+========================= */
 
 .brand-grid {
-  width: 100%;
-  max-width: 850px;
-  margin: 0 auto;
-
+  width: min(1100px, 92%);
+  margin: 25px auto 60px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
-  gap: 25px;
+  gap: 30px;
 }
 
 .brand-card {
-  background: white;
-  border-radius: 15px;
-  padding: 15px;
-
-  box-shadow: 0 3px 12px rgba(0, 0, 0, .10);
-
+  display: block;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
   text-decoration: none;
   color: #222;
-
-  overflow: hidden;
   text-align: center;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+  animation: fadeUp 0.9s ease;
 }
 
-/*
-  HOME PAGE LOGO
-  দুটো logo পুরো গোল হবে
-*/
+.brand-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
 
 .brand-card img {
   display: block;
-
   width: 70%;
   max-width: 300px;
-
   aspect-ratio: 1 / 1;
-
   height: auto;
-
   object-fit: cover;
   object-position: center;
-
-  margin: 0 auto;
-
+  margin: 0 auto 20px;
   border-radius: 50%;
+  transition: transform 0.5s ease;
+}
+
+.brand-card:hover img {
+  transform: scale(1.06) rotate(1deg);
 }
 
 .brand-card h2 {
-  font-size: 22px;
-  margin: 14px 0 7px;
+  margin: 10px 0;
+  font-size: 25px;
 }
 
 .brand-card p {
-  margin: 5px 0;
-  color: #666;
+  color: #777;
 }
 
-.brand-card .shop-link {
-  display: inline-block;
-  margin-top: 10px;
-
-  color: #111;
-  font-weight: bold;
-}
-
-/* ================= PRODUCTS ================= */
+/* =========================
+   PRODUCT AREA
+========================= */
 
 #products {
-  width: 100%;
-
+  width: min(1200px, 94%);
+  margin: 35px auto;
   display: grid;
-
-  grid-template-columns: repeat(4, 1fr);
-
-  gap: 12px;
-
-  text-align: left;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
 }
 
-.product {
+/* =========================
+   PRODUCT CARD
+========================= */
+
+.product-card {
+  position: relative;
   background: white;
-
-  border-radius: 10px;
-
-  padding: 7px;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
-
-  cursor: pointer;
-
+  border-radius: 20px;
+  padding: 15px;
   overflow: hidden;
-
-  transition: transform .15s;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+  animation: productAppear 0.7s ease both;
 }
 
-.product:active {
-  transform: scale(.96);
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
 }
 
-/* ================= PRODUCT IMAGE ================= */
+/* Product Image */
 
-.product-img {
+.product-card img {
   width: 100%;
-
-  height: 150px;
-
-  background: #f1f1f1;
-
-  border-radius: 8px;
-
-  overflow: hidden;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-}
-
-/*
-  contain ব্যবহার করা হয়েছে
-  যাতে পুরো bag দেখা যায়
-*/
-
-.product-img img {
-  width: 100%;
-  height: 100%;
-
+  height: 220px;
+  display: block;
   object-fit: contain;
-  object-position: center center;
-
-  display: block;
-
-  padding: 5px;
+  border-radius: 15px;
+  transition:
+    transform 0.45s ease,
+    filter 0.45s ease;
 }
 
-.placeholder {
-  font-size: 45px;
+.product-card:hover img {
+  transform: scale(1.07);
+  filter: brightness(1.04);
 }
 
-/* ================= PRODUCT TEXT ================= */
+/* Product title */
 
-.product h3 {
-  font-size: 14px;
-
-  line-height: 1.2;
-
-  margin: 8px 2px 4px;
+.product-card h3 {
+  margin: 12px 0 6px;
+  font-size: 18px;
 }
 
-.product strong {
-  display: block;
+/* Price */
 
-  font-size: 15px;
-
-  margin: 4px 2px;
+.product-card .price {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 5px 0;
 }
 
-.product small {
-  display: block;
+/* Description */
 
+.product-card p {
   color: #777;
-
-  font-size: 11px;
-
-  margin: 4px 2px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-/* ================= LARGE PRODUCT ================= */
+/* =========================
+   NEW BADGE
+========================= */
+
+.product-card::before {
+  content: "NEW";
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #111;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  animation: badgePulse 2s infinite;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   PRODUCT VIEWER
+========================= */
 
 #productViewer {
   position: fixed;
-
   inset: 0;
-
-  z-index: 9998;
-
-  background: rgba(0, 0, 0, .70);
-
+  z-index: 2000;
   display: none;
-
   align-items: center;
-
   justify-content: center;
-
-  padding: 15px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  animation: viewerBg 0.3s ease;
 }
 
-.large-product-box {
-  position: relative;
+#productViewer.active {
+  display: flex;
+}
 
-  background: white;
+#productViewer > div {
+  animation: viewerZoom 0.4s ease;
+}
 
+/* =========================
+   MODAL
+========================= */
+
+.modal,
+#orderModal {
+  animation: modalFade 0.3s ease;
+}
+
+.modal-content,
+#orderModal > div {
+  animation: modalUp 0.4s ease;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input,
+textarea,
+select {
   width: 100%;
-
-  max-width: 450px;
-
-  max-height: 92vh;
-
-  overflow-y: auto;
-
-  border-radius: 15px;
-
-  padding: 15px;
-
-  text-align: left;
-}
-
-.close-viewer {
-  position: absolute;
-
-  right: 10px;
-  top: 10px;
-
-  width: 36px;
-  height: 36px;
-
-  border: 0;
-
-  border-radius: 50%;
-
-  background: #111;
-
-  color: white;
-
-  font-size: 25px;
-
-  z-index: 5;
-}
-
-/* ================= LARGE PRODUCT IMAGE ================= */
-
-.product-slider {
-  position: relative;
-
-  width: 100%;
-
-  height: 350px;
-
-  background: #f1f1f1;
-
+  padding: 12px 14px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
   border-radius: 12px;
-
-  overflow: hidden;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
+  outline: none;
+  background: #fff;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
-/*
-  বড় ছবিতেও পুরো product দেখা যাবে
-*/
-
-.product-slider img {
-  width: 100%;
-
-  height: 100%;
-
-  object-fit: contain;
-
-  object-position: center center;
-
-  display: block;
-
-  padding: 8px;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #555;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
-.big-placeholder {
-  width: 100%;
-  height: 100%;
+/* =========================
+   LOADING
+========================= */
 
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-size: 80px;
-}
-
-/* ================= SLIDER ================= */
-
-.slider-arrow {
-  position: absolute;
-
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 38px;
-
-  height: 38px;
-
-  border: 0;
-
-  border-radius: 50%;
-
-  background: rgba(0, 0, 0, .6);
-
-  color: white;
-
-  font-size: 25px;
-
-  z-index: 4;
-}
-
-.slider-prev {
-  left: 8px;
-}
-
-.slider-next {
-  right: 8px;
-}
-
-.slider-dots {
-  position: absolute;
-
-  bottom: 8px;
-
-  left: 0;
-
-  right: 0;
-
-  display: flex;
-
-  justify-content: center;
-
-  gap: 5px;
-}
-
-.slider-dot {
-  width: 8px;
-
-  height: 8px;
-
-  border-radius: 50%;
-
-  background: #bbb;
-}
-
-.slider-dot.active {
-  background: #111;
-}
-
-/* ================= PRODUCT DETAILS ================= */
-
-.large-product-box h2 {
-  font-size: 22px;
-
-  margin: 15px 0 5px;
-}
-
-.large-description {
+.loading {
+  text-align: center;
+  padding: 50px 20px;
+  font-size: 18px;
   color: #666;
 }
 
-.large-price {
-  font-size: 22px;
-
-  font-weight: bold;
-
-  margin: 10px 0;
-}
-
-/* ================= COLOR ================= */
-
-.color-title {
-  font-weight: bold;
-
-  margin: 12px 0 7px;
-}
-
-.color-buttons {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 7px;
-}
-
-.color-btn {
-  border: 1px solid #ccc;
-
-  background: white;
-
-  padding: 7px 13px;
-
-  border-radius: 20px;
-
-  cursor: pointer;
-}
-
-.color-btn.selected {
-  background: #111;
-
-  color: white;
-}
-
-/* ================= ORDER BUTTON ================= */
-
-.order-now-btn {
-  width: 100%;
-
-  border: 0;
-
-  background: #111;
-
-  color: white;
-
-  padding: 12px;
-
-  border-radius: 8px;
-
-  margin-top: 15px;
-
-  font-size: 16px;
-
-  cursor: pointer;
-}
-
-/* ================= ORDER MODAL ================= */
-
-#modal {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 10000;
-
-  background: rgba(0, 0, 0, .70);
-
-  display: none;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 15px;
-}
-
-#orderForm {
-  width: 100%;
-
-  max-width: 450px;
-
-  max-height: 92vh;
-
-  overflow-y: auto;
-
-  background: white;
-
-  border-radius: 15px;
-
-  padding: 20px;
-
-  text-align: left;
-}
-
-#orderForm h2 {
-  margin: 0 0 20px;
-
-  font-size: 28px;
-}
-
-#orderForm p {
-  margin: 10px 0;
-
-  font-size: 16px;
-}
-
-#orderForm label {
+.loading::after {
+  content: "";
   display: block;
-
-  margin-top: 15px;
-
-  margin-bottom: 6px;
-
-  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  margin: 15px auto;
+  border: 3px solid #ddd;
+  border-top-color: #222;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-#orderForm input,
-#orderForm textarea,
-#orderForm select {
-  width: 100%;
+/* =========================
+   SCROLL ANIMATION
+========================= */
 
-  padding: 11px;
-
-  border: 1px solid #ccc;
-
-  border-radius: 8px;
-
-  font-size: 16px;
-
-  background: white;
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
 }
 
-#orderForm button[type="submit"] {
-  width: 100%;
-
-  border: 0;
-
-  background: #111;
-
-  color: white;
-
-  padding: 12px;
-
-  border-radius: 8px;
-
-  font-size: 16px;
-
-  margin-top: 10px;
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-#colorWrap {
-  display: none;
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-#status {
-  text-align: center;
+@keyframes productAppear {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* ================= MOBILE ================= */
+@keyframes headerDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes viewerBg {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes viewerZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalUp {
+  from {
+    opacity: 0;
+    transform: translateY(35px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 700px) {
 
   header {
-    padding: 13px 15px;
+    padding: 13px 12px;
   }
 
-  header .site-name {
-    font-size: 18px;
+  header h1 {
+    font-size: 23px;
   }
 
-  header nav {
-    gap: 12px;
+  .home-intro {
+    padding-top: 30px;
   }
 
-  header a {
-    font-size: 15px;
-  }
-
-  main {
-    padding: 25px 15px;
-  }
-
-  main h1 {
-    font-size: 32px;
-  }
-
-  main h2 {
+  .home-intro h2 {
     font-size: 26px;
   }
 
-  .home-intro h1 {
-    font-size: 32px;
-  }
-
-  .home-intro p:last-child {
-    font-size: 17px;
-  }
-
-  /* ================= HOME LOGOS ================= */
-
   .brand-grid {
     grid-template-columns: 1fr;
-
-    max-width: 500px;
-
-    gap: 18px;
+    gap: 20px;
   }
 
   .brand-card {
-    padding: 12px;
+    padding: 25px 18px;
   }
-
-  /*
-    Mobile-এও logo গোল থাকবে
-  */
 
   .brand-card img {
     width: 58%;
-
     max-width: 250px;
-
     aspect-ratio: 1 / 1;
-
     height: auto;
-
-    object-fit: cover;
-
-    object-position: center;
-
     border-radius: 50%;
   }
 
-  /* ================= PRODUCTS ================= */
-
   #products {
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 7px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 94%;
   }
 
-  .product {
-    padding: 5px;
+  .product-card {
+    padding: 10px;
+    border-radius: 16px;
   }
 
-  .product-img {
-    height: 105px;
+  .product-card img {
+    height: 150px;
   }
 
-  .product-img img {
-    padding: 4px;
-
-    object-fit: contain;
-
-    object-position: center;
+  .product-card h3 {
+    font-size: 15px;
   }
 
-  .product h3 {
+  .product-card .price {
+    font-size: 17px;
+  }
+
+  .product-card p {
     font-size: 12px;
   }
 
-  .product strong {
-    font-size: 13px;
-  }
-
-  .product small {
+  .product-card::before {
+    top: 8px;
+    left: 8px;
     font-size: 9px;
-  }
-
-  /* ================= LARGE PRODUCT ================= */
-
-  .product-slider {
-    height: 300px;
-  }
-
-  .product-slider img {
-    padding: 8px;
-
-    object-fit: contain;
-
-    object-position: center;
+    padding: 4px 7px;
   }
 }
 
-/* ================= SMALL PHONE ================= */
+/* =========================
+   SMALL MOBILE
+========================= */
 
 @media (max-width: 420px) {
 
-  #products {
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 5px;
-  }
-
-  .product-img {
-    height: 100px;
-  }
-
-  .product-img img {
-    padding: 3px;
-  }
-
-  .product h3 {
-    font-size: 11px;
-  }
-
-  .product strong {
-    font-size: 12px;
-  }
-
-  /* ================= HOME LOGO ================= */
-
   .brand-card img {
     width: 55%;
-
     max-width: 230px;
-
-    aspect-ratio: 1 / 1;
-
-    height: auto;
-
-    object-fit: cover;
-
-    border-radius: 50%;
   }
 
-  /* ================= LARGE PRODUCT ================= */
-
-  .product-slider {
-    height: 280px;
+  #products {
+    gap: 9px;
   }
 
-  .product-slider img {
-    padding: 8px;
-
-    object-fit: contain;
-
-    object-position: center;
+  .product-card img {
+    height: 135px;
   }
 }
