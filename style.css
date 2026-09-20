@@ -95,14 +95,16 @@ main > p {
   color: #555;
 }
 
-/* ================= BRAND HOME ================= */
+/* ================= BRAND LOGOS ================= */
 
 .brand-grid {
   width: 100%;
   max-width: 850px;
   margin: 0 auto;
+
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+
   gap: 25px;
 }
 
@@ -110,27 +112,37 @@ main > p {
   background: white;
   border-radius: 15px;
   padding: 15px;
-  box-shadow: 0 3px 12px rgba(0,0,0,.10);
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .10);
+
   text-decoration: none;
   color: #222;
+
   overflow: hidden;
   text-align: center;
 }
 
 /*
-  IMPORTANT:
-  Logo আর square করা হবে না।
-  Original image ratio বজায় থাকবে।
+  HOME PAGE LOGO
+  দুটো logo পুরো গোল হবে
 */
 
 .brand-card img {
   display: block;
+
   width: 70%;
   max-width: 300px;
+
+  aspect-ratio: 1 / 1;
+
   height: auto;
-  object-fit: contain;
+
+  object-fit: cover;
+  object-position: center;
+
   margin: 0 auto;
-  border-radius: 10px;
+
+  border-radius: 50%;
 }
 
 .brand-card h2 {
@@ -146,6 +158,7 @@ main > p {
 .brand-card .shop-link {
   display: inline-block;
   margin-top: 10px;
+
   color: #111;
   font-weight: bold;
 }
@@ -154,19 +167,29 @@ main > p {
 
 #products {
   width: 100%;
+
   display: grid;
+
   grid-template-columns: repeat(4, 1fr);
+
   gap: 12px;
+
   text-align: left;
 }
 
 .product {
   background: white;
+
   border-radius: 10px;
+
   padding: 7px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
   cursor: pointer;
+
   overflow: hidden;
+
   transition: transform .15s;
 }
 
@@ -174,35 +197,40 @@ main > p {
   transform: scale(.96);
 }
 
-/*
-  Product card-এর image area
-*/
+/* ================= PRODUCT IMAGE ================= */
 
 .product-img {
   width: 100%;
+
   height: 150px;
+
   background: #f1f1f1;
+
   border-radius: 8px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   overflow: hidden;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
 }
 
 /*
-  IMPORTANT:
-  cover বাদ দিয়ে contain করা হয়েছে।
-  তাই পুরো bag দেখা যাবে।
+  contain ব্যবহার করা হয়েছে
+  যাতে পুরো bag দেখা যায়
 */
 
 .product-img img {
   width: 100%;
   height: 100%;
+
   object-fit: contain;
   object-position: center center;
+
   display: block;
+
   padding: 5px;
 }
 
@@ -210,35 +238,49 @@ main > p {
   font-size: 45px;
 }
 
+/* ================= PRODUCT TEXT ================= */
+
 .product h3 {
   font-size: 14px;
+
   line-height: 1.2;
+
   margin: 8px 2px 4px;
 }
 
 .product strong {
   display: block;
+
   font-size: 15px;
+
   margin: 4px 2px;
 }
 
 .product small {
   display: block;
+
   color: #777;
+
   font-size: 11px;
+
   margin: 4px 2px;
 }
 
-/* ================= LARGE PRODUCT VIEW ================= */
+/* ================= LARGE PRODUCT ================= */
 
 #productViewer {
   position: fixed;
+
   inset: 0;
+
   z-index: 9998;
-  background: rgba(0,0,0,.70);
+
+  background: rgba(0, 0, 0, .70);
 
   display: none;
+
   align-items: center;
+
   justify-content: center;
 
   padding: 15px;
@@ -246,15 +288,19 @@ main > p {
 
 .large-product-box {
   position: relative;
+
   background: white;
 
   width: 100%;
+
   max-width: 450px;
 
   max-height: 92vh;
+
   overflow-y: auto;
 
   border-radius: 15px;
+
   padding: 15px;
 
   text-align: left;
@@ -262,6 +308,7 @@ main > p {
 
 .close-viewer {
   position: absolute;
+
   right: 10px;
   top: 10px;
 
@@ -269,47 +316,55 @@ main > p {
   height: 36px;
 
   border: 0;
+
   border-radius: 50%;
 
   background: #111;
+
   color: white;
 
   font-size: 25px;
+
   z-index: 5;
 }
 
-/*
-  বড় ছবির area
-*/
+/* ================= LARGE PRODUCT IMAGE ================= */
 
 .product-slider {
   position: relative;
 
   width: 100%;
+
   height: 350px;
 
   background: #f1f1f1;
+
   border-radius: 12px;
 
   overflow: hidden;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 }
 
 /*
-  বড় অবস্থাতেও পুরো bag দেখা যাবে
+  বড় ছবিতেও পুরো product দেখা যাবে
 */
 
 .product-slider img {
   width: 100%;
+
   height: 100%;
 
   object-fit: contain;
+
   object-position: center center;
 
   display: block;
+
   padding: 8px;
 }
 
@@ -318,7 +373,9 @@ main > p {
   height: 100%;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   font-size: 80px;
@@ -330,18 +387,23 @@ main > p {
   position: absolute;
 
   top: 50%;
+
   transform: translateY(-50%);
 
   width: 38px;
+
   height: 38px;
 
   border: 0;
+
   border-radius: 50%;
 
-  background: rgba(0,0,0,.6);
+  background: rgba(0, 0, 0, .6);
+
   color: white;
 
   font-size: 25px;
+
   z-index: 4;
 }
 
@@ -357,10 +419,13 @@ main > p {
   position: absolute;
 
   bottom: 8px;
+
   left: 0;
+
   right: 0;
 
   display: flex;
+
   justify-content: center;
 
   gap: 5px;
@@ -368,9 +433,11 @@ main > p {
 
 .slider-dot {
   width: 8px;
+
   height: 8px;
 
   border-radius: 50%;
+
   background: #bbb;
 }
 
@@ -378,10 +445,11 @@ main > p {
   background: #111;
 }
 
-/* ================= LARGE PRODUCT INFO ================= */
+/* ================= PRODUCT DETAILS ================= */
 
 .large-product-box h2 {
   font-size: 22px;
+
   margin: 15px 0 5px;
 }
 
@@ -391,7 +459,9 @@ main > p {
 
 .large-price {
   font-size: 22px;
+
   font-weight: bold;
+
   margin: 10px 0;
 }
 
@@ -399,36 +469,45 @@ main > p {
 
 .color-title {
   font-weight: bold;
+
   margin: 12px 0 7px;
 }
 
 .color-buttons {
   display: flex;
+
   flex-wrap: wrap;
+
   gap: 7px;
 }
 
 .color-btn {
   border: 1px solid #ccc;
+
   background: white;
 
   padding: 7px 13px;
 
   border-radius: 20px;
+
+  cursor: pointer;
 }
 
 .color-btn.selected {
   background: #111;
+
   color: white;
 }
 
-/* ================= ORDER ================= */
+/* ================= ORDER BUTTON ================= */
 
 .order-now-btn {
   width: 100%;
 
   border: 0;
+
   background: #111;
+
   color: white;
 
   padding: 12px;
@@ -438,19 +517,25 @@ main > p {
   margin-top: 15px;
 
   font-size: 16px;
+
+  cursor: pointer;
 }
+
+/* ================= ORDER MODAL ================= */
 
 #modal {
   position: fixed;
+
   inset: 0;
 
   z-index: 10000;
 
-  background: rgba(0,0,0,.70);
+  background: rgba(0, 0, 0, .70);
 
   display: none;
 
   align-items: center;
+
   justify-content: center;
 
   padding: 15px;
@@ -458,9 +543,11 @@ main > p {
 
 #orderForm {
   width: 100%;
+
   max-width: 450px;
 
   max-height: 92vh;
+
   overflow-y: auto;
 
   background: white;
@@ -474,11 +561,13 @@ main > p {
 
 #orderForm h2 {
   margin: 0 0 20px;
+
   font-size: 28px;
 }
 
 #orderForm p {
   margin: 10px 0;
+
   font-size: 16px;
 }
 
@@ -486,6 +575,7 @@ main > p {
   display: block;
 
   margin-top: 15px;
+
   margin-bottom: 6px;
 
   font-size: 16px;
@@ -513,6 +603,7 @@ main > p {
   border: 0;
 
   background: #111;
+
   color: white;
 
   padding: 12px;
@@ -572,11 +663,13 @@ main > p {
     font-size: 17px;
   }
 
-  /* HOME LOGO */
+  /* ================= HOME LOGOS ================= */
 
   .brand-grid {
     grid-template-columns: 1fr;
+
     max-width: 500px;
+
     gap: 18px;
   }
 
@@ -584,18 +677,31 @@ main > p {
     padding: 12px;
   }
 
+  /*
+    Mobile-এও logo গোল থাকবে
+  */
+
   .brand-card img {
     width: 58%;
+
     max-width: 250px;
+
+    aspect-ratio: 1 / 1;
+
     height: auto;
-    aspect-ratio: auto;
-    object-fit: contain;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 50%;
   }
 
-  /* PRODUCTS */
+  /* ================= PRODUCTS ================= */
 
   #products {
     grid-template-columns: repeat(3, 1fr);
+
     gap: 7px;
   }
 
@@ -609,7 +715,10 @@ main > p {
 
   .product-img img {
     padding: 4px;
+
     object-fit: contain;
+
+    object-position: center;
   }
 
   .product h3 {
@@ -624,7 +733,7 @@ main > p {
     font-size: 9px;
   }
 
-  /* BIG PRODUCT */
+  /* ================= LARGE PRODUCT ================= */
 
   .product-slider {
     height: 300px;
@@ -632,7 +741,10 @@ main > p {
 
   .product-slider img {
     padding: 8px;
+
     object-fit: contain;
+
+    object-position: center;
   }
 }
 
@@ -642,6 +754,7 @@ main > p {
 
   #products {
     grid-template-columns: repeat(3, 1fr);
+
     gap: 5px;
   }
 
@@ -661,16 +774,23 @@ main > p {
     font-size: 12px;
   }
 
-  /* HOME LOGO */
+  /* ================= HOME LOGO ================= */
 
   .brand-card img {
     width: 55%;
+
     max-width: 230px;
+
+    aspect-ratio: 1 / 1;
+
     height: auto;
-    aspect-ratio: auto;
+
+    object-fit: cover;
+
+    border-radius: 50%;
   }
 
-  /* LARGE PRODUCT */
+  /* ================= LARGE PRODUCT ================= */
 
   .product-slider {
     height: 280px;
@@ -678,6 +798,9 @@ main > p {
 
   .product-slider img {
     padding: 8px;
+
     object-fit: contain;
+
+    object-position: center;
   }
 }
