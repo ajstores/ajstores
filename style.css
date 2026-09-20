@@ -21,6 +21,10 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 
 /* =====================================================
    HEADER
@@ -30,31 +34,26 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 11px 15px;
+  width: 100%;
+  padding: 12px 15px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.94);
   backdrop-filter: blur(12px);
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.07);
   animation: headerDown 0.55s ease;
 }
 
-header h1 {
+/* IMPORTANT: actual HTML uses .site-name */
+.site-name {
+  display: block;
   margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #111;
 }
-
-header p {
-  margin: 4px 0 0;
-  color: #666;
-  font-size: 12px;
-}
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
 
 nav {
   margin-top: 8px;
@@ -63,19 +62,29 @@ nav {
 nav a {
   display: inline-block;
   margin: 2px 3px;
-  padding: 6px 12px;
+  padding: 7px 13px;
   color: #222;
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 18px;
   transition: 0.25s ease;
 }
 
 nav a:hover {
-  background: #222;
+  background: #111;
   color: white;
   transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+main {
+  width: 100%;
+  min-height: 70vh;
 }
 
 
@@ -85,19 +94,50 @@ nav a:hover {
 
 .home-intro {
   text-align: center;
-  padding: 28px 15px 15px;
+  padding: 30px 15px 15px;
   animation: fadeUp 0.7s ease;
 }
 
-.home-intro h2 {
-  font-size: 27px;
-  margin: 0 0 7px;
-}
-
 .home-intro p {
-  margin: 0;
+  margin: 5px 0;
   color: #666;
   font-size: 13px;
+}
+
+.home-intro h1 {
+  margin: 7px 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 900;
+  color: #111;
+}
+
+
+/* =====================================================
+   PAGE TITLE
+===================================================== */
+
+main > h1 {
+  margin: 25px 15px 5px;
+  text-align: center;
+  font-size: 27px;
+  line-height: 1.2;
+  font-weight: 900;
+  color: #111;
+}
+
+main > p {
+  margin: 5px 15px;
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+}
+
+main > h2 {
+  width: 94%;
+  margin: 22px auto 8px;
+  font-size: 19px;
+  font-weight: 800;
 }
 
 
@@ -116,20 +156,18 @@ nav a:hover {
 .brand-card {
   display: block;
   padding: 18px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255,255,255,0.94);
   border-radius: 20px;
   text-decoration: none;
   color: #222;
   text-align: center;
-  box-shadow: 0 7px 22px rgba(0, 0, 0, 0.07);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  box-shadow: 0 7px 22px rgba(0,0,0,0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .brand-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
 }
 
 .brand-card img {
@@ -142,11 +180,6 @@ nav a:hover {
   object-position: center;
   margin: 0 auto 12px;
   border-radius: 50%;
-  transition: transform 0.4s ease;
-}
-
-.brand-card:hover img {
-  transform: scale(1.04);
 }
 
 .brand-card h2 {
@@ -162,17 +195,14 @@ nav a:hover {
 
 
 /* =====================================================
-   PRODUCT AREA
+   PRODUCTS
 ===================================================== */
 
 #products {
   width: min(1100px, 94%);
-  margin: 25px auto 45px;
+  margin: 20px auto 45px;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(175px, 1fr)
-  );
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 14px;
 }
 
@@ -183,22 +213,20 @@ nav a:hover {
 
 .product-card {
   position: relative;
-  background: white;
+  width: 100%;
+  min-width: 0;
+  background: #fff;
   border-radius: 15px;
   padding: 9px;
   overflow: hidden;
-  box-shadow:
-    0 5px 18px rgba(0, 0, 0, 0.07);
-
-  transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
 
@@ -209,27 +237,26 @@ nav a:hover {
 .product-img {
   position: relative;
   width: 100%;
-  height: 175px;
+  height: 170px;
+  max-height: 170px;
   overflow: hidden;
   border-radius: 11px;
   background: #f7f7f8;
 }
 
+.product-card .product-img img,
 .product-card img {
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   border-radius: 11px;
-
-  transition:
-    transform 0.4s ease,
-    filter 0.4s ease;
 }
 
 .product-card:hover img {
-  transform: scale(1.055);
-  filter: brightness(1.04);
+  transform: scale(1.035);
 }
 
 
@@ -243,7 +270,7 @@ nav a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 35px;
   color: #aaa;
 }
 
@@ -275,9 +302,9 @@ nav a:hover {
 }
 
 .product-card .price {
+  margin: 0;
   font-size: 17px;
   font-weight: 800;
-  margin: 0;
 }
 
 .color-count {
@@ -288,7 +315,7 @@ nav a:hover {
 
 
 /* =====================================================
-   PRODUCT BADGE
+   BADGE
 ===================================================== */
 
 .product-badge {
@@ -296,18 +323,12 @@ nav a:hover {
   top: 7px;
   left: 7px;
   z-index: 5;
-
   padding: 4px 7px;
   border-radius: 12px;
-
   background: #111;
   color: white;
-
   font-size: 8px;
   font-weight: bold;
-  letter-spacing: 0.4px;
-
-  animation: badgePulse 2.5s infinite;
 }
 
 
@@ -319,7 +340,7 @@ nav a:hover {
   position: absolute;
   top: 7px;
   right: 7px;
-  z-index: 6;
+  z-index: 10;
 
   width: 28px;
   height: 28px;
@@ -328,16 +349,12 @@ nav a:hover {
   align-items: center;
   justify-content: center;
 
+  border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  background: rgba(255,255,255,0.94);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
 
   cursor: pointer;
-
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease;
 }
 
 .heart-btn span {
@@ -345,14 +362,9 @@ nav a:hover {
   line-height: 1;
 }
 
-.heart-btn:hover {
-  transform: scale(1.1);
-}
-
 .heart-btn.liked {
   background: #111;
   color: white;
-  transform: scale(1.08);
 }
 
 
@@ -370,19 +382,16 @@ nav a:hover {
 
   text-align: center;
 
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0,0,0,0.75);
   color: white;
 
   border-radius: 8px;
-
   font-size: 10px;
 
   opacity: 0;
   transform: translateY(8px);
 
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
+  transition: 0.25s ease;
 }
 
 .product-card:hover .quick-view {
@@ -398,142 +407,164 @@ nav a:hover {
 button {
   border: none;
   cursor: pointer;
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
+  transition: 0.2s ease;
 }
 
-button:hover {
-  transform: translateY(-2px);
-}
-
-button:active,
-.button-click {
+button:active {
   transform: scale(0.96);
 }
 
 
 /* =====================================================
-   PRODUCT VIEWER
+   PRODUCT VIEWER BACKGROUND
 ===================================================== */
 
 #productViewer {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
+  position: fixed !important;
+  inset: 0 !important;
+
+  z-index: 9998 !important;
 
   display: none;
 
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  justify-content: center !important;
 
-  padding: 12px;
+  width: 100vw !important;
+  height: 100vh !important;
 
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(7px);
+  padding: 10px !important;
 
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
+  background: rgba(0,0,0,0.72);
 
-#productViewer.viewer-show {
+  overflow: hidden !important;
+
   opacity: 1;
 }
 
 
 /* =====================================================
-   LARGE PRODUCT BOX
+   POPUP BOX
 ===================================================== */
 
-.large-product-box {
-  position: relative;
+#productViewer .large-product-box {
+  position: relative !important;
 
-  width: min(500px, 94vw);
-  max-height: 92vh;
+  width: 100% !important;
+  max-width: 470px !important;
 
-  overflow-y: auto;
+  height: auto !important;
+  max-height: 92vh !important;
 
-  padding: 15px;
+  margin: 0 auto !important;
 
-  background: white;
+  padding: 12px !important;
 
-  border-radius: 20px;
+  background: #fff !important;
 
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 18px !important;
 
-  animation: viewerZoom 0.3s ease;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+
+  transform: none;
 }
 
 
 /* =====================================================
-   CLOSE VIEWER
+   POPUP INNER CONTENT
+===================================================== */
+
+#productViewer .product-viewer-animation {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+#productViewer .viewer-product-info {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+
+/* =====================================================
+   CLOSE BUTTON
 ===================================================== */
 
 .close-viewer {
-  position: absolute;
+  position: absolute !important;
 
-  top: 8px;
-  right: 8px;
+  top: 7px !important;
+  right: 7px !important;
 
-  z-index: 20;
+  z-index: 50 !important;
 
-  width: 32px;
-  height: 32px;
+  width: 32px !important;
+  height: 32px !important;
 
-  border-radius: 50%;
+  padding: 0 !important;
 
-  background: rgba(0, 0, 0, 0.75);
-  color: white;
+  border-radius: 50% !important;
 
-  font-size: 21px;
-  line-height: 1;
+  background: rgba(0,0,0,0.78) !important;
+  color: white !important;
+
+  font-size: 21px !important;
+  line-height: 32px !important;
+
+  text-align: center;
 }
 
 
 /* =====================================================
-   PRODUCT SLIDER
+   POPUP PRODUCT SLIDER
 ===================================================== */
 
-.product-slider {
-  position: relative;
+#productViewer .product-slider {
+  position: relative !important;
 
-  width: 100%;
-  height: 310px;
+  width: 100% !important;
+  height: 290px !important;
 
-  overflow: hidden;
+  max-height: 290px !important;
 
-  border-radius: 14px;
+  overflow: hidden !important;
+
+  border-radius: 13px !important;
 
   background: #f7f7f8;
-
-  touch-action: pan-y;
 }
 
-#sliderImageArea {
-  width: 100%;
-  height: 100%;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* =====================================================
+   POPUP IMAGE AREA
+===================================================== */
+
+#productViewer #sliderImageArea {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  overflow: hidden !important;
 }
 
-#sliderImageArea img {
-  width: 100%;
-  height: 100%;
+#productViewer #sliderImageArea img {
+  display: block !important;
 
-  object-fit: contain;
+  width: 100% !important;
+  height: 100% !important;
 
-  transition:
-    opacity 0.3s ease,
-    transform 0.35s ease;
-}
+  max-width: 100% !important;
+  max-height: 100% !important;
 
-#sliderImageArea.color-changing img {
-  animation: colorImageChange 0.35s ease;
+  object-fit: contain !important;
+
+  margin: 0 !important;
 }
 
 
@@ -545,78 +576,81 @@ button:active,
   position: absolute;
 
   top: 50%;
-  transform: translateY(-50%);
 
   width: 32px;
   height: 32px;
 
+  margin: 0;
+
+  transform: translateY(-50%);
+
   border-radius: 50%;
 
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.62);
   color: white;
 
-  font-size: 25px;
-  line-height: 25px;
+  font-size: 23px;
+  line-height: 32px;
 
-  z-index: 5;
+  z-index: 10;
 }
 
 .slider-prev {
-  left: 8px;
+  left: 7px;
 }
 
 .slider-next {
-  right: 8px;
+  right: 7px;
 }
 
 .slider-arrow:hover {
   background: #111;
-  transform: translateY(-50%) scale(1.08);
 }
 
 
 /* =====================================================
-   SLIDER DOTS
+   DOTS
 ===================================================== */
 
 .slider-dots {
   position: absolute;
 
-  bottom: 8px;
+  bottom: 7px;
   left: 50%;
 
   transform: translateX(-50%);
 
   display: flex;
   gap: 5px;
+
+  z-index: 10;
 }
 
 .slider-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 
   border-radius: 50%;
 
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0,0,0,0.3);
 }
 
 .slider-dot.active {
   background: #111;
-  transform: scale(1.3);
 }
 
 
 /* =====================================================
-   VIEWER INFO
+   VIEWER TEXT
 ===================================================== */
 
-.viewer-product-info {
-  padding: 5px 2px 0;
-}
+#productViewer .large-product-box h2 {
+  margin: 11px 0 5px;
 
-.large-product-box h2 {
-  margin: 12px 0 5px;
-  font-size: 21px;
+  font-size: 20px;
+  line-height: 1.25;
+
+  color: #111;
 }
 
 .large-description {
@@ -624,24 +658,26 @@ button:active,
 
   color: #777;
 
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
 .large-price {
-  margin: 5px 0 12px;
+  margin: 5px 0 10px;
 
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 800;
+
+  color: #111;
 }
 
 
 /* =====================================================
-   STYLISH COLOR BUTTONS
+   COLORS
 ===================================================== */
 
 .color-title {
-  margin: 10px 0 7px;
+  margin: 9px 0 7px;
 
   font-size: 13px;
   font-weight: 700;
@@ -650,7 +686,7 @@ button:active,
 .stylish-colors {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 6px;
 }
 
 .stylish-color-btn {
@@ -660,7 +696,8 @@ button:active,
   align-items: center;
   gap: 5px;
 
-  min-width: 70px;
+  min-width: 65px;
+
   padding: 4px 8px 4px 4px;
 
   border: 1px solid #ddd;
@@ -669,18 +706,16 @@ button:active,
   background: white;
 
   font-size: 10px;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
 .stylish-color-btn img {
-  width: 27px;
-  height: 27px;
+  width: 27px !important;
+  height: 27px !important;
 
-  object-fit: cover;
+  max-width: 27px !important;
+  max-height: 27px !important;
+
+  object-fit: cover !important;
 
   border-radius: 50%;
 }
@@ -706,11 +741,7 @@ button:active,
 
 .stylish-color-btn.selected {
   border-color: #111;
-
-  box-shadow:
-    0 0 0 2px rgba(0, 0, 0, 0.08);
-
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
 }
 
 .stylish-color-btn.selected b {
@@ -731,8 +762,8 @@ button:active,
 
   font-size: 9px;
 
-  text-align: center;
   line-height: 15px;
+  text-align: center;
 }
 
 
@@ -743,11 +774,11 @@ button:active,
 .order-now-btn {
   width: 100%;
 
-  margin-top: 13px;
+  margin-top: 12px;
 
-  padding: 11px 15px;
+  padding: 10px 14px;
 
-  border-radius: 12px;
+  border-radius: 11px;
 
   background: #111;
   color: white;
@@ -755,18 +786,7 @@ button:active,
   font-size: 14px;
   font-weight: 700;
 
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.15);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.order-now-btn:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
 .order-now-btn span {
@@ -778,100 +798,47 @@ button:active,
    ORDER MODAL
 ===================================================== */
 
-.modal,
-#orderModal {
-  animation: modalFade 0.25s ease;
-}
+#modal {
+  position: fixed !important;
+  inset: 0 !important;
 
-.modal-content,
-#orderModal > div {
-  animation: modalUp 0.3s ease;
-}
+  z-index: 10000 !important;
 
-
-/* =====================================================
-   ORDER COLOR OPTIONS
-===================================================== */
-
-.order-color-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-
-  margin-top: 5px;
-  margin-bottom: 9px;
-}
-
-.order-color-choice {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
-  padding: 3px 7px 3px 3px;
-
-  border: 1px solid #ddd;
-  border-radius: 16px;
-
-  background: white;
-
-  font-size: 10px;
-}
-
-.order-color-choice img {
-  width: 24px;
-  height: 24px;
-
-  object-fit: cover;
-
-  border-radius: 50%;
-}
-
-.order-color-choice .mini-color {
-  width: 24px;
-  height: 24px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #eee;
-
-  font-size: 9px;
-}
-
-.order-color-choice b {
   display: none;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  padding: 10px !important;
+
+  background: rgba(0,0,0,0.72);
+
+  overflow-y: auto !important;
 }
 
-.order-color-choice.selected {
-  border-color: #111;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.07);
+#modal form {
+  width: 100% !important;
+  max-width: 430px !important;
+  max-height: 92vh !important;
+
+  overflow-y: auto !important;
+
+  margin: auto !important;
+  padding: 18px !important;
+
+  background: white !important;
+
+  border-radius: 17px !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
-.order-color-choice.selected b {
-  display: block;
-
-  position: absolute;
-
-  top: -4px;
-  right: -4px;
-
-  width: 14px;
-  height: 14px;
-
-  border-radius: 50%;
-
-  background: #111;
-  color: white;
-
-  font-size: 8px;
-
-  line-height: 14px;
-  text-align: center;
+#modal form h2 {
+  margin: 0 0 12px;
+  font-size: 21px;
 }
 
 
@@ -890,6 +857,7 @@ select {
   margin-bottom: 9px;
 
   border: 1px solid #ddd;
+
   border-radius: 9px;
 
   outline: none;
@@ -897,10 +865,6 @@ select {
   background: #fff;
 
   font-size: 13px;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
 input:focus,
@@ -908,8 +872,7 @@ textarea:focus,
 select:focus {
   border-color: #555;
 
-  box-shadow:
-    0 0 0 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 
 
@@ -954,6 +917,37 @@ select:focus {
 
 
 /* =====================================================
+   EMPTY
+===================================================== */
+
+.products-empty {
+  grid-column: 1 / -1;
+
+  text-align: center;
+
+  padding: 35px 10px;
+
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 7px;
+}
+
+.retry-btn {
+  padding: 8px 14px;
+
+  border-radius: 8px;
+
+  background: #111;
+  color: white;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
    PAGE LOADER
 ===================================================== */
 
@@ -961,17 +955,14 @@ select:focus {
   position: fixed;
   inset: 0;
 
-  z-index: 9999;
+  z-index: 99999;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   background: #f7f8fc;
-
-  transition:
-    opacity 0.45s ease,
-    visibility 0.45s ease;
 }
 
 #pageLoader.hide {
@@ -1010,67 +1001,23 @@ select:focus {
 
 
 /* =====================================================
-   EMPTY / ERROR
-===================================================== */
-
-.products-empty {
-  grid-column: 1 / -1;
-
-  text-align: center;
-
-  padding: 35px 10px;
-
-  color: #666;
-}
-
-.empty-icon {
-  font-size: 32px;
-  margin-bottom: 7px;
-}
-
-.retry-btn {
-  padding: 8px 14px;
-
-  border-radius: 8px;
-
-  background: #111;
-  color: white;
-
-  font-size: 12px;
-}
-
-
-/* =====================================================
-   SCROLL REVEAL
+   REVEAL
 ===================================================== */
 
 .reveal {
   opacity: 0;
 
-  transform:
-    translateY(20px)
-    scale(0.98);
+  transform: translateY(20px) scale(0.98);
 
   transition:
-    opacity 0.5s ease var(--delay, 0s),
-    transform 0.5s ease var(--delay, 0s);
+    opacity 0.5s ease var(--delay,0s),
+    transform 0.5s ease var(--delay,0s);
 }
 
 .reveal.show {
   opacity: 1;
 
-  transform:
-    translateY(0)
-    scale(1);
-}
-
-
-/* =====================================================
-   BODY MODAL LOCK
-===================================================== */
-
-body.modal-open {
-  overflow: hidden;
+  transform: translateY(0) scale(1);
 }
 
 
@@ -1079,7 +1026,6 @@ body.modal-open {
 ===================================================== */
 
 @keyframes fadeUp {
-
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -1089,11 +1035,9 @@ body.modal-open {
     opacity: 1;
     transform: translateY(0);
   }
-
 }
 
 @keyframes headerDown {
-
   from {
     opacity: 0;
     transform: translateY(-15px);
@@ -1103,82 +1047,12 @@ body.modal-open {
     opacity: 1;
     transform: translateY(0);
   }
-
-}
-
-@keyframes viewerZoom {
-
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-
-}
-
-@keyframes colorImageChange {
-
-  0% {
-    opacity: 0.2;
-    transform: scale(0.97);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-}
-
-@keyframes modalFade {
-
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-
-}
-
-@keyframes modalUp {
-
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.97);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-}
-
-@keyframes badgePulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.04);
-  }
-
 }
 
 @keyframes spin {
-
   to {
     transform: rotate(360deg);
   }
-
 }
 
 
@@ -1189,15 +1063,12 @@ body.modal-open {
 @media (max-width: 700px) {
 
   header {
-    padding: 10px 10px;
+    padding: 10px 8px;
   }
 
-  header h1 {
+  .site-name {
     font-size: 21px;
-  }
-
-  header p {
-    font-size: 11px;
+    letter-spacing: 0.7px;
   }
 
   nav {
@@ -1209,15 +1080,29 @@ body.modal-open {
     font-size: 11px;
   }
 
-
   .home-intro {
     padding: 22px 12px 10px;
   }
 
-  .home-intro h2 {
+  .home-intro h1 {
     font-size: 23px;
   }
 
+  .home-intro p {
+    font-size: 12px;
+  }
+
+  main > h1 {
+    margin-top: 20px;
+    font-size: 23px;
+  }
+
+  main > h2 {
+    font-size: 18px;
+  }
+
+
+  /* Brand */
 
   .brand-grid {
     grid-template-columns: 1fr;
@@ -1244,60 +1129,49 @@ body.modal-open {
     font-size: 18px;
   }
 
-  .brand-card p {
-    font-size: 11px;
-  }
 
+  /* Products */
 
   #products {
     width: 94%;
 
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 9px;
 
-    margin-top: 18px;
+    margin-top: 15px;
   }
-
 
   .product-card {
     padding: 7px;
     border-radius: 12px;
   }
 
-
   .product-img {
-    height: 135px;
+    height: 125px;
+    max-height: 125px;
     border-radius: 9px;
   }
-
 
   .product-card h3 {
     font-size: 13px;
     margin: 7px 0 4px;
   }
 
-
   .product-card .price {
     font-size: 15px;
   }
-
 
   .color-count {
     font-size: 8px;
   }
 
-
   .product-badge {
     top: 5px;
     left: 5px;
-
     padding: 3px 5px;
-
     font-size: 7px;
   }
-
 
   .heart-btn {
     top: 5px;
@@ -1307,11 +1181,9 @@ body.modal-open {
     height: 25px;
   }
 
-
   .heart-btn span {
     font-size: 15px;
   }
-
 
   .quick-view {
     display: none;
@@ -1321,26 +1193,30 @@ body.modal-open {
   /* Viewer */
 
   #productViewer {
-    padding: 8px;
+    padding: 7px !important;
   }
 
-  .large-product-box {
-    width: 96vw;
-    max-height: 94vh;
+  #productViewer .large-product-box {
+    width: 94vw !important;
+    max-width: 400px !important;
 
-    padding: 10px;
+    max-height: 90vh !important;
 
-    border-radius: 16px;
+    padding: 9px !important;
+
+    border-radius: 15px !important;
   }
 
-  .product-slider {
-    height: 255px;
-    border-radius: 11px;
+  #productViewer .product-slider {
+    height: 220px !important;
+    max-height: 220px !important;
+
+    border-radius: 10px !important;
   }
 
-  .large-product-box h2 {
-    font-size: 18px;
-    margin-top: 9px;
+  #productViewer .large-product-box h2 {
+    font-size: 17px;
+    margin-top: 8px;
   }
 
   .large-description {
@@ -1348,33 +1224,47 @@ body.modal-open {
   }
 
   .large-price {
-    font-size: 19px;
-    margin-bottom: 8px;
+    font-size: 18px;
+    margin-bottom: 7px;
   }
 
   .stylish-color-btn {
-    min-width: 62px;
+    min-width: 60px;
     padding: 3px 6px 3px 3px;
     font-size: 9px;
   }
 
   .stylish-color-btn img,
   .stylish-color-btn .color-circle {
-    width: 24px;
-    height: 24px;
+    width: 23px !important;
+    height: 23px !important;
   }
 
   .order-now-btn {
     padding: 9px 12px;
     font-size: 13px;
-    margin-top: 9px;
+    margin-top: 8px;
   }
 
+
+  /* Order */
+
+  #modal {
+    padding: 8px !important;
+  }
+
+  #modal form {
+    width: 94vw !important;
+    max-width: 400px !important;
+    max-height: 90vh !important;
+
+    padding: 14px !important;
+  }
 }
 
 
 /* =====================================================
-   SMALL MOBILE
+   VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 420px) {
@@ -1389,7 +1279,8 @@ body.modal-open {
   }
 
   .product-img {
-    height: 125px;
+    height: 115px;
+    max-height: 115px;
   }
 
   .product-card h3 {
@@ -1405,8 +1296,13 @@ body.modal-open {
     max-width: 130px;
   }
 
-  .product-slider {
-    height: 230px;
+  #productViewer .large-product-box {
+    width: 94vw !important;
+    max-width: 370px !important;
   }
 
+  #productViewer .product-slider {
+    height: 195px !important;
+    max-height: 195px !important;
+  }
 }
