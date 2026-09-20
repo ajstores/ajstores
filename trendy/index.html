@@ -1,103 +1,218 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>AJ Trendy Hub</title>
-  <link rel="stylesheet" href="../style.css">
+
+  <link
+    rel="stylesheet"
+    href="../style.css"
+  >
+
 </head>
+
 
 <body>
 
-<header class="topbar">
-  <a class="brand" href="../">AJ <span>STORES</span></a>
+
+<header>
+
+  <a href="../">
+    AJ STORES
+  </a>
 
   <nav>
-    <a class="active" href="../trendy/">AJ Trendy Hub</a>
-    <a href="../kidz/">AJ Kidz Zone</a>
+
+    <a href="../">
+      Home
+    </a>
+
+    &nbsp;
+
+    <a href="./">
+      AJ Trendy Hub
+    </a>
+
+    &nbsp;
+
+    <a href="../kidz/">
+      AJ Kidz Zone
+    </a>
+
   </nav>
+
 </header>
 
-<section class="shop-hero trendy-bg">
-  <p class="eyebrow">AJ STORES</p>
-  <h1>AJ Trendy Hub</h1>
-  <p>ব্যাগ, ওয়ালেট ও দৈনন্দিন ফ্যাশন পণ্য।</p>
-</section>
 
-<main class="shop">
-  <h2>Products</h2>
+<main>
 
-  <div id="products" class="products">
-    <p class="loading">Product load হচ্ছে...</p>
-  </div>
+  <h1>
+    AJ Trendy Hub
+  </h1>
 
-  <p class="note">
-   
+  <p>
+    ব্যাগ, ওয়ালেট ও দৈনন্দিন ফ্যাশন পণ্য।
   </p>
+
+
+  <h2>
+    Products
+  </h2>
+
+
+  <section id="products">
+
+    <p class="loading">
+      Product load হচ্ছে...
+    </p>
+
+  </section>
+
 </main>
 
-<div id="modal" class="modal">
-  <div class="modal-box">
 
-    <button class="close" onclick="closeOrder()">×</button>
+<!-- PRODUCT LARGE VIEW -->
 
-    <h2>অর্ডার করুন</h2>
+<div id="productViewer"></div>
 
-    <form id="orderForm">
 
-      <input type="hidden" id="product">
-      <input type="hidden" id="price">
+<!-- ORDER MODAL -->
 
-      <div class="order-summary">
-        <b id="orderProductName"></b>
-        <span>
-          পণ্যের দাম: ৳<span id="orderProductPrice"></span>
-        </span>
-      </div>
+<div id="modal">
 
-      <label>
-        আপনার পূর্ণ নাম
-        <input id="name" placeholder="আপনার পূর্ণ নাম" required>
-      </label>
+  <form id="orderForm">
 
-      <label>
-        মোবাইল নম্বর
-        <input id="phone" placeholder="01XXXXXXXXX" required type="tel">
-      </label>
+    <h2>
+      অর্ডার করুন
+    </h2>
 
-      <label>
-        ডেলিভারি এলাকা
-        <select id="deliveryArea" required>
-          <option value="">এলাকা নির্বাচন করুন</option>
-          <option value="ঢাকার ভিতরে">ঢাকার ভিতরে — ৳60</option>
-          <option value="ঢাকার বাইরে">ঢাকার বাইরে — ৳120</option>
-        </select>
-      </label>
 
-      <label>
-        পূর্ণ ঠিকানা
-        <textarea id="address" placeholder="বাড়ি/রোড/এলাকা/থানা/জেলা সহ পূর্ণ ঠিকানা" required></textarea>
-      </label>
+    <p>
+      Product:
+      <strong id="orderProductName"></strong>
+    </p>
 
-      <div class="total-box">
-        পণ্যের দাম: ৳<span id="summaryPrice">0</span><br>
-        ডেলিভারি চার্জ: ৳<span id="deliveryCharge">0</span>
-        <hr>
-        <b>সর্বমোট: ৳<span id="totalPrice">0</span></b>
-      </div>
 
-      <button class="submit" type="submit">
-        অর্ডার কনফার্ম করুন
-      </button>
+    <p>
+      Price:
+      ৳<strong id="orderProductPrice"></strong>
+    </p>
 
-      <p id="status"></p>
 
-    </form>
+    <input
+      type="hidden"
+      id="product"
+    >
 
-  </div>
+
+    <input
+      type="hidden"
+      id="price"
+    >
+
+
+    <label>
+      Color
+    </label>
+
+    <select id="orderColor">
+    </select>
+
+
+    <label>
+      আপনার নাম
+    </label>
+
+    <input
+      type="text"
+      id="name"
+      required
+    >
+
+
+    <label>
+      মোবাইল নম্বর
+    </label>
+
+    <input
+      type="tel"
+      id="phone"
+      required
+    >
+
+
+    <label>
+      ঠিকানা
+    </label>
+
+    <textarea
+      id="address"
+      rows="3"
+      required
+    ></textarea>
+
+
+    <label>
+      ডেলিভারি এলাকা
+    </label>
+
+    <select
+      id="deliveryArea"
+      required
+    >
+
+      <option value="">
+        নির্বাচন করুন
+      </option>
+
+      <option value="ঢাকার ভিতরে">
+        ঢাকার ভিতরে — ৳60
+      </option>
+
+      <option value="ঢাকার বাইরে">
+        ঢাকার বাইরে — ৳120
+      </option>
+
+    </select>
+
+
+    <p>
+      Delivery Charge:
+      ৳<span id="deliveryCharge">0</span>
+    </p>
+
+
+    <p>
+      Total:
+      ৳<strong id="totalPrice">0</strong>
+    </p>
+
+
+    <button type="submit">
+      অর্ডার কনফার্ম করুন
+    </button>
+
+
+    <p id="status"></p>
+
+  </form>
+
 </div>
 
-<script src="../script.js"></script>
+
+<script
+  src="../script.js"
+></script>
+
 
 </body>
+
 </html>
