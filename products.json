@@ -14,6 +14,20 @@
   },
   {
     "store": "AJ Trendy Hub",
+    "name": "ARTICHUNTER LABTOP BAG",
+    "price": 550,
+    "description": "Stylish collage Office bag",
+    "status": "ON",
+    "colors": [
+      {
+        "name": "Black",
+        "image": "/ajstores/artichunter.jpg"
+      }
+    ]
+  },
+  
+  {
+    "store": "AJ Trendy Hub",
     "name": "KURUMU BAG",
     "price": 500,
     "description": "Cute Baby bag",
@@ -31,6 +45,23 @@
         "name": "Pink",
         "image": "/ajstores/kurumipink.jpg"
       }
+    ]
+  },
+  {
+    "store": "AJ Trendy Hub",
+    "name": "BUTTERFLY BABY BAG",
+    "price": 480,
+    "description": "Cute Baby bag",
+    "status": "ON",
+    "colors": [
+      {
+        "name": "Grey",
+        "image": "/ajstores/buterflygrey.jpg"
+      },
+      {
+        "name": "Pink",
+        "image": "/ajstores/buterflypink.jpg"
+      },
     ]
   },
   {
