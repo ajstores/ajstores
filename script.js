@@ -848,3 +848,86 @@ if (orderForm) {
 ========================= */
 
 loadProducts();
+// =====================================
+// PREMIUM SCROLL ANIMATION
+// =====================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const observer = new IntersectionObserver(
+    function (entries) {
+
+      entries.forEach(function (entry) {
+
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          observer.unobserve(entry.target);
+        }
+
+      });
+
+    },
+    {
+      threshold: 0.12
+    }
+  );
+
+
+  function addScrollAnimation() {
+
+    const items = document.querySelectorAll(
+      ".product-card, .brand-card"
+    );
+
+    items.forEach(function (item) {
+
+      item.classList.add("reveal");
+
+      observer.observe(item);
+
+    });
+
+  }
+
+
+  setTimeout(addScrollAnimation, 500);
+
+});
+
+
+// =====================================
+// SMOOTH PRODUCT IMAGE EFFECT
+// =====================================
+
+document.addEventListener("click", function (e) {
+
+  const img = e.target.closest(".product-card img");
+
+  if (!img) return;
+
+  img.style.transform = "scale(0.95)";
+
+  setTimeout(function () {
+    img.style.transform = "";
+  }, 180);
+
+});
+
+
+// =====================================
+// BUTTON CLICK ANIMATION
+// =====================================
+
+document.addEventListener("click", function (e) {
+
+  const button = e.target.closest("button");
+
+  if (!button) return;
+
+  button.classList.add("button-click");
+
+  setTimeout(function () {
+    button.classList.remove("button-click");
+  }, 180);
+
+});
