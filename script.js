@@ -22,9 +22,9 @@ let selectedColor = "";
 let currentSlide = 0;
 
 
-// =========================
-// ESCAPE
-// =========================
+/* =========================
+   ESCAPE
+========================= */
 
 function escapeHtml(value) {
 
@@ -43,14 +43,13 @@ function escapeHtml(value) {
 }
 
 
-// =========================
-// LOAD PRODUCTS
-// =========================
+/* =========================
+   LOAD PRODUCTS
+========================= */
 
 async function loadProducts() {
 
-  const grid =
-    document.getElementById("products");
+  const grid = document.getElementById("products");
 
   if (!grid) return;
 
@@ -70,24 +69,19 @@ async function loadProducts() {
       throw new Error("products.json পাওয়া যায়নি");
     }
 
-    const allProducts =
-      await response.json();
+    const allProducts = await response.json();
 
+    const products = allProducts.filter(function(p) {
 
-    const products =
-      allProducts.filter(function(p) {
+      return String(p.store || "")
+        .trim()
+        .toLowerCase() === store.trim().toLowerCase()
+        &&
+        String(p.status || "")
+        .trim()
+        .toUpperCase() === "ON";
 
-        return String(p.store || "")
-          .trim()
-          .toLowerCase() ===
-          store.trim().toLowerCase()
-          &&
-          String(p.status || "")
-          .trim()
-          .toUpperCase() === "ON";
-
-      });
-
+    });
 
     if (!products.length) {
 
@@ -97,90 +91,70 @@ async function loadProducts() {
       return;
     }
 
-
     window.loadedProducts = products;
 
+    grid.innerHTML = products.map(function(p, index) {
 
-    grid.innerHTML =
-      products.map(function(p, index) {
+      const price = Number(p.price) || 0;
 
-        const price =
-          Number(p.price) || 0;
+      const colors =
+        Array.isArray(p.colors) ? p.colors : [];
 
+      const firstColor =
+        colors.length ? colors[0] : null;
 
-        const colors =
-          Array.isArray(p.colors)
-            ? p.colors
-            : [];
+      const firstImage =
+        firstColor && firstColor.image
+          ? firstColor.image
+          : "";
 
+      let imageHTML;
 
-        const firstColor =
-          colors.length
-            ? colors[0]
-            : null;
+      if (firstImage) {
 
-
-        const firstImage =
-          firstColor &&
-          firstColor.image
-            ? firstColor.image
-            : "";
-
-
-        let imageHTML;
-
-
-        if (firstImage) {
-
-          imageHTML = `
-            <img
-              src="${escapeHtml(firstImage)}"
-              alt="${escapeHtml(p.name)}"
-            >
-          `;
-
-        } else {
-
-          imageHTML = `
-            <div class="placeholder">
-              🛍️
-            </div>
-          `;
-
-        }
-
-
-        return `
-
-          <article
-            class="product"
-            onclick="openProduct(${index})"
+        imageHTML = `
+          <img
+            src="${escapeHtml(firstImage)}"
+            alt="${escapeHtml(p.name)}"
           >
-
-            <div class="product-img">
-              ${imageHTML}
-            </div>
-
-            <h3>
-              ${escapeHtml(p.name)}
-            </h3>
-
-            <strong>
-              ৳${price.toLocaleString("en-BD")}
-            </strong>
-
-            ${
-              colors.length > 1
-                ? `<small>${colors.length} colors</small>`
-                : ""
-            }
-
-          </article>
-
         `;
 
-      }).join("");
+      } else {
 
+        imageHTML = `
+          <div class="placeholder">🛍️</div>
+        `;
+
+      }
+
+      return `
+        <article
+          class="product"
+          onclick="openProduct(${index})"
+        >
+
+          <div class="product-img">
+            ${imageHTML}
+          </div>
+
+          <h3>
+            ${escapeHtml(p.name)}
+          </h3>
+
+          <strong>
+            ৳${price.toLocaleString("en-BD")}
+          </strong>
+
+          ${
+            colors.length > 1
+              ? `<small>${colors.length} colors</small>`
+              : ""
+          }
+
+        </article>
+      `;
+
+    }).join("");
 
   } catch (error) {
 
@@ -194,47 +168,35 @@ async function loadProducts() {
 }
 
 
-// =========================
-// OPEN PRODUCT
-// =========================
+/* =========================
+   OPEN PRODUCT
+========================= */
 
 function openProduct(index) {
 
-  const products =
-    window.loadedProducts || [];
+  const products = window.loadedProducts || [];
 
-  const product =
-    products[index];
+  const product = products[index];
 
   if (!product) return;
 
-
   currentProduct = product;
-
   selectedColor = "";
-
   currentSlide = 0;
-
 
   const colors =
     Array.isArray(product.colors)
       ? product.colors
       : [];
 
-
   if (colors.length === 1) {
-
-    selectedColor =
-      colors[0].name || "";
-
+    selectedColor = colors[0].name || "";
   }
-
 
   const viewer =
     document.getElementById("productViewer");
 
   if (!viewer) return;
-
 
   viewer.innerHTML = `
 
@@ -250,15 +212,12 @@ function openProduct(index) {
         ×
       </button>
 
-
       <div
         class="product-slider"
         id="productSlider"
       >
 
-        <div id="sliderImageArea">
-        </div>
-
+        <div id="sliderImageArea"></div>
 
         ${
           colors.length > 1
@@ -280,34 +239,28 @@ function openProduct(index) {
               <div
                 class="slider-dots"
                 id="sliderDots"
-              >
-              </div>
+              ></div>
             `
             : ""
         }
 
       </div>
 
-
       <h2>
         ${escapeHtml(product.name)}
       </h2>
-
 
       <p class="large-description">
         ${escapeHtml(product.description || "")}
       </p>
 
-
       <div class="large-price">
         ৳${Number(product.price || 0).toLocaleString("en-BD")}
       </div>
 
-
       ${
         colors.length > 1
           ? `
-
             <div class="color-title">
               Color নির্বাচন করুন:
             </div>
@@ -317,31 +270,22 @@ function openProduct(index) {
               ${colors.map(function(color, i) {
 
                 return `
-
                   <button
                     class="color-btn ${
-                      i === 0
-                        ? "selected"
-                        : ""
+                      i === 0 ? "selected" : ""
                     }"
-                    onclick="selectColor(
-                      ${i},
-                      event
-                    )"
+                    onclick="selectColor(${i}, event)"
                   >
                     ${escapeHtml(color.name)}
                   </button>
-
                 `;
 
               }).join("")}
 
             </div>
-
           `
           : ""
       }
-
 
       <button
         class="order-now-btn"
@@ -351,17 +295,13 @@ function openProduct(index) {
       </button>
 
     </div>
-
   `;
-
 
   viewer.style.display = "flex";
 
-
   renderSlide();
 
-
-  // SWIPE
+  /* SWIPE */
 
   const slider =
     document.getElementById("productSlider");
@@ -373,13 +313,9 @@ function openProduct(index) {
     slider.addEventListener(
       "touchstart",
       function(e) {
-
-        startX =
-          e.touches[0].clientX;
-
+        startX = e.touches[0].clientX;
       }
     );
-
 
     slider.addEventListener(
       "touchend",
@@ -391,11 +327,9 @@ function openProduct(index) {
         const difference =
           startX - endX;
 
-
         if (Math.abs(difference) < 40) {
           return;
         }
-
 
         if (difference > 0) {
           nextSlide();
@@ -411,74 +345,54 @@ function openProduct(index) {
 }
 
 
-// =========================
-// RENDER SLIDE
-// =========================
+/* =========================
+   RENDER SLIDE
+========================= */
 
 function renderSlide() {
 
   if (!currentProduct) return;
-
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
+  const imageArea =
+    document.getElementById("sliderImageArea");
+
+  if (!imageArea) return;
 
   if (!colors.length) {
 
-    document.getElementById(
-      "sliderImageArea"
-    ).innerHTML =
+    imageArea.innerHTML =
       '<div class="big-placeholder">🛍️</div>';
 
     return;
   }
 
-
-  const color =
-    colors[currentSlide];
-
-
-  const imageArea =
-    document.getElementById(
-      "sliderImageArea"
-    );
-
-
-  if (!imageArea) return;
-
+  const color = colors[currentSlide];
 
   if (color.image) {
 
     imageArea.innerHTML = `
-
       <img
         src="${escapeHtml(color.image)}"
         alt="${escapeHtml(color.name)}"
       >
-
     `;
 
   } else {
 
     imageArea.innerHTML = `
-
       <div class="big-placeholder">
         🛍️
       </div>
-
     `;
 
   }
 
-
-  selectedColor =
-    color.name || "";
-
-
-  // COLOR BUTTON
+  selectedColor = color.name || "";
 
   document.querySelectorAll(".color-btn")
     .forEach(function(btn, index) {
@@ -491,12 +405,8 @@ function renderSlide() {
 
     });
 
-
-  // DOTS
-
   const dots =
     document.getElementById("sliderDots");
-
 
   if (dots) {
 
@@ -506,9 +416,7 @@ function renderSlide() {
         return `
           <span
             class="slider-dot ${
-              i === currentSlide
-                ? "active"
-                : ""
+              i === currentSlide ? "active" : ""
             }"
           ></span>
         `;
@@ -520,88 +428,65 @@ function renderSlide() {
 }
 
 
-// =========================
-// NEXT SLIDE
-// =========================
+/* =========================
+   NEXT / PREVIOUS
+========================= */
 
 function nextSlide(event) {
 
-  if (event) {
-    event.stopPropagation();
-  }
-
+  if (event) event.stopPropagation();
 
   if (!currentProduct) return;
-
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
-
   if (colors.length <= 1) return;
 
-
   currentSlide++;
-
 
   if (currentSlide >= colors.length) {
     currentSlide = 0;
   }
 
-
   renderSlide();
 
 }
 
 
-// =========================
-// PREVIOUS SLIDE
-// =========================
-
 function previousSlide(event) {
 
-  if (event) {
-    event.stopPropagation();
-  }
-
+  if (event) event.stopPropagation();
 
   if (!currentProduct) return;
-
 
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
 
-
   if (colors.length <= 1) return;
 
-
   currentSlide--;
-
 
   if (currentSlide < 0) {
     currentSlide = colors.length - 1;
   }
-
 
   renderSlide();
 
 }
 
 
-// =========================
-// COLOR BUTTON
-// =========================
+/* =========================
+   SELECT COLOR
+========================= */
 
 function selectColor(index, event) {
 
-  if (event) {
-    event.stopPropagation();
-  }
-
+  if (event) event.stopPropagation();
 
   currentSlide = index;
 
@@ -610,42 +495,34 @@ function selectColor(index, event) {
 }
 
 
-// =========================
-// CLOSE PRODUCT
-// =========================
+/* =========================
+   CLOSE PRODUCT
+========================= */
 
 function closeProduct() {
 
   const viewer =
-    document.getElementById(
-      "productViewer"
-    );
-
+    document.getElementById("productViewer");
 
   if (viewer) {
-
-    viewer.style.display =
-      "none";
-
+    viewer.style.display = "none";
   }
 
 }
 
 
-// =========================
-// ORDER CURRENT PRODUCT
-// =========================
+/* =========================
+   ORDER PRODUCT
+========================= */
 
 function orderCurrentProduct() {
 
   if (!currentProduct) return;
 
-
   const colors =
     Array.isArray(currentProduct.colors)
       ? currentProduct.colors
       : [];
-
 
   if (colors.length === 1) {
 
@@ -654,14 +531,12 @@ function orderCurrentProduct() {
 
   }
 
-
   if (colors.length > 1) {
 
     selectedColor =
       colors[currentSlide].name || "";
 
   }
-
 
   openOrder(
     currentProduct.name,
@@ -672,239 +547,153 @@ function orderCurrentProduct() {
 }
 
 
-// =========================
-// ORDER MODAL
-// =========================
+/* =========================
+   OPEN ORDER
+========================= */
 
-function openOrder(
-  product,
-  price,
-  color
-) {
+function openOrder(product, price, color) {
 
   if (!modal) return;
 
+  modal.style.display = "flex";
 
-  modal.style.display =
-    "flex";
+  document.getElementById("product").value = product;
 
-
-  document.getElementById(
-    "product"
-  ).value = product;
-
-
-  document.getElementById(
-    "price"
-  ).value = price;
-
+  document.getElementById("price").value = price;
 
   const productName =
-    document.getElementById(
-      "orderProductName"
-    );
-
+    document.getElementById("orderProductName");
 
   if (productName) {
-
-    productName.textContent =
-      product;
-
+    productName.textContent = product;
   }
-
 
   const productPrice =
-    document.getElementById(
-      "orderProductPrice"
-    );
-
+    document.getElementById("orderProductPrice");
 
   if (productPrice) {
-
     productPrice.textContent =
-      Number(price)
-        .toLocaleString("en-BD");
-
+      Number(price).toLocaleString("en-BD");
   }
 
+  /*
+    COLOR OPTION
+    Multiple color হলে দেখাবে
+    Single color হলে লুকাবে
+  */
 
-  const summaryPrice =
-    document.getElementById(
-      "summaryPrice"
-    );
-
-
-  if (summaryPrice) {
-
-    summaryPrice.textContent =
-      Number(price)
-        .toLocaleString("en-BD");
-
-  }
-
+  const colorWrap =
+    document.getElementById("colorWrap");
 
   const colorBox =
-    document.getElementById(
-      "orderColor"
-    );
+    document.getElementById("orderColor");
 
+  const colors =
+    currentProduct &&
+    Array.isArray(currentProduct.colors)
+      ? currentProduct.colors
+      : [];
 
-  if (colorBox) {
-
-    const colors =
-      currentProduct &&
-      Array.isArray(
-        currentProduct.colors
-      )
-        ? currentProduct.colors
-        : [];
-
+  if (colorWrap && colorBox) {
 
     colorBox.innerHTML = "";
 
-
     if (colors.length > 1) {
 
-      colorBox.style.display =
-        "block";
-
+      colorWrap.style.display = "block";
 
       colors.forEach(function(c) {
 
         const option =
-          document.createElement(
-            "option"
-          );
+          document.createElement("option");
 
-
-        option.value =
-          c.name;
-
-
-        option.textContent =
-          c.name;
-
+        option.value = c.name;
+        option.textContent = c.name;
 
         if (c.name === color) {
-
-          option.selected =
-            true;
-
+          option.selected = true;
         }
 
-
-        colorBox.appendChild(
-          option
-        );
+        colorBox.appendChild(option);
 
       });
 
     } else {
 
-      colorBox.style.display =
-        "none";
+      colorWrap.style.display = "none";
 
     }
 
   }
 
-
-  document.getElementById(
-    "deliveryArea"
-  ).value = "";
-
+  document.getElementById("deliveryArea").value = "";
 
   updateTotal();
 
-
-  document.getElementById(
-    "status"
-  ).textContent = "";
+  document.getElementById("status").textContent = "";
 
 }
 
 
-// =========================
-// CLOSE ORDER
-// =========================
+/* =========================
+   CLOSE ORDER
+========================= */
 
 function closeOrder() {
 
   if (modal) {
-
-    modal.style.display =
-      "none";
-
+    modal.style.display = "none";
   }
 
 }
 
+window.onclick = function(e) {
 
-window.onclick =
-  function(e) {
+  if (e.target === modal) {
+    closeOrder();
+  }
 
-    if (e.target === modal) {
-
-      closeOrder();
-
-    }
-
-  };
+};
 
 
-// =========================
-// DELIVERY
-// =========================
+/* =========================
+   DELIVERY
+========================= */
 
 function updateTotal() {
 
   const price =
     Number(
-      document.getElementById(
-        "price"
-      ).value
+      document.getElementById("price").value
     ) || 0;
 
-
   const area =
-    document.getElementById(
-      "deliveryArea"
-    ).value;
-
+    document.getElementById("deliveryArea").value;
 
   let charge = 0;
-
 
   if (area === "ঢাকার ভিতরে") {
     charge = 60;
   }
 
-
   if (area === "ঢাকার বাইরে") {
     charge = 120;
   }
 
-
   document.getElementById(
     "deliveryCharge"
-  ).textContent =
-    charge;
-
+  ).textContent = charge;
 
   document.getElementById(
     "totalPrice"
   ).textContent =
-    (price + charge)
-      .toLocaleString("en-BD");
+    (price + charge).toLocaleString("en-BD");
 
 }
 
 
 const deliveryArea =
-  document.getElementById(
-    "deliveryArea"
-  );
-
+  document.getElementById("deliveryArea");
 
 if (deliveryArea) {
 
@@ -916,15 +705,12 @@ if (deliveryArea) {
 }
 
 
-// =========================
-// SUBMIT ORDER
-// =========================
+/* =========================
+   SUBMIT ORDER
+========================= */
 
 const orderForm =
-  document.getElementById(
-    "orderForm"
-  );
-
+  document.getElementById("orderForm");
 
 if (orderForm) {
 
@@ -934,47 +720,41 @@ if (orderForm) {
 
       e.preventDefault();
 
-
       const status =
-        document.getElementById(
-          "status"
-        );
-
+        document.getElementById("status");
 
       const price =
         Number(
-          document.getElementById(
-            "price"
-          ).value
+          document.getElementById("price").value
         ) || 0;
 
-
       const area =
-        document.getElementById(
-          "deliveryArea"
-        ).value;
-
+        document.getElementById("deliveryArea").value;
 
       const colorBox =
-        document.getElementById(
-          "orderColor"
-        );
-
+        document.getElementById("orderColor");
 
       let color =
         selectedColor || "";
 
+      /*
+        Multiple color হলে
+        customer যে color select করেছে
+        সেটা নেওয়া হবে
+      */
+
+      const colorWrap =
+        document.getElementById("colorWrap");
 
       if (
         colorBox &&
-        colorBox.style.display !== "none"
+        colorWrap &&
+        colorWrap.style.display !== "none"
       ) {
 
-        color =
-          colorBox.value;
+        color = colorBox.value;
 
       }
-
 
       if (!area) {
 
@@ -985,16 +765,13 @@ if (orderForm) {
 
       }
 
-
       const charge =
         area === "ঢাকার ভিতরে"
           ? 60
           : 120;
 
-
       const total =
         price + charge;
-
 
       const data =
         new URLSearchParams({
@@ -1002,9 +779,7 @@ if (orderForm) {
           store: store,
 
           product:
-            document.getElementById(
-              "product"
-            ).value,
+            document.getElementById("product").value,
 
           price:
             String(price),
@@ -1022,26 +797,18 @@ if (orderForm) {
             String(total),
 
           name:
-            document.getElementById(
-              "name"
-            ).value,
+            document.getElementById("name").value,
 
           phone:
-            document.getElementById(
-              "phone"
-            ).value,
+            document.getElementById("phone").value,
 
           address:
-            document.getElementById(
-              "address"
-            ).value
+            document.getElementById("address").value
 
         });
 
-
       status.textContent =
         "অর্ডার পাঠানো হচ্ছে...";
-
 
       try {
 
@@ -1054,15 +821,12 @@ if (orderForm) {
           }
         );
 
-
         status.textContent =
           "অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
-
 
         this.reset();
 
         updateTotal();
-
 
       } catch (error) {
 
@@ -1079,8 +843,8 @@ if (orderForm) {
 }
 
 
-// =========================
-// START
-// =========================
+/* =========================
+   START
+========================= */
 
 loadProducts();
