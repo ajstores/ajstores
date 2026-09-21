@@ -1,7 +1,5 @@
-
-
 /* =====================================================
-   GLOBAL
+   AJ STORES - CLEAN STYLE
 ===================================================== */
 
 * {
@@ -43,10 +41,8 @@ header {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 2px 14px rgba(0,0,0,0.07);
-  animation: headerDown 0.55s ease;
 }
 
-/* IMPORTANT: actual HTML uses .site-name */
 .site-name {
   display: block;
   margin: 0;
@@ -75,7 +71,7 @@ nav a {
 
 nav a:hover {
   background: #111;
-  color: white;
+  color: #fff;
   transform: translateY(-2px);
 }
 
@@ -91,7 +87,7 @@ main {
 
 
 /* =====================================================
-   HOME INTRO
+   HOME
 ===================================================== */
 
 .home-intro {
@@ -123,7 +119,6 @@ main > h1 {
   margin: 25px 15px 5px;
   text-align: center;
   font-size: 27px;
-  line-height: 1.2;
   font-weight: 900;
   color: #111;
 }
@@ -164,7 +159,7 @@ main > h2 {
   color: #222;
   text-align: center;
   box-shadow: 0 7px 22px rgba(0,0,0,0.07);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .brand-card:hover {
@@ -179,7 +174,6 @@ main > h2 {
   aspect-ratio: 1 / 1;
   height: auto;
   object-fit: cover;
-  object-position: center;
   margin: 0 auto 12px;
   border-radius: 50%;
 }
@@ -208,11 +202,6 @@ main > h2 {
   gap: 14px;
 }
 
-
-/* =====================================================
-   PRODUCT CARD
-===================================================== */
-
 .product-card {
   position: relative;
   width: 100%;
@@ -233,21 +222,19 @@ main > h2 {
 
 
 /* =====================================================
-   PRODUCT IMAGE
+   PRODUCT CARD IMAGE
 ===================================================== */
 
 .product-img {
   position: relative;
   width: 100%;
   height: 170px;
-  max-height: 170px;
   overflow: hidden;
   border-radius: 11px;
   background: #f7f7f8;
 }
 
-.product-card .product-img img,
-.product-card img {
+.product-card .product-img img {
   display: block;
   width: 100%;
   height: 100%;
@@ -255,10 +242,12 @@ main > h2 {
   max-height: 100%;
   object-fit: contain;
   border-radius: 11px;
+  transform: none !important;
+  transition: none !important;
 }
 
-.product-card:hover img {
-  transform: scale(1.035);
+.product-card:hover .product-img img {
+  transform: none !important;
 }
 
 
@@ -328,7 +317,7 @@ main > h2 {
   padding: 4px 7px;
   border-radius: 12px;
   background: #111;
-  color: white;
+  color: #fff;
   font-size: 8px;
   font-weight: bold;
 }
@@ -361,12 +350,11 @@ main > h2 {
 
 .heart-btn span {
   font-size: 17px;
-  line-height: 1;
 }
 
 .heart-btn.liked {
   background: #111;
-  color: white;
+  color: #fff;
 }
 
 
@@ -385,7 +373,7 @@ main > h2 {
   text-align: center;
 
   background: rgba(0,0,0,0.75);
-  color: white;
+  color: #fff;
 
   border-radius: 8px;
   font-size: 10px;
@@ -403,7 +391,7 @@ main > h2 {
 
 
 /* =====================================================
-   BUTTONS
+   BUTTON BASE
 ===================================================== */
 
 button {
@@ -413,12 +401,12 @@ button {
 }
 
 button:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 
 /* =====================================================
-   PRODUCT VIEWER BACKGROUND
+   PRODUCT VIEWER
 ===================================================== */
 
 #productViewer {
@@ -440,13 +428,11 @@ button:active {
   background: rgba(0,0,0,0.72);
 
   overflow: hidden !important;
-
-  opacity: 1;
 }
 
 
 /* =====================================================
-   POPUP BOX
+   PRODUCT VIEWER BOX
 ===================================================== */
 
 #productViewer .large-product-box {
@@ -455,11 +441,9 @@ button:active {
   width: 100% !important;
   max-width: 470px !important;
 
-  height: auto !important;
-  max-height: 92vh !important;
+  max-height: 90vh !important;
 
   margin: 0 auto !important;
-
   padding: 12px !important;
 
   background: #fff !important;
@@ -471,19 +455,15 @@ button:active {
 
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 
-  transform: none;
+  transform: none !important;
 }
 
 
 /* =====================================================
-   POPUP INNER CONTENT
+   VIEWER CONTENT
 ===================================================== */
 
-#productViewer .product-viewer-animation {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
+#productViewer .product-viewer-animation,
 #productViewer .viewer-product-info {
   width: 100% !important;
   max-width: 100% !important;
@@ -491,7 +471,7 @@ button:active {
 
 
 /* =====================================================
-   CLOSE BUTTON
+   VIEWER CLOSE
 ===================================================== */
 
 .close-viewer {
@@ -510,7 +490,7 @@ button:active {
   border-radius: 50% !important;
 
   background: rgba(0,0,0,0.78) !important;
-  color: white !important;
+  color: #fff !important;
 
   font-size: 21px !important;
   line-height: 32px !important;
@@ -520,32 +500,33 @@ button:active {
 
 
 /* =====================================================
-   POPUP PRODUCT SLIDER
+   MULTI COLOR PRODUCT IMAGE SLIDER
+   FIXED SIZE
 ===================================================== */
 
 #productViewer .product-slider {
   position: relative !important;
 
   width: 100% !important;
-  height: 290px !important;
 
-  max-height: 290px !important;
+  height: 260px !important;
+  max-height: 260px !important;
 
   overflow: hidden !important;
 
   border-radius: 13px !important;
 
-  background: #f7f7f8;
+  background: #f7f7f8 !important;
 }
 
 
-/* =====================================================
-   POPUP IMAGE AREA
-===================================================== */
+/* Image container */
 
 #productViewer #sliderImageArea {
+  position: relative !important;
+
   width: 100% !important;
-  height: 100% !important;
+  height: 260px !important;
 
   display: flex !important;
 
@@ -555,18 +536,26 @@ button:active {
   overflow: hidden !important;
 }
 
-#productViewer #sliderImageArea img {
+
+/* IMPORTANT:
+   Multi-color image can NEVER exceed slider box
+*/
+
+#productViewer #sliderImageArea img,
+#productViewer .slider-image-transition img {
   display: block !important;
 
-  width: 100% !important;
-  height: 100% !important;
+  width: auto !important;
+  height: auto !important;
 
   max-width: 100% !important;
   max-height: 100% !important;
 
   object-fit: contain !important;
 
-  margin: 0 !important;
+  margin: auto !important;
+
+  transform: none !important;
 }
 
 
@@ -582,19 +571,17 @@ button:active {
   width: 32px;
   height: 32px;
 
-  margin: 0;
-
   transform: translateY(-50%);
 
   border-radius: 50%;
 
   background: rgba(0,0,0,0.62);
-  color: white;
+  color: #fff;
 
   font-size: 23px;
   line-height: 32px;
 
-  z-index: 10;
+  z-index: 20;
 }
 
 .slider-prev {
@@ -611,7 +598,7 @@ button:active {
 
 
 /* =====================================================
-   DOTS
+   SLIDER DOTS
 ===================================================== */
 
 .slider-dots {
@@ -625,7 +612,7 @@ button:active {
   display: flex;
   gap: 5px;
 
-  z-index: 10;
+  z-index: 20;
 }
 
 .slider-dot {
@@ -675,7 +662,7 @@ button:active {
 
 
 /* =====================================================
-   COLORS
+   COLOR BUTTONS
 ===================================================== */
 
 .color-title {
@@ -705,7 +692,7 @@ button:active {
   border: 1px solid #ddd;
   border-radius: 18px;
 
-  background: white;
+  background: #fff;
 
   font-size: 10px;
 }
@@ -743,7 +730,9 @@ button:active {
 
 .stylish-color-btn.selected {
   border-color: #111;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
+
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.08);
 }
 
 .stylish-color-btn.selected b {
@@ -760,7 +749,7 @@ button:active {
   border-radius: 50%;
 
   background: #111;
-  color: white;
+  color: #fff;
 
   font-size: 9px;
 
@@ -770,29 +759,33 @@ button:active {
 
 
 /* =====================================================
-   ORDER BUTTON
+   ORDER NOW BUTTON
 ===================================================== */
 
 .order-now-btn {
-  width: 100%;
+  display: block !important;
 
-  margin-top: 12px;
+  width: 100% !important;
 
-  padding: 10px 14px;
+  margin-top: 13px !important;
+  padding: 11px 14px !important;
 
-  border-radius: 11px;
+  border: 0 !important;
+  border-radius: 11px !important;
 
-  background: #111;
-  color: white;
+  background: #111 !important;
+  color: #fff !important;
 
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  text-align: center !important;
 
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
-.order-now-btn span {
-  margin-right: 4px;
+.order-now-btn:hover {
+  background: #222 !important;
 }
 
 
@@ -802,6 +795,7 @@ button:active {
 
 #modal {
   position: fixed !important;
+
   inset: 0 !important;
 
   z-index: 10000 !important;
@@ -814,67 +808,204 @@ button:active {
   width: 100vw !important;
   height: 100vh !important;
 
-  padding: 10px !important;
+  padding: 12px !important;
 
-  background: rgba(0,0,0,0.72);
-
-  overflow-y: auto !important;
-}
-
-#modal form {
-  width: 100% !important;
-  max-width: 430px !important;
-  max-height: 92vh !important;
+  background: rgba(0,0,0,0.70) !important;
 
   overflow-y: auto !important;
-
-  margin: auto !important;
-  padding: 18px !important;
-
-  background: white !important;
-
-  border-radius: 17px !important;
-
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-#modal form h2 {
-  margin: 0 0 12px;
-  font-size: 21px;
 }
 
 
 /* =====================================================
-   INPUTS
+   ORDER FORM BOX
 ===================================================== */
 
-input,
-textarea,
-select {
-  width: 100%;
+#modal form {
+  position: relative !important;
 
-  padding: 9px 11px;
+  width: min(390px, 92vw) !important;
 
-  margin-top: 5px;
-  margin-bottom: 9px;
+  max-height: 88vh !important;
 
-  border: 1px solid #ddd;
+  margin: auto !important;
 
-  border-radius: 9px;
+  padding: 17px !important;
 
-  outline: none;
+  background: #fff !important;
 
-  background: #fff;
+  border-radius: 17px !important;
 
-  font-size: 13px;
+  box-shadow:
+    0 18px 55px rgba(0,0,0,0.30);
+
+  overflow-y: auto !important;
+
+  animation: orderBoxIn 0.22s ease;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #555;
 
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+/* Order heading */
+
+#modal form h2 {
+  margin: 0 0 10px;
+
+  font-size: 20px;
+
+  text-align: center;
+
+  color: #111;
+}
+
+
+/* Product / price text */
+
+#modal form p {
+  margin: 6px 0;
+
+  font-size: 12px;
+
+  color: #555;
+}
+
+#modal form p strong {
+  color: #111;
+}
+
+
+/* =====================================================
+   ORDER FORM LABELS
+===================================================== */
+
+#modal form label {
+  display: block;
+
+  margin-top: 8px;
+  margin-bottom: 4px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: #333;
+}
+
+
+/* =====================================================
+   ORDER INPUTS
+===================================================== */
+
+#modal form input,
+#modal form textarea,
+#modal form select {
+  display: block;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  padding: 9px 10px !important;
+
+  margin: 0 0 7px !important;
+
+  border: 1px solid #ddd !important;
+
+  border-radius: 9px !important;
+
+  outline: none !important;
+
+  background: #fff !important;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 13px !important;
+
+  color: #222;
+}
+
+#modal form textarea {
+  resize: vertical;
+
+  min-height: 65px;
+}
+
+#modal form input:focus,
+#modal form textarea:focus,
+#modal form select:focus {
+  border-color: #555 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(0,0,0,0.05);
+}
+
+
+/* =====================================================
+   DELIVERY INFO
+===================================================== */
+
+#deliveryCharge,
+#totalPrice {
+  font-weight: 800;
+
+  color: #111;
+}
+
+#modal form #totalPrice {
+  font-size: 17px;
+}
+
+
+/* =====================================================
+   CONFIRM ORDER BUTTON
+   SMALL + BEAUTIFUL BOX
+===================================================== */
+
+#modal form button[type="submit"] {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin: 12px 0 2px !important;
+
+  padding: 11px 12px !important;
+
+  border: 0 !important;
+
+  border-radius: 10px !important;
+
+  background: #111 !important;
+
+  color: #fff !important;
+
+  font-size: 13px !important;
+
+  font-weight: 700 !important;
+
+  text-align: center !important;
+
+  box-shadow:
+    0 5px 15px rgba(0,0,0,0.16);
+
+  cursor: pointer !important;
+}
+
+#modal form button[type="submit"]:hover {
+  background: #252525 !important;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   ORDER STATUS
+===================================================== */
+
+#status {
+  text-align: center !important;
+
+  font-size: 11px !important;
+
+  color: #666 !important;
+
+  margin-top: 8px !important;
 }
 
 
@@ -908,12 +1039,15 @@ select:focus {
 
 .products-loading p {
   margin: 0;
+
   font-size: 13px;
 }
 
 .loading {
   text-align: center;
+
   padding: 30px 10px;
+
   color: #666;
 }
 
@@ -934,6 +1068,7 @@ select:focus {
 
 .empty-icon {
   font-size: 32px;
+
   margin-bottom: 7px;
 }
 
@@ -943,7 +1078,8 @@ select:focus {
   border-radius: 8px;
 
   background: #111;
-  color: white;
+
+  color: #fff;
 
   font-size: 12px;
 }
@@ -955,6 +1091,7 @@ select:focus {
 
 #pageLoader {
   position: fixed;
+
   inset: 0;
 
   z-index: 99999;
@@ -969,6 +1106,7 @@ select:focus {
 
 #pageLoader.hide {
   opacity: 0;
+
   visibility: hidden;
 }
 
@@ -983,6 +1121,7 @@ select:focus {
   margin: 0 auto 10px;
 
   border: 4px solid #ddd;
+
   border-top-color: #111;
 
   border-radius: 50%;
@@ -992,12 +1131,15 @@ select:focus {
 
 .loader-logo {
   font-size: 20px;
+
   font-weight: 900;
 }
 
 .loader-content p {
   margin: 4px 0;
+
   color: #777;
+
   font-size: 11px;
 }
 
@@ -1039,15 +1181,15 @@ select:focus {
   }
 }
 
-@keyframes headerDown {
+@keyframes orderBoxIn {
   from {
     opacity: 0;
-    transform: translateY(-15px);
+    transform: scale(0.94) translateY(8px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -1070,6 +1212,7 @@ select:focus {
 
   .site-name {
     font-size: 21px;
+
     letter-spacing: 0.7px;
   }
 
@@ -1079,6 +1222,7 @@ select:focus {
 
   nav a {
     padding: 5px 9px;
+
     font-size: 11px;
   }
 
@@ -1096,6 +1240,7 @@ select:focus {
 
   main > h1 {
     margin-top: 20px;
+
     font-size: 23px;
   }
 
@@ -1118,12 +1263,15 @@ select:focus {
 
   .brand-card {
     padding: 14px;
+
     border-radius: 17px;
   }
 
   .brand-card img {
     width: 48%;
+
     max-width: 145px;
+
     margin-bottom: 8px;
   }
 
@@ -1137,7 +1285,8 @@ select:focus {
   #products {
     width: 94%;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
 
     gap: 9px;
 
@@ -1146,17 +1295,19 @@ select:focus {
 
   .product-card {
     padding: 7px;
+
     border-radius: 12px;
   }
 
   .product-img {
     height: 125px;
-    max-height: 125px;
+
     border-radius: 9px;
   }
 
   .product-card h3 {
     font-size: 13px;
+
     margin: 7px 0 4px;
   }
 
@@ -1171,7 +1322,9 @@ select:focus {
   .product-badge {
     top: 5px;
     left: 5px;
+
     padding: 3px 5px;
+
     font-size: 7px;
   }
 
@@ -1192,7 +1345,7 @@ select:focus {
   }
 
 
-  /* Viewer */
+  /* Product Viewer */
 
   #productViewer {
     padding: 7px !important;
@@ -1200,9 +1353,10 @@ select:focus {
 
   #productViewer .large-product-box {
     width: 94vw !important;
+
     max-width: 400px !important;
 
-    max-height: 90vh !important;
+    max-height: 88vh !important;
 
     padding: 9px !important;
 
@@ -1210,14 +1364,31 @@ select:focus {
   }
 
   #productViewer .product-slider {
-    height: 220px !important;
-    max-height: 220px !important;
+    height: 210px !important;
+
+    max-height: 210px !important;
 
     border-radius: 10px !important;
   }
 
+  #productViewer #sliderImageArea {
+    height: 210px !important;
+  }
+
+  #productViewer #sliderImageArea img,
+  #productViewer .slider-image-transition img {
+    max-width: 100% !important;
+
+    max-height: 100% !important;
+
+    width: auto !important;
+
+    height: auto !important;
+  }
+
   #productViewer .large-product-box h2 {
     font-size: 17px;
+
     margin-top: 8px;
   }
 
@@ -1227,12 +1398,15 @@ select:focus {
 
   .large-price {
     font-size: 18px;
+
     margin-bottom: 7px;
   }
 
   .stylish-color-btn {
     min-width: 60px;
+
     padding: 3px 6px 3px 3px;
+
     font-size: 9px;
   }
 
@@ -1243,24 +1417,52 @@ select:focus {
   }
 
   .order-now-btn {
-    padding: 9px 12px;
-    font-size: 13px;
-    margin-top: 8px;
+    padding: 9px 12px !important;
+
+    font-size: 13px !important;
+
+    margin-top: 8px !important;
   }
 
 
-  /* Order */
+  /* Order Form */
 
   #modal {
     padding: 8px !important;
   }
 
   #modal form {
-    width: 94vw !important;
-    max-width: 400px !important;
-    max-height: 90vh !important;
+    width: 92vw !important;
+
+    max-width: 370px !important;
+
+    max-height: 88vh !important;
 
     padding: 14px !important;
+
+    border-radius: 15px !important;
+  }
+
+  #modal form h2 {
+    font-size: 18px;
+  }
+
+  #modal form label {
+    font-size: 11px;
+  }
+
+  #modal form input,
+  #modal form textarea,
+  #modal form select {
+    font-size: 12px !important;
+
+    padding: 8px 9px !important;
+  }
+
+  #modal form button[type="submit"] {
+    padding: 10px !important;
+
+    font-size: 12px !important;
   }
 }
 
@@ -1273,6 +1475,7 @@ select:focus {
 
   #products {
     gap: 7px;
+
     width: 95%;
   }
 
@@ -1282,7 +1485,6 @@ select:focus {
 
   .product-img {
     height: 115px;
-    max-height: 115px;
   }
 
   .product-card h3 {
@@ -1295,129 +1497,31 @@ select:focus {
 
   .brand-card img {
     width: 45%;
+
     max-width: 130px;
   }
 
   #productViewer .large-product-box {
     width: 94vw !important;
-    max-width: 370px !important;
+
+    max-width: 360px !important;
   }
 
   #productViewer .product-slider {
     height: 195px !important;
+
     max-height: 195px !important;
   }
-}
-/* FIX: Product card image should not zoom on touch */
-.product-card .product-img {
-  overflow: hidden;
-}
 
-.product-card .product-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: none !important;
-  transition: none !important;
-}
-
-/* Keep large image only inside product viewer */
-#productViewer .slider-image-transition img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: none;
-}
-/* Multi-color product viewer fix */
-#productViewer .large-product-box {
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-#productViewer .product-slider {
-  height: 260px;
-}
-
-#productViewer #sliderImageArea {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-#productViewer #sliderImageArea img {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  transform: none !important;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  #productViewer .product-slider {
-    height: 210px;
-  }
-
-  #productViewer .large-product-box {
-    max-height: 88vh;
-    padding: 12px;
-  }
-}
-/* ===== ORDER FORM SIZE FIX ===== */
-
-#modal {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  display: none;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 12px !important;
-  box-sizing: border-box !important;
-  background: rgba(0,0,0,0.65) !important;
-  z-index: 3000 !important;
-  overflow-y: auto !important;
-}
-
-#modal form {
-  width: min(430px, 92vw) !important;
-  max-height: 88vh !important;
-  overflow-y: auto !important;
-  box-sizing: border-box !important;
-  margin: auto !important;
-  padding: 20px !important;
-  border-radius: 18px !important;
-  background: #fff !important;
-}
-
-#modal form input,
-#modal form textarea,
-#modal form select {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-#modal form button[type="submit"] {
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  #modal {
-    padding: 10px !important;
+  #productViewer #sliderImageArea {
+    height: 195px !important;
   }
 
   #modal form {
-    width: 94vw !important;
-    max-height: 90vh !important;
-    padding: 16px !important;
-    border-radius: 16px !important;
+    width: 93vw !important;
+
+    max-width: 350px !important;
+
+    padding: 13px !important;
   }
 }
