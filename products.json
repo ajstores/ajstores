@@ -68,6 +68,7 @@
     "name": "CROSS BAG",
     "price": 390,
     "description": "Designed for style",
+    "status": "ON",
     "colors": [
       {
         "name": "Black",
