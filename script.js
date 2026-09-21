@@ -22,9 +22,9 @@ let selectedColor = "";
 let currentSlide = 0;
 
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
+/* =========================
+   SECURITY / HTML
+========================= */
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, function (c) {
@@ -39,12 +39,11 @@ function escapeHtml(value) {
 }
 
 
-/* =====================================================
+/* =========================
    PAGE LOADER
-===================================================== */
+========================= */
 
 function showPageLoader() {
-
   if (document.getElementById("pageLoader")) return;
 
   const loader = document.createElement("div");
@@ -64,9 +63,7 @@ function showPageLoader() {
 
 
 function hidePageLoader() {
-
-  const loader =
-    document.getElementById("pageLoader");
+  const loader = document.getElementById("pageLoader");
 
   if (!loader) return;
 
@@ -78,14 +75,13 @@ function hidePageLoader() {
 }
 
 
-/* =====================================================
-   PRODUCT LOADING
-===================================================== */
+/* =========================
+   LOAD PRODUCTS
+========================= */
 
 async function loadProducts() {
 
-  const grid =
-    document.getElementById("products");
+  const grid = document.getElementById("products");
 
   if (!grid) {
     hidePageLoader();
@@ -112,23 +108,17 @@ async function loadProducts() {
       throw new Error("products.json পাওয়া যায়নি");
     }
 
-    const allProducts =
-      await response.json();
+    const allProducts = await response.json();
 
-    const products =
-      allProducts.filter(function (p) {
+    const products = allProducts.filter(function (p) {
 
-        return (
-          String(p.store || "")
-            .trim()
-            .toLowerCase() ===
-          store.trim().toLowerCase()
-        ) &&
-        String(p.status || "")
-          .trim()
-          .toUpperCase() === "ON";
+      return (
+        String(p.store || "").trim().toLowerCase() ===
+        store.trim().toLowerCase()
+      ) &&
+      String(p.status || "").trim().toUpperCase() === "ON";
 
-      });
+    });
 
 
     if (!products.length) {
@@ -151,8 +141,7 @@ async function loadProducts() {
     grid.innerHTML =
       products.map(function (p, index) {
 
-        const price =
-          Number(p.price) || 0;
+        const price = Number(p.price) || 0;
 
         const colors =
           Array.isArray(p.colors)
@@ -165,8 +154,7 @@ async function loadProducts() {
             : null;
 
         const firstImage =
-          firstColor &&
-          firstColor.image
+          firstColor && firstColor.image
             ? firstColor.image
             : "";
 
@@ -195,17 +183,6 @@ async function loadProducts() {
         }
 
 
-        /*
-          BADGE
-
-          products.json এ চাইলে:
-          "badge":"SALE"
-          অথবা
-          "badge":"NEW"
-
-          না থাকলে NEW দেখাবে
-        */
-
         const badge =
           String(p.badge || "NEW")
             .trim()
@@ -225,8 +202,10 @@ async function loadProducts() {
                 ${escapeHtml(badge)}
               </div>
 
-              <div class="heart-btn"
-                   onclick="toggleFavorite(event, ${index})">
+              <div
+                class="heart-btn"
+                onclick="toggleFavorite(event, ${index})"
+              >
                 <span>♡</span>
               </div>
 
@@ -253,11 +232,7 @@ async function loadProducts() {
 
                 ${
                   colors.length > 1
-                    ? `
-                      <small class="color-count">
-                        ${colors.length} colors
-                      </small>
-                    `
+                    ? `<small class="color-count">${colors.length} colors</small>`
                     : ""
                 }
 
@@ -270,10 +245,6 @@ async function loadProducts() {
 
       }).join("");
 
-
-    /*
-      STAGGER ANIMATION
-    */
 
     requestAnimationFrame(function () {
 
@@ -288,7 +259,9 @@ async function loadProducts() {
         );
 
         setTimeout(function () {
+
           card.classList.add("show");
+
         }, index * 70);
 
       });
@@ -302,28 +275,34 @@ async function loadProducts() {
 
     grid.innerHTML = `
       <div class="products-empty">
-        <div class="empty-icon">⚠️</div>
-        <p>Product load হয়নি।</p>
+
+        <div class="empty-icon">
+          ⚠️
+        </div>
+
+        <p>
+          Product load হয়নি।
+        </p>
+
         <button
           class="retry-btn"
           onclick="loadProducts()"
         >
           আবার চেষ্টা করুন
         </button>
+
       </div>
     `;
 
   }
 
-
   hidePageLoader();
-
 }
 
 
-/* =====================================================
+/* =========================
    OPEN PRODUCT
-===================================================== */
+========================= */
 
 function openProduct(index) {
 
@@ -335,9 +314,10 @@ function openProduct(index) {
 
   if (!product) return;
 
-
   currentProduct = product;
+
   selectedColor = "";
+
   currentSlide = 0;
 
 
@@ -348,8 +328,10 @@ function openProduct(index) {
 
 
   if (colors.length === 1) {
+
     selectedColor =
       colors[0].name || "";
+
   }
 
 
@@ -422,13 +404,14 @@ function openProduct(index) {
           ${escapeHtml(product.name)}
         </h2>
 
+
         <p class="large-description">
           ${escapeHtml(product.description || "")}
         </p>
 
+
         <div class="large-price">
-          ৳${Number(product.price || 0)
-            .toLocaleString("en-BD")}
+          ৳${Number(product.price || 0).toLocaleString("en-BD")}
         </div>
 
 
@@ -448,12 +431,10 @@ function openProduct(index) {
                 ${colors.map(function (color, i) {
 
                   return `
+
                     <button
-                      class="
-                        color-btn
-                        stylish-color-btn
-                        ${i === 0 ? "selected" : ""}
-                      "
+                      type="button"
+                      class="color-btn stylish-color-btn ${i === 0 ? "selected" : ""}"
                       onclick="selectColor(${i}, event)"
                     >
 
@@ -479,6 +460,7 @@ function openProduct(index) {
                       <b>✓</b>
 
                     </button>
+
                   `;
 
                 }).join("")}
@@ -491,16 +473,18 @@ function openProduct(index) {
 
 
         <button
+          type="button"
           class="order-now-btn animated-order-btn"
           onclick="orderCurrentProduct()"
         >
           <span>🛒</span>
-          অর্ডার করুন
+          <span>অর্ডার করুন</span>
         </button>
 
       </div>
 
     </div>
+
   `;
 
 
@@ -510,16 +494,14 @@ function openProduct(index) {
 
 
   requestAnimationFrame(function () {
+
     viewer.classList.add("viewer-show");
+
   });
 
 
   renderSlide();
 
-
-  /* =================================================
-     SWIPE
-  ================================================= */
 
   const slider =
     document.getElementById("productSlider");
@@ -542,7 +524,9 @@ function openProduct(index) {
           e.touches[0].clientY;
 
       },
-      { passive: true }
+      {
+        passive: true
+      }
     );
 
 
@@ -580,13 +564,19 @@ function openProduct(index) {
 
 
         if (differenceX > 0) {
+
           nextSlide();
+
         } else {
+
           previousSlide();
+
         }
 
       },
-      { passive: true }
+      {
+        passive: true
+      }
     );
 
   }
@@ -594,9 +584,9 @@ function openProduct(index) {
 }
 
 
-/* =====================================================
+/* =========================
    RENDER SLIDE
-===================================================== */
+========================= */
 
 function renderSlide() {
 
@@ -620,11 +610,8 @@ function renderSlide() {
 
   if (!colors.length) {
 
-    imageArea.innerHTML = `
-      <div class="big-placeholder">
-        🛍️
-      </div>
-    `;
+    imageArea.innerHTML =
+      `<div class="big-placeholder">🛍️</div>`;
 
     return;
   }
@@ -633,10 +620,6 @@ function renderSlide() {
   const color =
     colors[currentSlide];
 
-
-  /*
-    IMAGE TRANSITION
-  */
 
   imageArea.classList.remove(
     "color-changing"
@@ -654,19 +637,18 @@ function renderSlide() {
   if (color.image) {
 
     imageArea.innerHTML = `
+
       <img
         src="${escapeHtml(color.image)}"
         alt="${escapeHtml(color.name)}"
       >
+
     `;
 
   } else {
 
-    imageArea.innerHTML = `
-      <div class="big-placeholder">
-        🛍️
-      </div>
-    `;
+    imageArea.innerHTML =
+      `<div class="big-placeholder">🛍️</div>`;
 
   }
 
@@ -675,31 +657,25 @@ function renderSlide() {
     color.name || "";
 
 
-  /*
-    COLOR BUTTON ACTIVE
-  */
-
   document
     .querySelectorAll(".color-btn")
     .forEach(function (btn, index) {
 
       if (index === currentSlide) {
+
         btn.classList.add("selected");
+
       } else {
+
         btn.classList.remove("selected");
+
       }
 
     });
 
 
-  /*
-    DOTS
-  */
-
   const dots =
-    document.getElementById(
-      "sliderDots"
-    );
+    document.getElementById("sliderDots");
 
 
   if (dots) {
@@ -709,12 +685,11 @@ function renderSlide() {
 
         return `
           <span
-            class="
-              slider-dot
-              ${i === currentSlide
+            class="slider-dot ${
+              i === currentSlide
                 ? "active"
-                : ""}
-            "
+                : ""
+            }"
           ></span>
         `;
 
@@ -725,16 +700,15 @@ function renderSlide() {
 }
 
 
-/* =====================================================
-   NEXT SLIDE
-===================================================== */
+/* =========================
+   SLIDER
+========================= */
 
 function nextSlide(event) {
 
   if (event) {
     event.stopPropagation();
   }
-
 
   if (!currentProduct) return;
 
@@ -752,28 +726,23 @@ function nextSlide(event) {
 
 
   if (
-    currentSlide >=
-    colors.length
+    currentSlide >= colors.length
   ) {
+
     currentSlide = 0;
+
   }
 
 
   renderSlide();
-
 }
 
-
-/* =====================================================
-   PREVIOUS SLIDE
-===================================================== */
 
 function previousSlide(event) {
 
   if (event) {
     event.stopPropagation();
   }
-
 
   if (!currentProduct) return;
 
@@ -791,19 +760,16 @@ function previousSlide(event) {
 
 
   if (currentSlide < 0) {
+
     currentSlide =
       colors.length - 1;
+
   }
 
 
   renderSlide();
-
 }
 
-
-/* =====================================================
-   SELECT COLOR
-===================================================== */
 
 function selectColor(index, event) {
 
@@ -811,17 +777,15 @@ function selectColor(index, event) {
     event.stopPropagation();
   }
 
-
   currentSlide = index;
 
   renderSlide();
-
 }
 
 
-/* =====================================================
-   CLOSE PRODUCT
-===================================================== */
+/* =========================
+   CLOSE PRODUCT VIEWER
+========================= */
 
 function closeProduct() {
 
@@ -854,9 +818,9 @@ function closeProduct() {
 }
 
 
-/* =====================================================
+/* =========================
    ORDER CURRENT PRODUCT
-===================================================== */
+========================= */
 
 function orderCurrentProduct() {
 
@@ -894,9 +858,9 @@ function orderCurrentProduct() {
 }
 
 
-/* =====================================================
-   OPEN ORDER MODAL
-===================================================== */
+/* =========================
+   OPEN ORDER FORM
+========================= */
 
 function openOrder(
   product,
@@ -907,12 +871,30 @@ function openOrder(
   if (!modal) return;
 
 
-  modal.style.display = "flex";
+  /*
+    প্রথমে product viewer পুরোপুরি বন্ধ
+    করে দিচ্ছি।
+    তাই multi-color-এর বড় ছবি
+    order form-এর সাথে থাকবে না।
+  */
+
+  const viewer =
+    document.getElementById(
+      "productViewer"
+    );
 
 
-  requestAnimationFrame(function () {
-    modal.classList.add("modal-show");
-  });
+  if (viewer) {
+
+    viewer.classList.remove(
+      "viewer-show"
+    );
+
+    viewer.style.display = "none";
+
+    viewer.innerHTML = "";
+
+  }
 
 
   document.body.classList.add(
@@ -920,14 +902,42 @@ function openOrder(
   );
 
 
-  document.getElementById(
-    "product"
-  ).value = product;
+  modal.style.display = "flex";
 
 
-  document.getElementById(
-    "price"
-  ).value = price;
+  requestAnimationFrame(function () {
+
+    modal.classList.add(
+      "modal-show"
+    );
+
+  });
+
+
+  const productInput =
+    document.getElementById(
+      "product"
+    );
+
+
+  const priceInput =
+    document.getElementById(
+      "price"
+    );
+
+
+  if (productInput) {
+
+    productInput.value = product;
+
+  }
+
+
+  if (priceInput) {
+
+    priceInput.value = price;
+
+  }
 
 
   const productName =
@@ -937,8 +947,10 @@ function openOrder(
 
 
   if (productName) {
+
     productName.textContent =
       product;
+
   }
 
 
@@ -951,15 +963,12 @@ function openOrder(
   if (productPrice) {
 
     productPrice.textContent =
-      Number(price)
-        .toLocaleString("en-BD");
+      Number(price).toLocaleString(
+        "en-BD"
+      );
 
   }
 
-
-  /*
-    COLOR
-  */
 
   const colorWrap =
     document.getElementById(
@@ -982,10 +991,31 @@ function openOrder(
       : [];
 
 
-  if (colorWrap && colorBox) {
+  if (
+    colorWrap &&
+    colorBox
+  ) {
 
     colorBox.innerHTML = "";
 
+
+    const oldButtons =
+      document.getElementById(
+        "orderColorStyle"
+      );
+
+
+    if (oldButtons) {
+
+      oldButtons.remove();
+
+    }
+
+
+    /*
+      Multi-color হলে
+      color selection দেখাবে।
+    */
 
     if (colors.length > 1) {
 
@@ -993,47 +1023,49 @@ function openOrder(
         "block";
 
 
-      colors.forEach(
-        function (c) {
+      colors.forEach(function (c) {
 
-          const option =
-            document.createElement(
-              "option"
-            );
-
-
-          option.value =
-            c.name;
-
-
-          option.textContent =
-            c.name;
-
-
-          if (c.name === color) {
-            option.selected = true;
-          }
-
-
-          colorBox.appendChild(
-            option
+        const option =
+          document.createElement(
+            "option"
           );
 
+
+        option.value =
+          c.name;
+
+
+        option.textContent =
+          c.name;
+
+
+        if (c.name === color) {
+
+          option.selected = true;
+
         }
-      );
 
 
-      /*
-        Stylish order color preview
-      */
+        colorBox.appendChild(
+          option
+        );
+
+      });
+
 
       createOrderColorButtons(
         colors,
         color
       );
 
+    }
 
-    } else {
+    /*
+      Single color হলে
+      color box পুরো hide।
+    */
+
+    else {
 
       colorWrap.style.display =
         "none";
@@ -1043,24 +1075,45 @@ function openOrder(
   }
 
 
-  document.getElementById(
-    "deliveryArea"
-  ).value = "";
+  const deliveryArea =
+    document.getElementById(
+      "deliveryArea"
+    );
+
+
+  if (deliveryArea) {
+
+    deliveryArea.value = "";
+
+  }
 
 
   updateTotal();
 
 
-  document.getElementById(
-    "status"
-  ).textContent = "";
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  if (status) {
+
+    status.textContent = "";
+
+    status.classList.remove(
+      "error",
+      "success"
+    );
+
+  }
 
 }
 
 
-/* =====================================================
-   STYLISH ORDER COLORS
-===================================================== */
+/* =========================
+   ORDER COLOR BUTTONS
+========================= */
 
 function createOrderColorButtons(
   colors,
@@ -1076,14 +1129,16 @@ function createOrderColorButtons(
   if (!colorWrap) return;
 
 
-  let old =
+  const old =
     document.getElementById(
       "orderColorStyle"
     );
 
 
   if (old) {
+
     old.remove();
+
   }
 
 
@@ -1123,9 +1178,11 @@ function createOrderColorButtons(
     if (
       color.name === selected
     ) {
+
       button.classList.add(
         "selected"
       );
+
     }
 
 
@@ -1163,9 +1220,11 @@ function createOrderColorButtons(
             ".order-color-choice"
           )
           .forEach(function (btn) {
+
             btn.classList.remove(
               "selected"
             );
+
           });
 
 
@@ -1181,8 +1240,10 @@ function createOrderColorButtons(
 
 
         if (colorBox) {
+
           colorBox.value =
             color.name;
+
         }
 
 
@@ -1206,9 +1267,9 @@ function createOrderColorButtons(
 }
 
 
-/* =====================================================
+/* =========================
    CLOSE ORDER
-===================================================== */
+========================= */
 
 function closeOrder() {
 
@@ -1225,6 +1286,7 @@ function closeOrder() {
     modal.style.display =
       "none";
 
+
     document.body.classList.remove(
       "modal-open"
     );
@@ -1234,33 +1296,33 @@ function closeOrder() {
 }
 
 
-/* =====================================================
-   CLOSE MODALS WITH CLICK
-===================================================== */
+/* =========================
+   CLOSE MODAL BY CLICK
+========================= */
 
 window.addEventListener(
   "click",
   function (e) {
 
     if (e.target === modal) {
+
       closeOrder();
+
     }
 
   }
 );
 
 
-/* =====================================================
+/* =========================
    ESC KEY
-===================================================== */
+========================= */
 
 document.addEventListener(
   "keydown",
   function (e) {
 
-    if (e.key !== "Escape") {
-      return;
-    }
+    if (e.key !== "Escape") return;
 
 
     const viewer =
@@ -1276,7 +1338,9 @@ document.addEventListener(
 
       closeProduct();
 
-    } else if (
+    }
+
+    else if (
       modal &&
       modal.style.display === "flex"
     ) {
@@ -1289,9 +1353,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   DELIVERY
-===================================================== */
+/* =========================
+   DELIVERY TOTAL
+========================= */
 
 function updateTotal() {
 
@@ -1299,14 +1363,14 @@ function updateTotal() {
     Number(
       document.getElementById(
         "price"
-      ).value
+      )?.value
     ) || 0;
 
 
   const area =
     document.getElementById(
       "deliveryArea"
-    ).value;
+    )?.value || "";
 
 
   let charge = 0;
@@ -1315,14 +1379,18 @@ function updateTotal() {
   if (
     area === "ঢাকার ভিতরে"
   ) {
+
     charge = 60;
+
   }
 
 
   if (
     area === "ঢাকার বাইরে"
   ) {
+
     charge = 120;
+
   }
 
 
@@ -1339,16 +1407,21 @@ function updateTotal() {
 
 
   if (deliveryCharge) {
+
     deliveryCharge.textContent =
       charge;
+
   }
 
 
   if (totalPrice) {
 
     totalPrice.textContent =
-      (price + charge)
-        .toLocaleString("en-BD");
+      (
+        price + charge
+      ).toLocaleString(
+        "en-BD"
+      );
 
   }
 
@@ -1371,9 +1444,9 @@ if (deliveryArea) {
 }
 
 
-/* =====================================================
-   FAVORITE / HEART
-===================================================== */
+/* =========================
+   FAVORITE
+========================= */
 
 function toggleFavorite(
   event,
@@ -1381,7 +1454,9 @@ function toggleFavorite(
 ) {
 
   if (event) {
+
     event.stopPropagation();
+
   }
 
 
@@ -1427,9 +1502,9 @@ function toggleFavorite(
 }
 
 
-/* =====================================================
+/* =========================
    ORDER SUBMIT
-===================================================== */
+========================= */
 
 const orderForm =
   document.getElementById(
@@ -1533,7 +1608,11 @@ if (orderForm) {
         ).value.trim();
 
 
-      if (!name || !phone || !address) {
+      if (
+        !name ||
+        !phone ||
+        !address
+      ) {
 
         status.textContent =
           "সব তথ্য পূরণ করুন।";
@@ -1599,6 +1678,11 @@ if (orderForm) {
       );
 
 
+      status.classList.remove(
+        "success"
+      );
+
+
       status.textContent =
         "অর্ডার পাঠানো হচ্ছে...";
 
@@ -1645,13 +1729,11 @@ if (orderForm) {
         updateTotal();
 
 
-        /*
-          কিছুক্ষণ পরে modal close
-        */
-
         setTimeout(
           function () {
+
             closeOrder();
+
           },
           1800
         );
@@ -1690,9 +1772,9 @@ if (orderForm) {
 }
 
 
-/* =====================================================
-   SCROLL REVEAL
-===================================================== */
+/* =========================
+   SCROLL ANIMATION
+========================= */
 
 function setupScrollAnimation() {
 
@@ -1706,12 +1788,21 @@ function setupScrollAnimation() {
 
 
   if (
-    !("IntersectionObserver" in window)
+    !(
+      "IntersectionObserver"
+      in window
+    )
   ) {
 
-    items.forEach(function (item) {
-      item.classList.add("show");
-    });
+    items.forEach(
+      function (item) {
+
+        item.classList.add(
+          "show"
+        );
+
+      }
+    );
 
     return;
 
@@ -1749,16 +1840,22 @@ function setupScrollAnimation() {
     );
 
 
-  items.forEach(function (item) {
-    observer.observe(item);
-  });
+  items.forEach(
+    function (item) {
+
+      observer.observe(
+        item
+      );
+
+    }
+  );
 
 }
 
 
-/* =====================================================
-   BUTTON CLICK ANIMATION
-===================================================== */
+/* =========================
+   BUTTON ANIMATION
+========================= */
 
 document.addEventListener(
   "click",
@@ -1793,9 +1890,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   IMAGE CLICK EFFECT
-===================================================== */
+/* =========================
+   IMAGE CLICK ANIMATION
+========================= */
 
 document.addEventListener(
   "click",
@@ -1830,9 +1927,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   HOME BRAND CARD ANIMATION
-===================================================== */
+/* =========================
+   BRAND ANIMATION
+========================= */
 
 function setupBrandAnimation() {
 
@@ -1843,7 +1940,10 @@ function setupBrandAnimation() {
 
 
   brands.forEach(
-    function (brand, index) {
+    function (
+      brand,
+      index
+    ) {
 
       brand.classList.add(
         "reveal"
@@ -1864,9 +1964,9 @@ function setupBrandAnimation() {
 }
 
 
-/* =====================================================
-   SMOOTH ANCHOR SCROLL
-===================================================== */
+/* =========================
+   SMOOTH LINKS
+========================= */
 
 document.addEventListener(
   "click",
@@ -1887,9 +1987,10 @@ document.addEventListener(
       );
 
 
-    if (!id || id === "#") {
-      return;
-    }
+    if (
+      !id ||
+      id === "#"
+    ) return;
 
 
     const target =
@@ -1913,9 +2014,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   INITIALIZE
-===================================================== */
+/* =========================
+   START
+========================= */
 
 document.addEventListener(
   "DOMContentLoaded",
