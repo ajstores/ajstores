@@ -64,6 +64,19 @@
     ]
   },
   {
+    "store": "AJ Trendy Hub",
+    "name": "CROSS BAG",
+    "price": 390,
+    "description": "Designed for style, comfort, and convenience, the Arctic Hunter Crossbody Sling Bag is your ideal daily companion. Whether you are commuting to work, traveling, or riding a bike, this sleek and compact bag keeps your essentials organized and securely within reach.",
+    "status": "ON",
+    "colors": [
+      {
+        "name": "Black",
+        "image": "/ajstores/shalong.jpg"
+      }
+    ]
+  },
+  {
     "store": "AJ Kidz Zone",
     "name": "Kids Toy",
     "price": 250,
