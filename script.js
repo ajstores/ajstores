@@ -1,21 +1,62 @@
 // =====================================================
 // AJ STORES - PRODUCT + ORDER SYSTEM
-// Products from products.json
-// Orders saved to Google Sheets
 // =====================================================
 
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzZV3hrM0m0BhQR8c3Vdmk72ZEstvF-ASKdvV1fPgQ_gMRPOgX6NXmKAN_Hifnh78gK0A/exec";
 
-const modal = document.getElementById("modal");
-const productViewer = document.getElementById("productViewer");
 
-const store = location.pathname.toLowerCase().includes("kidz")
-  ? "AJ Kidz Zone"
-  : "AJ Trendy Hub";
+// =====================================================
+// STORE DETECTION
+// =====================================================
+
+const currentPath = window.location.pathname.toLowerCase();
+
+let store = "AJ Trendy Hub";
+
+if (currentPath.includes("/kidz/")) {
+  store = "AJ Kidz Zone";
+}
+
+
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
 
 let allProducts = [];
 let currentProduct = null;
+let currentSlide = 0;
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
+const modal = document.getElementById("modal");
+const productViewer = document.getElementById("productViewer");
+
+
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHtml(value) {
+
+  return String(value || "").replace(/[&<>"']/g, function(char) {
+
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    };
+
+    return map[char];
+
+  });
+
+}
 
 
 // =====================================================
@@ -23,228 +64,417 @@ let currentProduct = null;
 // =====================================================
 
 async function loadProducts() {
-  const grid = document.getElementById("products");
 
-  if (!grid) return;
+  const productContainer =
+    document.getElementById("products");
+
+  if (!productContainer) return;
+
+
+  // IMPORTANT:
+  // products.json root folder-এ আছে।
+  //
+  // /ajstores/trendy/ থেকে:
+  // ../products.json
+  //
+  // /ajstores/kidz/ থেকে:
+  // ../products.json
+
+  let productsPath = "products.json";
+
+  if (
+    currentPath.includes("/trendy/") ||
+    currentPath.includes("/kidz/")
+  ) {
+    productsPath = "../products.json";
+  }
+
 
   try {
-    const response = await fetch("products.json?v=" + Date.now(), {
-      cache: "no-store"
-    });
+
+    productContainer.innerHTML =
+      '<p class="loading">Product load হচ্ছে...</p>';
+
+
+    const response = await fetch(
+      productsPath + "?v=" + Date.now(),
+      {
+        cache: "no-store"
+      }
+    );
+
 
     if (!response.ok) {
-      throw new Error("products.json load failed");
+      throw new Error(
+        "products.json পাওয়া যায়নি"
+      );
     }
+
 
     const data = await response.json();
 
-    const products = Array.isArray(data)
-      ? data
-      : (data.products || []);
 
-    allProducts = products.filter(p =>
-      String(p.store || "").trim().toLowerCase() === store.toLowerCase() &&
-      String(p.status || "").trim().toUpperCase() === "ON" &&
-      String(p.name || "").trim() !== ""
-    );
+    // products.json array হলে
+    // সরাসরি ব্যবহার করবে।
+    //
+    // আর যদি {products:[]} হয়
+    // সেটাও support করবে।
 
+    const products =
+      Array.isArray(data)
+        ? data
+        : (data.products || []);
+
+
+    allProducts = products.filter(function(product) {
+
+      const productStore =
+        String(product.store || "")
+          .trim()
+          .toLowerCase();
+
+      const productStatus =
+        String(product.status || "")
+          .trim()
+          .toUpperCase();
+
+      const productName =
+        String(product.name || "")
+          .trim();
+
+
+      return (
+        productStore === store.toLowerCase() &&
+        productStatus === "ON" &&
+        productName !== ""
+      );
+
+    });
+
+
+    // No product
     if (!allProducts.length) {
-      grid.innerHTML =
-        '<p class="loading">এখনো কোনো product যোগ করা হয়নি।</p>';
+
+      productContainer.innerHTML = `
+        <p class="loading">
+          এই store-এ এখন কোনো product নেই।
+        </p>
+      `;
+
       return;
     }
 
-    grid.innerHTML = allProducts.map((p, index) => {
 
-      const price = Number(p.price) || 0;
+    // Display products
 
-      let image = "";
+    productContainer.innerHTML =
+      allProducts.map(function(product, index) {
 
-      if (Array.isArray(p.colors) && p.colors.length > 0) {
-        image = String(p.colors[0].image || "").trim();
-      }
+        const price =
+          Number(product.price) || 0;
 
-      if (!image) {
-        image = String(p.image || "").trim();
-      }
 
-      const safeName = escapeHtml(p.name);
-      const safeDescription = escapeHtml(p.description || "");
-      const safeImage = escapeHtml(image);
+        let image = "";
 
-      const imageHtml = image
-        ? `
-          <img
-            src="${safeImage}"
-            alt="${safeName}"
-            onerror="
-              this.style.display='none';
-              if(this.nextElementSibling){
-                this.nextElementSibling.style.display='flex';
-              }
-            "
-          >
-        `
-        : "";
 
-      return `
-        <article class="product">
+        // Multi-color / single-color
+        if (
+          Array.isArray(product.colors) &&
+          product.colors.length > 0
+        ) {
 
-          <div
-            class="product-img"
-            onclick="openProduct(${index})"
-            style="cursor:pointer;"
-          >
-            ${imageHtml}
-            <span
-              class="placeholder"
-              ${image ? 'style="display:none"' : ""}
+          image =
+            String(
+              product.colors[0].image || ""
+            ).trim();
+
+        }
+
+
+        // Old image system support
+        if (!image && product.image) {
+
+          image =
+            String(product.image).trim();
+
+        }
+
+
+        const productName =
+          escapeHtml(product.name);
+
+
+        const description =
+          escapeHtml(
+            product.description || ""
+          );
+
+
+        let imageHTML = "";
+
+
+        if (image) {
+
+          imageHTML = `
+            <img
+              src="${escapeHtml(image)}"
+              alt="${productName}"
+              onerror="
+                this.style.display='none';
+                if(this.nextElementSibling){
+                  this.nextElementSibling.style.display='flex';
+                }
+              "
             >
-              🛍️
-            </span>
-          </div>
+          `;
 
-          <h3 onclick="openProduct(${index})" style="cursor:pointer;">
-            ${safeName}
-          </h3>
+        }
 
-          <p>${safeDescription}</p>
 
-          <strong>
-            ৳${price.toLocaleString("en-BD")}
-          </strong>
+        return `
+          <article class="product">
 
-          <button
-            type="button"
-            onclick="event.stopPropagation(); openOrderByIndex(${index})"
-          >
-            অর্ডার করুন
-          </button>
+            <div
+              class="product-img"
+              onclick="openProduct(${index})"
+            >
 
-        </article>
-      `;
-    }).join("");
+              ${imageHTML}
+
+              <span
+                class="placeholder"
+                ${image ? 'style="display:none"' : ""}
+              >
+                🛍️
+              </span>
+
+            </div>
+
+
+            <h3
+              onclick="openProduct(${index})"
+            >
+              ${productName}
+            </h3>
+
+
+            <p>
+              ${description}
+            </p>
+
+
+            <strong>
+              ৳${price.toLocaleString("en-BD")}
+            </strong>
+
+
+            <button
+              type="button"
+              onclick="
+                event.stopPropagation();
+                openOrderByIndex(${index});
+              "
+            >
+              অর্ডার করুন
+            </button>
+
+          </article>
+        `;
+
+      }).join("");
+
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Product loading error:",
+      error
+    );
 
-    grid.innerHTML = `
+
+    productContainer.innerHTML = `
       <div class="loading">
-        Product load করা যায়নি। products.json file আছে কিনা দেখুন।
+
+        <p>
+          Product load হচ্ছে না।
+        </p>
+
+        <small>
+          products.json file আছে কিনা দেখুন।
+        </small>
+
       </div>
     `;
+
   }
-}
-
-
-// =====================================================
-// SECURITY HELPERS
-// =====================================================
-
-function escapeHtml(value) {
-
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[c]));
 
 }
 
 
 // =====================================================
-// PRODUCT VIEWER
+// OPEN PRODUCT VIEWER
 // =====================================================
 
 function openProduct(index) {
 
-  const product = allProducts[index];
+  const product =
+    allProducts[index];
+
 
   if (!product) return;
 
+
   currentProduct = product;
+  currentSlide = 0;
+
 
   const colors =
-    Array.isArray(product.colors) && product.colors.length
+    Array.isArray(product.colors)
       ? product.colors
       : [];
 
-  let images = colors
-    .map(c => String(c.image || "").trim())
-    .filter(Boolean);
 
-  if (!images.length && product.image) {
-    images = [String(product.image).trim()];
+  let images =
+    colors
+      .map(function(color) {
+        return String(
+          color.image || ""
+        ).trim();
+      })
+      .filter(Boolean);
+
+
+  if (
+    images.length === 0 &&
+    product.image
+  ) {
+
+    images = [
+      String(product.image).trim()
+    ];
+
   }
 
-  const price = Number(product.price) || 0;
 
-  const colorButtons = colors.length > 1
-    ? `
-      <div class="viewer-colors">
-        <div class="viewer-color-title">
-          Color
-        </div>
+  const price =
+    Number(product.price) || 0;
 
-        <div class="viewer-color-list">
-          ${colors.map((c, i) => `
-            <button
-              type="button"
-              class="viewer-color-btn ${i === 0 ? "active" : ""}"
-              onclick="selectViewerColor(${i})"
-            >
-              ${escapeHtml(c.name || "")}
-            </button>
-          `).join("")}
-        </div>
-      </div>
-    `
-    : "";
 
-  const imageHtml = images.length
-    ? `
+  // ===================================================
+  // IMAGE AREA
+  // ===================================================
+
+  let imageArea = "";
+
+
+  if (images.length > 0) {
+
+    imageArea = `
       <div class="product-slider">
 
         <button
           type="button"
           class="slider-btn prev"
-          onclick="previousSlide()"
+          onclick="previousSlide(event)"
         >
           ‹
         </button>
 
+
         <div id="sliderImageArea">
+
           <img
             id="viewerMainImage"
             src="${escapeHtml(images[0])}"
             alt="${escapeHtml(product.name)}"
           >
+
         </div>
+
 
         <button
           type="button"
           class="slider-btn next"
-          onclick="nextSlide()"
+          onclick="nextSlide(event)"
         >
           ›
         </button>
 
       </div>
-    `
-    : `
+    `;
+
+  } else {
+
+    imageArea = `
       <div class="product-slider">
+
         <div id="sliderImageArea">
+
           <span class="placeholder">
             🛍️
           </span>
+
         </div>
+
       </div>
     `;
 
+  }
+
+
+  // ===================================================
+  // COLOR BUTTONS
+  // ===================================================
+
+  let colorButtons = "";
+
+
+  if (colors.length > 1) {
+
+    colorButtons = `
+      <div class="viewer-colors">
+
+        <div class="viewer-color-title">
+          Color
+        </div>
+
+
+        <div class="viewer-color-list">
+
+          ${colors.map(function(color, index) {
+
+            return `
+              <button
+                type="button"
+                class="
+                  viewer-color-btn
+                  ${index === 0 ? "active" : ""}
+                "
+                onclick="
+                  event.stopPropagation();
+                  selectViewerColor(${index});
+                "
+              >
+                ${escapeHtml(color.name || "")}
+              </button>
+            `;
+
+          }).join("")}
+
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  // ===================================================
+  // VIEWER HTML
+  // ===================================================
+
   productViewer.innerHTML = `
+
     <div
       class="large-product-box"
       onclick="event.stopPropagation()"
@@ -253,12 +483,17 @@ function openProduct(index) {
       <button
         type="button"
         class="close-viewer"
-        onclick="closeProduct()"
+        onclick="
+          event.stopPropagation();
+          closeProduct();
+        "
       >
         ×
       </button>
 
-      ${imageHtml}
+
+      ${imageArea}
+
 
       <div class="large-product-info">
 
@@ -266,15 +501,21 @@ function openProduct(index) {
           ${escapeHtml(product.name)}
         </h2>
 
+
         <p>
-          ${escapeHtml(product.description || "")}
+          ${escapeHtml(
+            product.description || ""
+          )}
         </p>
+
 
         <strong class="large-product-price">
           ৳${price.toLocaleString("en-BD")}
         </strong>
 
+
         ${colorButtons}
+
 
         <button
           type="button"
@@ -287,139 +528,251 @@ function openProduct(index) {
       </div>
 
     </div>
+
   `;
 
-  // Order button আলাদা event listener দিয়ে চালানো হচ্ছে
-  // যাতে click product viewer-এ bubble না করে।
+
+  // ===================================================
+  // ORDER BUTTON
+  // ===================================================
+
   const orderButton =
-    document.getElementById("viewerOrderButton");
+    document.getElementById(
+      "viewerOrderButton"
+    );
+
 
   if (orderButton) {
 
-    orderButton.addEventListener("click", function(e) {
+    orderButton.addEventListener(
+      "click",
+      function(event) {
 
-      e.preventDefault();
-      e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
-      // IMPORTANT:
-      // আগে পুরো product viewer বন্ধ হবে
-      closeProduct();
 
-      // তারপর শুধু order form খুলবে
-      openOrderByProduct(product);
+        // প্রথমে product viewer বন্ধ
+        closeProduct();
 
-    });
+
+        // তারপর ONLY order form
+        openOrderByProduct(product);
+
+      }
+    );
+
   }
+
+
+  // ===================================================
+  // SHOW VIEWER
+  // ===================================================
 
   productViewer.style.display = "flex";
 
-  document.body.classList.add("viewer-open");
+  document.body.classList.add(
+    "viewer-open"
+  );
 
-  currentSlide = 0;
 }
 
 
 // =====================================================
-// SLIDER
+// GET CURRENT PRODUCT IMAGES
 // =====================================================
-
-let currentSlide = 0;
 
 function getCurrentImages() {
 
-  if (!currentProduct) return [];
+  if (!currentProduct) {
+    return [];
+  }
+
 
   const colors =
-    Array.isArray(currentProduct.colors)
+    Array.isArray(
+      currentProduct.colors
+    )
       ? currentProduct.colors
       : [];
 
-  let images = colors
-    .map(c => String(c.image || "").trim())
-    .filter(Boolean);
 
-  if (!images.length && currentProduct.image) {
-    images = [String(currentProduct.image).trim()];
+  let images =
+    colors
+      .map(function(color) {
+        return String(
+          color.image || ""
+        ).trim();
+      })
+      .filter(Boolean);
+
+
+  if (
+    images.length === 0 &&
+    currentProduct.image
+  ) {
+
+    images = [
+      String(currentProduct.image).trim()
+    ];
+
   }
 
+
   return images;
+
 }
 
+
+// =====================================================
+// RENDER SLIDE
+// =====================================================
 
 function renderSlide() {
 
-  const images = getCurrentImages();
+  const images =
+    getCurrentImages();
+
 
   const image =
-    document.getElementById("viewerMainImage");
+    document.getElementById(
+      "viewerMainImage"
+    );
 
-  if (!image || !images.length) return;
+
+  if (
+    !image ||
+    images.length === 0
+  ) {
+    return;
+  }
+
 
   if (currentSlide < 0) {
-    currentSlide = images.length - 1;
+
+    currentSlide =
+      images.length - 1;
+
   }
 
-  if (currentSlide >= images.length) {
+
+  if (
+    currentSlide >= images.length
+  ) {
+
     currentSlide = 0;
+
   }
 
-  image.src = images[currentSlide];
+
+  image.src =
+    images[currentSlide];
+
 }
 
 
-function nextSlide() {
+// =====================================================
+// NEXT SLIDE
+// =====================================================
 
-  const images = getCurrentImages();
+function nextSlide(event) {
 
-  if (images.length <= 1) return;
+  if (event) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+  }
+
+
+  const images =
+    getCurrentImages();
+
+
+  if (images.length <= 1) {
+    return;
+  }
+
 
   currentSlide++;
 
   renderSlide();
+
 }
 
 
-function previousSlide() {
+// =====================================================
+// PREVIOUS SLIDE
+// =====================================================
 
-  const images = getCurrentImages();
+function previousSlide(event) {
 
-  if (images.length <= 1) return;
+  if (event) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+  }
+
+
+  const images =
+    getCurrentImages();
+
+
+  if (images.length <= 1) {
+    return;
+  }
+
 
   currentSlide--;
 
   renderSlide();
+
 }
 
 
 // =====================================================
-// VIEWER COLOR
+// SELECT COLOR IN PRODUCT VIEWER
 // =====================================================
 
 function selectViewerColor(index) {
 
-  if (!currentProduct) return;
+  if (!currentProduct) {
+    return;
+  }
+
 
   const colors =
-    Array.isArray(currentProduct.colors)
+    Array.isArray(
+      currentProduct.colors
+    )
       ? currentProduct.colors
       : [];
 
-  if (!colors[index]) return;
+
+  if (!colors[index]) {
+    return;
+  }
+
 
   currentSlide = index;
 
   renderSlide();
 
-  document
-    .querySelectorAll(".viewer-color-btn")
-    .forEach((btn, i) => {
 
-      btn.classList.toggle(
+  document
+    .querySelectorAll(
+      ".viewer-color-btn"
+    )
+    .forEach(function(button, i) {
+
+      button.classList.toggle(
         "active",
         i === index
       );
 
     });
+
 }
 
 
@@ -429,13 +782,24 @@ function selectViewerColor(index) {
 
 function closeProduct() {
 
-  if (!productViewer) return;
+  if (!productViewer) {
+    return;
+  }
 
-  // পুরো viewer remove/close
-  productViewer.style.display = "none";
+
+  productViewer.style.display =
+    "none";
+
+
+  // IMPORTANT:
+  // image / viewer completely remove
   productViewer.innerHTML = "";
 
-  document.body.classList.remove("viewer-open");
+
+  document.body.classList.remove(
+    "viewer-open"
+  );
+
 }
 
 
@@ -445,250 +809,438 @@ function closeProduct() {
 
 function openOrderByIndex(index) {
 
-  const product = allProducts[index];
+  const product =
+    allProducts[index];
 
-  if (!product) return;
+
+  if (!product) {
+    return;
+  }
+
 
   openOrderByProduct(product);
+
 }
 
 
 // =====================================================
-// OPEN ORDER
+// OPEN ORDER FORM
 // =====================================================
 
 function openOrderByProduct(product) {
 
-  if (!product) return;
+  if (!product) {
+    return;
+  }
 
-  // খুব গুরুত্বপূর্ণ:
-  // Order form খোলার আগে viewer সম্পূর্ণ বন্ধ
+
+  // IMPORTANT:
+  // Product viewer বন্ধ
   closeProduct();
 
-  currentProduct = product;
 
-  const price = Number(product.price) || 0;
+  currentProduct =
+    product;
+
+
+  const price =
+    Number(product.price) || 0;
+
+
+  // ===================================================
+  // PRODUCT NAME
+  // ===================================================
 
   const productInput =
-    document.getElementById("product");
+    document.getElementById(
+      "product"
+    );
 
-  const priceInput =
-    document.getElementById("price");
 
-  const nameText =
-    document.getElementById("orderProductName");
+  const productName =
+    document.getElementById(
+      "orderProductName"
+    );
 
-  const priceText =
-    document.getElementById("orderProductPrice");
 
   if (productInput) {
-    productInput.value = product.name || "";
+
+    productInput.value =
+      product.name || "";
+
   }
+
+
+  if (productName) {
+
+    productName.textContent =
+      product.name || "";
+
+  }
+
+
+  // ===================================================
+  // PRICE
+  // ===================================================
+
+  const priceInput =
+    document.getElementById(
+      "price"
+    );
+
+
+  const priceText =
+    document.getElementById(
+      "orderProductPrice"
+    );
+
 
   if (priceInput) {
-    priceInput.value = price;
+
+    priceInput.value =
+      price;
+
   }
 
-  if (nameText) {
-    nameText.textContent = product.name || "";
-  }
 
   if (priceText) {
+
     priceText.textContent =
       price.toLocaleString("en-BD");
+
   }
 
-  // ---------------------------------------------
-  // COLOR OPTION
-  // ---------------------------------------------
+
+  // ===================================================
+  // COLOR
+  // ===================================================
 
   const colorWrap =
-    document.getElementById("colorWrap");
+    document.getElementById(
+      "colorWrap"
+    );
+
 
   const colorSelect =
-    document.getElementById("orderColor");
+    document.getElementById(
+      "orderColor"
+    );
+
 
   const colors =
     Array.isArray(product.colors)
       ? product.colors
       : [];
 
-  if (colorWrap && colorSelect) {
+
+  if (
+    colorWrap &&
+    colorSelect
+  ) {
 
     colorSelect.innerHTML = "";
 
+
+    // MULTI COLOR
     if (colors.length > 1) {
 
-      colorWrap.style.display = "block";
+      colorWrap.style.display =
+        "block";
 
-      colors.forEach((color, index) => {
 
-        const option =
-          document.createElement("option");
+      colors.forEach(
+        function(color, index) {
 
-        option.value =
-          color.name || "";
+          const option =
+            document.createElement(
+              "option"
+            );
 
-        option.textContent =
-          color.name || "";
 
-        if (index === 0) {
-          option.selected = true;
+          option.value =
+            color.name || "";
+
+
+          option.textContent =
+            color.name || "";
+
+
+          if (index === 0) {
+
+            option.selected = true;
+
+          }
+
+
+          colorSelect.appendChild(
+            option
+          );
+
         }
+      );
 
-        colorSelect.appendChild(option);
+    }
 
-      });
 
-    } else {
+    // SINGLE COLOR
+    else {
 
-      // Single color হলে Color option থাকবে না
-      colorWrap.style.display = "none";
+      colorWrap.style.display =
+        "none";
+
 
       colorSelect.innerHTML = "";
+
       colorSelect.value = "";
+
     }
+
   }
 
-  // ---------------------------------------------
-  // RESET DELIVERY
-  // ---------------------------------------------
 
-  const deliveryArea =
-    document.getElementById("deliveryArea");
+  // ===================================================
+  // CLEAR CUSTOMER INFORMATION
+  // ===================================================
 
-  if (deliveryArea) {
-    deliveryArea.value = "";
-  }
-
-  // Customer fields clear
   const nameInput =
-    document.getElementById("name");
+    document.getElementById(
+      "name"
+    );
+
 
   const phoneInput =
-    document.getElementById("phone");
+    document.getElementById(
+      "phone"
+    );
+
 
   const addressInput =
-    document.getElementById("address");
+    document.getElementById(
+      "address"
+    );
 
-  if (nameInput) nameInput.value = "";
-  if (phoneInput) phoneInput.value = "";
-  if (addressInput) addressInput.value = "";
+
+  if (nameInput) {
+    nameInput.value = "";
+  }
+
+
+  if (phoneInput) {
+    phoneInput.value = "";
+  }
+
+
+  if (addressInput) {
+    addressInput.value = "";
+  }
+
+
+  // ===================================================
+  // RESET DELIVERY
+  // ===================================================
+
+  const deliveryArea =
+    document.getElementById(
+      "deliveryArea"
+    );
+
+
+  if (deliveryArea) {
+
+    deliveryArea.value = "";
+
+  }
+
+
+  // ===================================================
+  // RESET STATUS
+  // ===================================================
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
+
 
   if (status) {
+
     status.textContent = "";
+
   }
+
 
   updateTotal();
 
-  // ---------------------------------------------
-  // ONLY ORDER FORM SHOW
-  // ---------------------------------------------
+
+  // ===================================================
+  // SHOW ONLY MODAL
+  // ===================================================
 
   if (modal) {
 
-    modal.style.display = "flex";
+    // Product viewer already closed
 
-    modal.style.position = "fixed";
+    modal.style.display =
+      "flex";
+
+
+    modal.style.position =
+      "fixed";
+
+
     modal.style.inset = "0";
-    modal.style.zIndex = "10000";
 
-    document.body.classList.add("modal-open");
+
+    modal.style.zIndex =
+      "10000";
+
+
+    document.body.classList.add(
+      "modal-open"
+    );
+
   }
+
 }
 
 
 // =====================================================
-// OLD openOrder SUPPORT
+// OLD OPEN ORDER SUPPORT
 // =====================================================
 
-function openOrder(product, price) {
+function openOrder(
+  productName,
+  price
+) {
 
-  const productObject = allProducts.find(
-    p =>
-      String(p.name).trim() ===
-      String(product).trim()
-  );
+  const product =
+    allProducts.find(
+      function(p) {
 
-  if (productObject) {
+        return String(p.name)
+          .trim()
+          .toLowerCase() ===
+          String(productName)
+            .trim()
+            .toLowerCase();
 
-    openOrderByProduct(productObject);
+      }
+    );
+
+
+  if (product) {
+
+    openOrderByProduct(product);
 
   } else {
 
     openOrderByProduct({
-      name: product,
+
+      name: productName,
+
       price: price,
+
       colors: []
+
     });
 
   }
+
 }
 
 
 // =====================================================
-// CLOSE ORDER
+// CLOSE ORDER FORM
 // =====================================================
 
 function closeOrder() {
 
-  if (!modal) return;
+  if (!modal) {
+    return;
+  }
 
-  modal.style.display = "none";
 
-  document.body.classList.remove("modal-open");
+  modal.style.display =
+    "none";
+
+
+  document.body.classList.remove(
+    "modal-open"
+  );
+
 }
 
 
 // =====================================================
-// CLICK OUTSIDE MODAL
+// CLICK OUTSIDE
 // =====================================================
 
-window.addEventListener("click", function(e) {
+window.addEventListener(
+  "click",
+  function(event) {
 
-  if (modal && e.target === modal) {
-    closeOrder();
+
+    // Close order modal
+    if (
+      modal &&
+      event.target === modal
+    ) {
+
+      closeOrder();
+
+    }
+
+
+    // Close product viewer
+    if (
+      productViewer &&
+      event.target === productViewer
+    ) {
+
+      closeProduct();
+
+    }
+
   }
-
-  if (
-    productViewer &&
-    e.target === productViewer
-  ) {
-    closeProduct();
-  }
-
-});
+);
 
 
 // =====================================================
 // ESC KEY
 // =====================================================
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener(
+  "keydown",
+  function(event) {
 
-  if (e.key === "Escape") {
+    if (event.key !== "Escape") {
+      return;
+    }
+
 
     if (
       modal &&
       modal.style.display === "flex"
     ) {
+
       closeOrder();
+
       return;
+
     }
+
 
     if (
       productViewer &&
       productViewer.style.display === "flex"
     ) {
+
       closeProduct();
+
     }
 
   }
-
-});
+);
 
 
 // =====================================================
@@ -698,44 +1250,85 @@ document.addEventListener("keydown", function(e) {
 function updateTotal() {
 
   const priceInput =
-    document.getElementById("price");
+    document.getElementById(
+      "price"
+    );
+
 
   const deliveryArea =
-    document.getElementById("deliveryArea");
+    document.getElementById(
+      "deliveryArea"
+    );
+
 
   const deliveryCharge =
-    document.getElementById("deliveryCharge");
+    document.getElementById(
+      "deliveryCharge"
+    );
+
 
   const totalPrice =
-    document.getElementById("totalPrice");
+    document.getElementById(
+      "totalPrice"
+    );
 
-  if (!priceInput || !deliveryArea) return;
+
+  if (
+    !priceInput ||
+    !deliveryArea
+  ) {
+
+    return;
+
+  }
+
 
   const price =
-    Number(priceInput.value) || 0;
+    Number(
+      priceInput.value
+    ) || 0;
 
-  const area =
-    deliveryArea.value;
 
   let charge = 0;
 
-  if (area === "ঢাকার ভিতরে") {
+
+  if (
+    deliveryArea.value ===
+    "ঢাকার ভিতরে"
+  ) {
+
     charge = 60;
+
   }
 
-  if (area === "ঢাকার বাইরে") {
+
+  if (
+    deliveryArea.value ===
+    "ঢাকার বাইরে"
+  ) {
+
     charge = 120;
+
   }
+
 
   if (deliveryCharge) {
+
     deliveryCharge.textContent =
       charge.toLocaleString("en-BD");
+
   }
 
+
   if (totalPrice) {
+
     totalPrice.textContent =
-      (price + charge).toLocaleString("en-BD");
+      (
+        price + charge
+      ).toLocaleString("en-BD");
+
   }
+
 }
 
 
@@ -743,12 +1336,15 @@ function updateTotal() {
 // DELIVERY CHANGE
 // =====================================================
 
-const deliveryArea =
-  document.getElementById("deliveryArea");
+const deliveryAreaElement =
+  document.getElementById(
+    "deliveryArea"
+  );
 
-if (deliveryArea) {
 
-  deliveryArea.addEventListener(
+if (deliveryAreaElement) {
+
+  deliveryAreaElement.addEventListener(
     "change",
     updateTotal
   );
@@ -757,58 +1353,97 @@ if (deliveryArea) {
 
 
 // =====================================================
-// SUBMIT ORDER
+// ORDER SUBMIT
 // =====================================================
 
 const orderForm =
-  document.getElementById("orderForm");
+  document.getElementById(
+    "orderForm"
+  );
+
 
 if (orderForm) {
 
   orderForm.addEventListener(
     "submit",
-    async function(e) {
+    async function(event) {
 
-      e.preventDefault();
+      event.preventDefault();
+
 
       const status =
-        document.getElementById("status");
+        document.getElementById(
+          "status"
+        );
+
 
       const price =
         Number(
-          document.getElementById("price").value
+          document.getElementById(
+            "price"
+          ).value
         ) || 0;
 
-      const area =
-        document.getElementById("deliveryArea").value;
 
-      if (!area) {
+      const deliveryArea =
+        document.getElementById(
+          "deliveryArea"
+        ).value;
+
+
+      if (!deliveryArea) {
 
         if (status) {
+
           status.textContent =
             "দয়া করে ডেলিভারি এলাকা নির্বাচন করুন।";
+
         }
 
         return;
+
       }
 
-      const charge =
-        area === "ঢাকার ভিতরে"
-          ? 60
-          : 120;
+
+      let deliveryCharge = 0;
+
+
+      if (
+        deliveryArea ===
+        "ঢাকার ভিতরে"
+      ) {
+
+        deliveryCharge = 60;
+
+      }
+
+
+      if (
+        deliveryArea ===
+        "ঢাকার বাইরে"
+      ) {
+
+        deliveryCharge = 120;
+
+      }
+
 
       const total =
-        price + charge;
+        price + deliveryCharge;
 
 
-      // ---------------------------------------------
-      // SELECTED COLOR
-      // ---------------------------------------------
-
-      const colorSelect =
-        document.getElementById("orderColor");
+      // =================================================
+      // COLOR
+      // =================================================
 
       let selectedColor = "";
+
+
+      const colorSelect =
+        document.getElementById(
+          "orderColor"
+        );
+
 
       if (
         colorSelect &&
@@ -817,53 +1452,97 @@ if (orderForm) {
 
         selectedColor =
           colorSelect.value;
+
       }
 
 
-      // ---------------------------------------------
-      // SEND DATA
-      // ---------------------------------------------
+      // =================================================
+      // FORM DATA
+      // =================================================
 
-      const data =
-        new URLSearchParams({
+      const formData =
+        new URLSearchParams();
 
-          store: store,
 
-          product:
-            document.getElementById("product").value,
+      formData.append(
+        "store",
+        store
+      );
 
-          price:
-            String(price),
 
-          color:
-            selectedColor,
+      formData.append(
+        "product",
+        document.getElementById(
+          "product"
+        ).value
+      );
 
-          deliveryArea:
-            area,
 
-          deliveryCharge:
-            String(charge),
+      formData.append(
+        "price",
+        String(price)
+      );
 
-          total:
-            String(total),
 
-          name:
-            document.getElementById("name").value,
+      formData.append(
+        "color",
+        selectedColor
+      );
 
-          phone:
-            document.getElementById("phone").value,
 
-          address:
-            document.getElementById("address").value
+      formData.append(
+        "deliveryArea",
+        deliveryArea
+      );
 
-        });
+
+      formData.append(
+        "deliveryCharge",
+        String(deliveryCharge)
+      );
+
+
+      formData.append(
+        "total",
+        String(total)
+      );
+
+
+      formData.append(
+        "name",
+        document.getElementById(
+          "name"
+        ).value
+      );
+
+
+      formData.append(
+        "phone",
+        document.getElementById(
+          "phone"
+        ).value
+      );
+
+
+      formData.append(
+        "address",
+        document.getElementById(
+          "address"
+        ).value
+      );
 
 
       if (status) {
+
         status.textContent =
           "অর্ডার পাঠানো হচ্ছে...";
+
       }
 
+
+      // =================================================
+      // SEND TO GOOGLE SHEET
+      // =================================================
 
       try {
 
@@ -872,27 +1551,39 @@ if (orderForm) {
           {
             method: "POST",
             mode: "no-cors",
-            body: data
+            body: formData
           }
         );
 
 
         if (status) {
+
           status.textContent =
             "অর্ডার সফলভাবে নেওয়া হয়েছে। ধন্যবাদ!";
+
         }
 
 
-        // Form reset
-        this.reset();
+        // Reset customer fields
+        document.getElementById(
+          "name"
+        ).value = "";
 
-        // Color আবার hide
-        const colorWrap =
-          document.getElementById("colorWrap");
 
-        if (colorWrap) {
-          colorWrap.style.display = "none";
-        }
+        document.getElementById(
+          "phone"
+        ).value = "";
+
+
+        document.getElementById(
+          "address"
+        ).value = "";
+
+
+        document.getElementById(
+          "deliveryArea"
+        ).value = "";
+
 
         updateTotal();
 
@@ -901,9 +1592,12 @@ if (orderForm) {
 
         console.error(error);
 
+
         if (status) {
+
           status.textContent =
             "অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন।";
+
         }
 
       }
@@ -915,7 +1609,7 @@ if (orderForm) {
 
 
 // =====================================================
-// START
+// START PRODUCT LOADING
 // =====================================================
 
 loadProducts();
