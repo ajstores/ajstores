@@ -1219,3 +1219,38 @@ main > p{
     font-size:13px;
   }
 }
+/* ================================
+   STORE PAGE CENTER ALIGNMENT
+   ================================ */
+
+body:not(:has(.home-intro)) main > h1,
+body:not(:has(.home-intro)) main > p{
+  text-align:center;
+}
+
+body:not(:has(.home-intro)) main > h1{
+  margin-top:10px;
+}
+
+body:not(:has(.home-intro)) main > p{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* Product area centered on computer */
+#products{
+  max-width:1100px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* Product text centered */
+.product > h3,
+.product > p{
+  text-align:center;
+}
+
+/* Keep price + order button balanced */
+.product-bottom{
+  justify-content:center;
+}
