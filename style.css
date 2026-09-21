@@ -1,3 +1,7 @@
+/* =========================================
+   AJ STORES - FINAL STYLE
+   ========================================= */
+
 *{
   box-sizing:border-box;
 }
@@ -13,19 +17,25 @@ body{
   background:#f7f7fb;
 }
 
-/* HEADER */
+/* =========================================
+   HEADER
+   ========================================= */
 
 header{
   width:100%;
   background:#111;
   color:#fff;
+
   display:flex;
   align-items:center;
   justify-content:space-between;
+
   padding:14px 5%;
+
   position:sticky;
   top:0;
   z-index:1000;
+
   box-shadow:0 3px 15px rgba(0,0,0,.15);
 }
 
@@ -44,9 +54,13 @@ nav{
 nav a{
   color:#fff;
   text-decoration:none;
+
   padding:9px 13px;
+
   border-radius:8px;
+
   font-size:14px;
+
   transition:.25s ease;
 }
 
@@ -55,16 +69,21 @@ nav a:hover{
   color:#111;
 }
 
-/* MAIN */
+/* =========================================
+   MAIN PAGE LOAD
+   ========================================= */
 
 main{
   width:92%;
   max-width:1200px;
+
   margin:0 auto;
+
   padding:35px 0 60px;
 
   opacity:0;
   transform:translateY(8px);
+
   animation:pageIn .5s ease forwards;
 }
 
@@ -88,7 +107,9 @@ main > p{
   color:#666;
 }
 
-/* HOME */
+/* =========================================
+   HOME PAGE
+   ========================================= */
 
 .home-intro{
   text-align:center;
@@ -97,62 +118,89 @@ main > p{
 
 .home-intro p:first-child{
   margin:0 0 10px;
+
   font-size:13px;
   font-weight:700;
+
   letter-spacing:2px;
+
   color:#777;
 }
 
 .home-intro h1{
   margin:0;
+
   font-size:42px;
   font-weight:800;
 }
 
 .home-intro p:last-child{
   margin-top:12px;
+
   color:#666;
   font-size:16px;
 }
 
-/* HOME BRAND */
+/* =========================================
+   HOME BRAND CARDS
+   ========================================= */
 
 .brand-grid{
   display:grid;
+
   grid-template-columns:repeat(2,minmax(0,1fr));
+
   gap:20px;
+
   margin-top:25px;
 }
 
 .brand-card{
   display:block;
+
   text-decoration:none;
+
   color:#181818;
+
   background:#fff;
+
   border-radius:18px;
+
   padding:18px;
+
   box-shadow:0 8px 25px rgba(0,0,0,.08);
+
   border:1px solid #eee;
-  transition:transform .3s ease,box-shadow .3s ease;
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+
   overflow:hidden;
 }
 
 .brand-card:hover{
   transform:translateY(-6px);
+
   box-shadow:0 15px 35px rgba(0,0,0,.15);
 }
 
-/* HOME LOGO - PERFECT CIRCLE */
+/* =========================================
+   HOME LOGO - ROUND
+   ========================================= */
 
 .brand-card img{
   width:220px;
   height:220px;
+
   display:block;
+
   margin:0 auto 18px;
 
   object-fit:cover;
 
   border-radius:50%;
+
   clip-path:circle(50%);
 
   background:#fff;
@@ -160,23 +208,32 @@ main > p{
 
 .brand-card h2{
   margin:0 0 7px;
+
   font-size:23px;
 }
 
 .brand-card p{
   margin:0;
+
   color:#666;
+
   line-height:1.5;
 }
 
 .shop-link{
   margin-top:14px;
+
   display:inline-block;
+
   background:#111;
   color:#fff;
+
   padding:9px 14px;
+
   border-radius:8px;
+
   font-size:13px;
+
   transition:.25s ease;
 }
 
@@ -184,38 +241,63 @@ main > p{
   background:#333;
 }
 
-/* PRODUCTS */
+/* =========================================
+   PRODUCTS GRID
+   ========================================= */
 
 #products{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:14px;
+
+  grid-template-columns:
+    repeat(auto-fill,minmax(170px,1fr));
+
+  gap:15px;
+
   margin-top:20px;
 }
 
 .loading{
   color:#777;
+
   text-align:center;
+
   padding:30px;
 }
 
-/* PRODUCT CARD */
+/* =========================================
+   PRODUCT CARD
+   IMPORTANT:
+   SCRIPT USES .product
+   ========================================= */
 
-.product-card{
+.product{
   position:relative;
+
   background:#fff;
+
   border:1px solid #eee;
+
   border-radius:12px;
+
   overflow:hidden;
+
   cursor:pointer;
-  box-shadow:0 4px 14px rgba(0,0,0,.06);
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.06);
 
   opacity:0;
+
   transform:translateY(12px);
 
-  animation:productIn .5s ease forwards;
+  animation:
+    productIn .5s ease forwards;
 
-  transition:transform .25s ease,box-shadow .25s ease;
+  animation-delay:var(--delay);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
 }
 
 @keyframes productIn{
@@ -225,63 +307,74 @@ main > p{
   }
 }
 
-.product-card:hover{
+.product:hover{
   transform:translateY(-5px);
-  box-shadow:0 10px 24px rgba(0,0,0,.13);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.13);
 }
 
-.product-image-wrap{
+/* =========================================
+   PRODUCT IMAGE
+   SCRIPT USES .product-img
+   ========================================= */
+
+.product-img{
   width:100%;
-  height:160px;
+
+  height:170px;
+
   background:#f5f5f5;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
   overflow:hidden;
+
+  position:relative;
 }
 
-.product-card img{
+.product-img img{
   width:100%;
   height:100%;
+
   object-fit:contain;
+
   display:block;
 
-  transition:transform .3s ease;
+  transition:
+    transform .3s ease;
 }
 
-.product-card:hover img{
+.product:hover .product-img img{
   transform:scale(1.04);
 }
 
-.product-info{
-  padding:10px;
+/* No image */
+
+.placeholder{
+  width:100%;
+  height:100%;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-size:45px;
+
+  color:#aaa;
 }
 
-.product-info h3{
-  margin:0 0 6px;
-  font-size:14px;
-  line-height:1.3;
-}
-
-.product-info p{
-  margin:0 0 7px;
-  color:#666;
-  font-size:12px;
-  line-height:1.4;
-}
-
-.product-price{
-  font-size:16px;
-  font-weight:700;
-  color:#111;
-}
-
-/* PRODUCT HOVER */
+/* =========================================
+   PRODUCT HOVER
+   ========================================= */
 
 .product-hover{
   position:absolute;
+
   left:0;
   right:0;
   bottom:0;
@@ -289,25 +382,105 @@ main > p{
   padding:9px;
 
   background:rgba(0,0,0,.78);
+
   color:#fff;
+
   text-align:center;
 
+  font-size:13px;
+
   opacity:0;
+
   transform:translateY(100%);
 
   transition:.25s ease;
 }
 
-.product-card:hover .product-hover{
+.product:hover .product-hover{
   opacity:1;
+
   transform:translateY(0);
 }
 
-/* PRODUCT VIEWER */
+/* =========================================
+   PRODUCT TEXT
+   ========================================= */
+
+.product > h3{
+  margin:10px 10px 5px;
+
+  font-size:15px;
+
+  line-height:1.3;
+}
+
+.product > p{
+  margin:0 10px 9px;
+
+  color:#666;
+
+  font-size:12px;
+
+  line-height:1.4;
+}
+
+/* =========================================
+   PRODUCT BOTTOM
+   ========================================= */
+
+.product-bottom{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:7px;
+
+  padding:0 10px 11px;
+}
+
+.product-bottom strong{
+  font-size:16px;
+
+  color:#111;
+
+  white-space:nowrap;
+}
+
+.card-order{
+  border:0;
+
+  background:#111;
+
+  color:#fff;
+
+  padding:7px 9px;
+
+  border-radius:7px;
+
+  font-size:11px;
+
+  cursor:pointer;
+
+  white-space:nowrap;
+
+  transition:.2s ease;
+}
+
+.card-order:hover{
+  background:#333;
+}
+
+/* =========================================
+   PRODUCT VIEWER
+   ========================================= */
 
 #productViewer{
   display:none;
+
   position:fixed;
+
   inset:0;
 
   background:rgba(0,0,0,.78);
@@ -315,18 +488,29 @@ main > p{
   z-index:2000;
 
   align-items:center;
+
   justify-content:center;
 
   padding:20px;
 }
 
-#productViewer.viewer-open{
-  display:flex;
+/* Script sets display:flex */
+
+.viewer-backdrop{
+  position:absolute;
+
+  inset:0;
 }
 
 .viewer-box{
+  position:relative;
+
+  z-index:2;
+
   width:min(700px,95vw);
+
   max-height:92vh;
+
   overflow:auto;
 
   background:#fff;
@@ -335,13 +519,13 @@ main > p{
 
   padding:18px;
 
-  position:relative;
-
-  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.35);
 }
 
 .viewer-close{
   position:absolute;
+
   top:10px;
   right:12px;
 
@@ -349,9 +533,11 @@ main > p{
   height:38px;
 
   border:0;
+
   border-radius:50%;
 
   background:#111;
+
   color:#fff;
 
   font-size:22px;
@@ -361,10 +547,15 @@ main > p{
   z-index:5;
 }
 
+/* =========================================
+   VIEWER IMAGE
+   ========================================= */
+
 .viewer-image-wrap{
   position:relative;
 
   width:100%;
+
   height:min(60vh,520px);
 
   background:#f5f5f5;
@@ -374,6 +565,7 @@ main > p{
   overflow:hidden;
 
   touch-action:pan-y;
+
   user-select:none;
 
   cursor:grab;
@@ -383,7 +575,7 @@ main > p{
   cursor:grabbing;
 }
 
-.viewer-image{
+.viewer-main-image{
   width:100%;
   height:100%;
 
@@ -392,82 +584,69 @@ main > p{
   display:block;
 }
 
-/* VIEWER BUTTONS */
+/* =========================================
+   VIEWER INFO
+   ========================================= */
 
-.viewer-prev,
-.viewer-next{
-  position:absolute;
-
-  top:50%;
-
-  transform:translateY(-50%);
-
-  width:42px;
-  height:42px;
-
-  border:0;
-  border-radius:50%;
-
-  background:rgba(0,0,0,.65);
-  color:#fff;
-
-  font-size:25px;
-
-  cursor:pointer;
-
-  z-index:3;
-
-  transition:.2s ease;
-}
-
-.viewer-prev:hover,
-.viewer-next:hover{
-  background:#111;
-}
-
-.viewer-prev{
-  left:10px;
-}
-
-.viewer-next{
-  right:10px;
-}
-
-/* VIEWER DETAILS */
-
-.viewer-details{
+.viewer-info{
   padding:15px 3px 5px;
 }
 
-.viewer-details h2{
+.viewer-title{
   margin:0 0 7px;
+
   font-size:23px;
 }
 
-.viewer-details p{
+.viewer-description{
   margin:5px 0;
+
   color:#666;
 }
 
 .viewer-price{
+  margin-top:8px;
+
   font-size:20px;
+
   font-weight:700;
+
   color:#111;
 }
 
-/* COLORS */
+/* =========================================
+   VIEWER COLORS
+   ========================================= */
 
-.viewer-colors{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
+.viewer-color-label{
   margin-top:13px;
+
+  font-size:14px;
+
+  font-weight:600;
 }
 
-.color-btn{
+.viewer-color{
+  font-weight:400;
+
+  color:#555;
+}
+
+.viewer-color-list{
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  margin-top:9px;
+}
+
+.viewer-color-btn{
   border:1px solid #ccc;
 
   background:#fff;
+
   color:#222;
 
   padding:8px 12px;
@@ -479,22 +658,59 @@ main > p{
   transition:.2s ease;
 }
 
-.color-btn:hover{
+.viewer-color-btn:hover{
   border-color:#111;
 }
 
-.color-btn.active{
+.viewer-color-btn.active{
   background:#111;
+
   color:#fff;
+
   border-color:#111;
 }
 
-/* ORDER MODAL */
+/* =========================================
+   VIEWER ORDER BUTTON
+   ========================================= */
+
+.viewer-order-btn{
+  width:100%;
+
+  margin-top:16px;
+
+  padding:12px;
+
+  border:0;
+
+  border-radius:9px;
+
+  background:#111;
+
+  color:#fff;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.25s ease;
+}
+
+.viewer-order-btn:hover{
+  background:#333;
+}
+
+/* =========================================
+   ORDER MODAL
+   ========================================= */
 
 #modal{
   display:none;
 
   position:fixed;
+
   inset:0;
 
   background:rgba(0,0,0,.75);
@@ -502,13 +718,10 @@ main > p{
   z-index:3000;
 
   align-items:center;
+
   justify-content:center;
 
   padding:15px;
-}
-
-#modal.modal-open{
-  display:flex;
 }
 
 #orderForm{
@@ -524,7 +737,8 @@ main > p{
 
   padding:22px;
 
-  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.35);
 }
 
 #orderForm h2{
@@ -539,9 +753,11 @@ main > p{
   display:block;
 
   margin-top:14px;
+
   margin-bottom:6px;
 
   font-weight:600;
+
   font-size:14px;
 }
 
@@ -585,9 +801,11 @@ main > p{
   border-radius:9px;
 
   background:#111;
+
   color:#fff;
 
   font-size:15px;
+
   font-weight:700;
 
   cursor:pointer;
@@ -607,7 +825,9 @@ main > p{
   font-weight:600;
 }
 
-/* MOBILE */
+/* =========================================
+   MOBILE
+   ========================================= */
 
 @media(max-width:700px){
 
@@ -659,6 +879,8 @@ main > p{
     font-size:14px;
   }
 
+  /* HOME */
+
   .brand-grid{
     grid-template-columns:1fr;
 
@@ -676,6 +898,7 @@ main > p{
     object-fit:cover;
 
     border-radius:50%;
+
     clip-path:circle(50%);
   }
 
@@ -683,37 +906,50 @@ main > p{
     font-size:22px;
   }
 
-  /* PRODUCTS SMALL */
+  /* PRODUCTS */
 
   #products{
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
 
     gap:10px;
   }
 
-  .product-image-wrap{
+  .product-img{
     height:145px;
   }
 
-  .product-info{
-    padding:9px;
-  }
-
-  .product-info h3{
+  .product > h3{
     font-size:13px;
+
+    margin:9px 8px 5px;
   }
 
-  .product-info p{
+  .product > p{
     font-size:11px;
+
+    margin:0 8px 8px;
   }
 
-  .product-price{
-    font-size:15px;
+  .product-bottom{
+    padding:0 8px 9px;
+  }
+
+  .product-bottom strong{
+    font-size:14px;
+  }
+
+  .card-order{
+    font-size:10px;
+
+    padding:6px 7px;
   }
 
   .product-hover{
     display:none;
   }
+
+  /* VIEWER */
 
   .viewer-box{
     width:96vw;
@@ -727,16 +963,12 @@ main > p{
     height:52vh;
   }
 
-  .viewer-details h2{
+  .viewer-title{
     font-size:20px;
   }
 
-  .viewer-prev,
-  .viewer-next{
-    width:38px;
-    height:38px;
-
-    font-size:21px;
+  .viewer-order-btn{
+    padding:11px;
   }
 
   #orderForm{
@@ -744,30 +976,40 @@ main > p{
   }
 }
 
-/* VERY SMALL MOBILE */
+/* =========================================
+   VERY SMALL MOBILE
+   ========================================= */
 
 @media(max-width:380px){
 
   #products{
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
 
     gap:8px;
   }
 
-  .product-image-wrap{
+  .product-img{
     height:135px;
   }
 
-  .product-info h3{
+  .product > h3{
     font-size:12px;
   }
 
-  .product-price{
-    font-size:14px;
+  .product-bottom strong{
+    font-size:13px;
+  }
+
+  .card-order{
+    font-size:9px;
+
+    padding:5px 6px;
   }
 
   nav a{
     padding:6px 7px;
+
     font-size:11px;
   }
 
