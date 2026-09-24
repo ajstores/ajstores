@@ -34,15 +34,15 @@
     "colors": [
       {
         "name": "Purpal",
-        "image": "/ajstores/trendy/kurumipurpal.jpeg"
+        "image": "/ajstores/trendy/kurimipurpal.jpeg"
       },
       {
         "name": "Sky Blue",
-        "image": "/ajstores/trendy/kurumisky.jpeg"
+        "image": "/ajstores/trendy/kurimisky.jpeg"
       },
       {
         "name": "Pink",
-        "image": "/ajstores/trendy/kurumipink.jpeg"
+        "image": "/ajstores/trendy/kurimipink.jpeg"
       }
     ]
   },
@@ -72,11 +72,11 @@
     "colors": [
       {
         "name": "Black",
-        "image": "/ajstores/trendy/crossblack.jpg"
+        "image": "/ajstores/trendy/crossblack.jpeg"
       },
       {
         "name": "Blue",
-        "image": "/ajstores/trendy/crossblue.jpg"
+        "image": "/ajstores/trendy/crossblue.jpeg"
       }
     ]
   },
