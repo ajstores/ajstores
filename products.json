@@ -65,6 +65,23 @@
   },
   {
     "store": "AJ Trendy Hub",
+    "name": "LOCK SYSTEM BAG",
+    "price": 480,
+    "description": "High quality lock system bag",
+    "status": "ON",
+    "colors": [
+      {
+        "name": "Black",
+        "image": "/ajstores/trendy/lockfront.jpeg"
+      },
+      {
+        "name": "",
+        "image": "/ajstores/trendy/lockback.jpeg"
+      }
+    ]
+  },
+  {
+    "store": "AJ Trendy Hub",
     "name": "CROSS BAG",
     "price": 390,
     "description": "Designed for style",
@@ -80,12 +97,25 @@
       }
     ]
   },
+   {
+    "store": "AJ Trendy Hub",
+    "name": "COLLACTION BAG",
+    "price": 650,
+    "description": "Stylish collaction or office using bag",
+    "status": "ON",
+    "colors": [
+      {
+        "name": "Black",
+        "image": "/ajstores/trendy/collaction.jpeg"
+      }
+    ]
+  },
   {
     "store": "AJ Kidz Zone",
     "name": "Kids Toy",
     "price": 250,
     "description": "Fun toy for kids",
-    "status": "ON",
+    "status": "OF",
     "colors": [
       {
         "name": "Blue",
