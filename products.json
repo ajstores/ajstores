@@ -34,15 +34,15 @@
     "colors": [
       {
         "name": "Purpal",
-        "image": "/ajstores/Kurumi.jpg"
+        "image": "/ajstores/trendy/kurumipurpal.jpeg"
       },
       {
         "name": "Sky Blue",
-        "image": "/ajstores/kurumisky.jpg"
+        "image": "/ajstores/trendy/kurumisky.jpeg"
       },
       {
         "name": "Pink",
-        "image": "/ajstores/kurumipink.jpg"
+        "image": "/ajstores/trendy/kurumipink.jpeg"
       }
     ]
   },
@@ -55,11 +55,11 @@
     "colors": [
       {
         "name": "Grey",
-        "image": "/ajstores/buterflygrey.jpg"
+        "image": "/ajstores/trendy/butterflygrey.jpeg"
       },
       {
         "name": "Pink",
-        "image": "/ajstores/buterflypink.jpg"
+        "image": "/ajstores/trendy/butterflypink.jpeg"
       }
     ]
   },
@@ -72,7 +72,11 @@
     "colors": [
       {
         "name": "Black",
-        "image": "/ajstores/trendy/crossbag.jpg"
+        "image": "/ajstores/trendy/crossblack.jpg"
+      },
+      {
+        "name": "Blue",
+        "image": "/ajstores/trendy/crossblue.jpg"
       }
     ]
   },
